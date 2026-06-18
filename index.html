@@ -745,14 +745,11 @@
     }
 
     // ── ABRIR ─────────────────────────────────────────
-    async function abrirHoja(nombre) {
-        try {
-            const h = todasHojas.find(h => h.nombre === nombre);
-            if (!h) return;
-            const url = URL.createObjectURL(await h.handle.getFile());
-            window.open(url, '_blank');
-            setTimeout(() => URL.revokeObjectURL(url), 60000);
-        } catch (e) { toast('No se pudo abrir la hoja.', true); }
+    function abrirHoja(nombreArchivo) {
+        window.open(
+            `notas/${encodeURIComponent(nombreArchivo)}`,
+            "_blank"
+        );
     }
 
     // ── ELIMINAR ──────────────────────────────────────
