@@ -1,0 +1,289 @@
+@page {
+    size: A4;
+    margin: 1cm;
+}
+
+body {
+    font-family: 'Calibri', 'Arial', sans-serif;
+    max-width: 21cm;
+    margin: 0 auto;
+    padding: 5px;
+    background: white;
+    color: #333;
+}
+
+/* ── HEADER ─────────────────────────────────── */
+.header {
+    border-bottom: 3px solid #c41e3a;
+    padding-bottom: 15px;
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    max-width: 300px;
+    height: auto;
+}
+
+.model {
+    max-width: 120px;
+    height: auto;
+    cursor: pointer;
+    border: 2px dashed transparent;
+    transition: border 0.3s;
+}
+
+.model:hover {
+    border: 2px dashed #1e5aa8;
+}
+
+#modelUpload {
+    display: none;
+}
+
+.model-upload-label {
+    display: block;
+    font-size: 10px;
+    color: #666;
+    margin-top: 5px;
+    cursor: pointer;
+}
+
+.model-upload-label:hover {
+    color: #1e5aa8;
+}
+
+/* ── TÍTULO DOCUMENTO ───────────────────────── */
+.document-title {
+    background-color: #2d5016;
+    color: white;
+    padding: 10px 15px;
+    margin: 20px 0;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* ── SECCIONES ──────────────────────────────── */
+.section {
+    margin-bottom: 25px;
+    page-break-inside: auto;
+}
+
+.section-header {
+    background-color: #1e5aa8;
+    color: white;
+    padding: 8px 12px;
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* ── GRID INFO ──────────────────────────────── */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.info-item {
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 5px;
+}
+
+.info-label {
+    font-weight: bold;
+    color: #2d5016;
+    font-size: 12px;
+    margin-bottom: 3px;
+}
+
+.info-value {
+    font-size: 14px;
+    min-height: 20px;
+    border: none;
+    background: transparent;
+    width: 100%;
+    padding: 2px;
+}
+
+.info-value:focus {
+    outline: 1px solid #1e5aa8;
+    background-color: #f9f9f9;
+}
+
+/* ── ÁREA EDITABLE ──────────────────────────── */
+.editable-box {
+    border: 1px solid #ddd;
+    padding: 7px;
+    min-height: 25px;
+    background-color: #fafafa;
+    font-size: 13px;
+    line-height: 1.6;
+    overflow: visible;
+    word-wrap: break-word;
+}
+
+.editable-box:focus {
+    outline: 2px solid #1e5aa8;
+    background-color: white;
+}
+
+/* ── TOOLBAR ────────────────────────────────── */
+.toolbar {
+    background-color: #f0f0f0;
+    padding: 8px;
+    margin-bottom: 5px;
+    border: 1px solid #ddd;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+}
+
+.toolbar button {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+}
+
+.toolbar button:hover {
+    background-color: #e8e8e8;
+}
+
+/* ── PRECIOS ────────────────────────────────── */
+.precio-section {
+    margin-top: 30px;
+    text-align: right;
+    page-break-inside: avoid;
+}
+
+.mano-obra-container {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.toggle-mano-obra {
+    background-color: #1e5aa8;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 12px;
+    border-radius: 3px;
+    margin-bottom: 10px;
+    display: block;
+    margin-left: auto;
+}
+
+.toggle-mano-obra:hover {
+    background-color: #2d5016;
+}
+
+.precio-total {
+    display: inline-block;
+    background-color: #2d5016;
+    color: white;
+    padding: 15px 30px;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.precio-input {
+    border: none;
+    border-bottom: 1px solid #333;
+    background: transparent;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    width: 150px;
+    padding: 2px;
+}
+
+.precio-input:focus {
+    outline: none;
+    border-bottom: 2px solid #1e5aa8;
+    background-color: #f9f9f9;
+}
+
+.precio-total-input {
+    border: none;
+    background: transparent;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    width: 200px;
+}
+
+.precio-total-input:focus {
+    outline: 2px solid white;
+}
+
+/* ── BOTONES ACCIÓN ─────────────────────────── */
+.print-button {
+    background-color: #2d5016;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 35px auto;
+    display: block;
+}
+
+.print-button:hover {
+    background-color: #1e5aa8;
+}
+
+.clear-button {
+    background-color: #c41e3a;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto;
+    display: block;
+}
+
+.clear-button:hover {
+    background-color: #a01528;
+}
+
+/* ── PRINT ──────────────────────────────────── */
+@media print {
+    body { padding: 0; }
+
+    .toolbar,
+    .print-button,
+    .toggle-mano-obra,
+    .model-upload-label,
+    .clear-button {
+        display: none !important;
+    }
+
+    .model {
+        border: none !important;
+    }
+
+    .editable-box {
+        overflow: visible;
+        height: auto;
+        page-break-inside: auto;
+    }
+
+    .section {
+        page-break-inside: auto;
+    }
+}

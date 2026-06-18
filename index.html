@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+    <title>LoworkShop — Panel Principal</title>
+    <style>
+        :root {
+            --azul:      #1e5aa8;
+            --azul-osc:  #174a8c;
+            --verde:     #2d5016;
+            --verde-osc: #1f3a0f;
+            --rojo:      #c41e3a;
+            --rojo-osc:  #a01528;
+            --gris-bg:   #f2f2f2;
+            --gris-borde:#cccccc;
+            --texto:     #333333;
+            --blanco:    #ffffff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Calibri', 'Arial', sans-serif;
+            background: var(--gris-bg);
+            color: var(--texto);
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ──────────────────────────────────── */
+        .header {
+            background: var(--blanco);
+            border-bottom: 3px solid var(--rojo);
+            padding: 12px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            max-width: 240px;
+            height: auto;
+        }
+
+        .header-titulo h1 {
+            color: var(--azul);
+            font-size: 22px;
+            font-weight: bold;
+            margin: 0;
+            text-align: right;
+        }
+
+        .header-titulo p {
+            color: var(--azul);
+            font-size: 13px;
+            margin-top: 3px;
+            text-align: right;
+        }
+
+        /* ── BARRA ESTADO ────────────────────────────── */
+        .barra-estado {
+            background: var(--azul);
+            color: white;
+            padding: 8px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+        }
+
+        .estado-texto {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ffffff55;
+            flex-shrink: 0;
+        }
+
+        .dot.conectado {
+            background: #7eff7e;
+            box-shadow: 0 0 5px #7eff7e88;
+        }
+
+        .btn-carpeta {
+            background: white;
+            color: var(--azul);
+            border: none;
+            padding: 5px 16px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .btn-carpeta:hover { background: var(--verde); color: white; }
+
+        /* ── MAIN ────────────────────────────────────── */
+        main {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 28px 20px;
+        }
+
+        /* ── AVISO NAVEGADOR ─────────────────────────── */
+        .aviso-navegador {
+            display: none;
+            background: #fff3cd;
+            border: 1px solid #e0a800;
+            border-left: 4px solid #e0a800;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        /* ── SECTION HEADER (igual que la hoja) ─────── */
+        .section-header {
+            background-color: var(--azul);
+            color: white;
+            padding: 8px 12px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .section-box {
+            background: white;
+            border: 1px solid var(--gris-borde);
+            border-top: none;
+            margin-bottom: 24px;
+        }
+
+        /* ── STATS ───────────────────────────────────── */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .stat-item {
+            padding: 18px 20px;
+            border-right: 1px solid var(--gris-borde);
+            text-align: center;
+        }
+
+        .stat-item:last-child { border-right: none; }
+
+        .stat-num {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--azul);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── ACCIONES ────────────────────────────────── */
+        .acciones-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .btn-accion {
+            padding: 18px 22px;
+            border: none;
+            border-right: 1px solid var(--gris-borde);
+            background: white;
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-accion:last-child { border-right: none; }
+        .btn-accion:hover { background: #f0f4fb; }
+        .btn-accion.nueva:hover { background: #fdf0f2; }
+        .btn-accion:disabled { opacity: 0.45; cursor: not-allowed; }
+        .btn-accion:disabled:hover { background: white; }
+
+        .accion-icono {
+            width: 36px;
+            height: 36px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+        }
+
+        .accion-icono.verde { background: var(--verde); color: white; }
+        .accion-icono.azul  { background: var(--azul);  color: white; }
+        .accion-icono.rojo  { background: var(--rojo);  color: white; }
+
+        .accion-titulo {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--texto);
+            margin-bottom: 2px;
+        }
+
+        .accion-desc {
+            font-size: 12px;
+            color: #888;
+            line-height: 1.4;
+        }
+
+        /* ── BUSCADOR ────────────────────────────────── */
+        .buscador-wrap {
+            padding: 9px 12px;
+            border-bottom: 1px solid var(--gris-borde);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .buscador-wrap svg { color: #aaa; flex-shrink: 0; }
+
+        #buscador {
+            border: none;
+            outline: none;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 14px;
+            color: var(--texto);
+            width: 100%;
+            background: transparent;
+        }
+
+        #buscador::placeholder { color: #bbb; }
+        #buscador:disabled { cursor: not-allowed; }
+
+        /* ── LISTA HOJAS ─────────────────────────────── */
+        .hoja-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 16px;
+            border-bottom: 1px solid #ebebeb;
+            transition: background 0.1s;
+        }
+
+        .hoja-item:last-child { border-bottom: none; }
+        .hoja-item:hover { background: #f5f8ff; }
+
+        .hoja-info { flex: 1; min-width: 0; }
+
+        .hoja-nombre {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--azul);
+            margin-bottom: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .hoja-meta { font-size: 11px; color: #999; }
+
+        .hoja-acciones {
+            display: flex;
+            gap: 6px;
+            flex-shrink: 0;
+            margin-left: 16px;
+        }
+
+        .btn-hoja {
+            padding: 5px 13px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid var(--gris-borde);
+            background: white;
+            color: var(--texto);
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.12s;
+        }
+
+        .btn-hoja:hover          { background: var(--azul); border-color: var(--azul); color: white; }
+        .btn-hoja.eliminar:hover { background: var(--rojo); border-color: var(--rojo); color: white; }
+
+        /* ── ESTADO VACÍO ────────────────────────────── */
+        .estado-vacio {
+            padding: 36px 20px;
+            text-align: center;
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* ── MODAL ───────────────────────────────────── */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .overlay.visible { display: flex; }
+
+        .modal {
+            background: white;
+            border-top: 4px solid var(--rojo);
+            width: 100%;
+            max-width: 440px;
+            border-radius: 2px;
+            animation: slideUp 0.16s ease;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(14px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-header {
+            background: var(--verde);
+            color: white;
+            padding: 10px 16px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .modal-body { padding: 20px 20px 8px; }
+
+        .campo-grupo { margin-bottom: 14px; }
+
+        .campo-label {
+            display: block;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--verde);
+            margin-bottom: 5px;
+        }
+
+        .campo-input {
+            width: 100%;
+            border: 1px solid var(--gris-borde);
+            border-bottom: 2px solid var(--gris-borde);
+            padding: 8px 10px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 14px;
+            color: var(--texto);
+            outline: none;
+            transition: border-color 0.2s;
+            border-radius: 1px;
+        }
+
+        .campo-input:focus { border-color: var(--azul); }
+
+        .preview-nombre {
+            font-size: 12px;
+            color: var(--azul);
+            margin-top: 4px;
+            font-style: italic;
+            min-height: 18px;
+        }
+
+        .modal-footer {
+            padding: 12px 20px 18px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-crear {
+            flex: 1;
+            background: var(--verde);
+            color: white;
+            border: none;
+            padding: 10px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: background 0.2s;
+        }
+
+        .btn-crear:hover { background: var(--verde-osc); }
+
+        .btn-cancelar {
+            background: white;
+            border: 1px solid var(--gris-borde);
+            color: #888;
+            padding: 10px 18px;
+            font-family: 'Calibri', 'Arial', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.15s;
+        }
+
+        .btn-cancelar:hover { border-color: var(--rojo); color: var(--rojo); }
+
+        /* ── TOAST ───────────────────────────────────── */
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--verde);
+            color: white;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 2px;
+            border-left: 4px solid var(--verde-osc);
+            transform: translateY(60px);
+            opacity: 0;
+            transition: all 0.25s;
+            z-index: 300;
+            max-width: 280px;
+        }
+
+        #toast.error { background: var(--rojo); border-left-color: var(--rojo-osc); }
+        #toast.visible { transform: translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="img/logo taller - sin bg.png" alt="Lozano Workshop" class="logo">
+        <div class="header-titulo">
+            <h1>LoworkShop</h1>
+            <p>Panel de gestión de hojas</p>
+        </div>
+    </div>
+
+    <div class="barra-estado">
+        <div class="estado-texto">
+            <span class="dot" id="dot-estado"></span>
+            <span id="texto-estado">Sin carpeta seleccionada — haz clic en el botón para comenzar</span>
+        </div>
+        <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">
+            📁 Seleccionar carpeta de hojas
+        </button>
+    </div>
+
+    <main>
+
+        <div class="aviso-navegador" id="aviso-navegador">
+            ⚠️ <strong>Navegador no compatible.</strong>
+            Esta aplicación requiere <strong>Chrome, Edge o Brave</strong> (v86+).
+            Firefox y Safari no soportan File System Access API.
+        </div>
+
+        <div class="section-header">RESUMEN</div>
+        <div class="section-box">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-num" id="stat-total">—</div>
+                    <div class="stat-label">Hojas guardadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" id="stat-mes">—</div>
+                    <div class="stat-label">Este mes</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-num" id="stat-ultima">—</div>
+                    <div class="stat-label">Última creada</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-header">ACCIONES RÁPIDAS</div>
+        <div class="section-box">
+            <div class="acciones-grid">
+                <button class="btn-accion nueva" onclick="abrirModal()">
+                    <div class="accion-icono rojo">📄</div>
+                    <div>
+                        <div class="accion-titulo">Nueva hoja</div>
+                        <div class="accion-desc">Crear hoja de presupuesto y reparación en blanco</div>
+                    </div>
+                </button>
+                <button class="btn-accion" id="btn-recargar" onclick="recargarHojas()" disabled>
+                    <div class="accion-icono azul">🔄</div>
+                    <div>
+                        <div class="accion-titulo">Actualizar lista</div>
+                        <div class="accion-desc">Recargar las hojas desde la carpeta seleccionada</div>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <div class="section-header">HOJAS GUARDADAS</div>
+        <div class="section-box">
+            <div class="buscador-wrap">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                </svg>
+                <input type="text" id="buscador" placeholder="Buscar por nombre de hoja…" oninput="filtrarHojas()" disabled>
+            </div>
+            <div id="lista-hojas">
+                <div class="estado-vacio">
+                    Selecciona la carpeta de hojas para ver los archivos guardados.
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL -->
+    <div class="overlay" id="overlay" onclick="cerrarModalFuera(event)">
+        <div class="modal">
+            <div class="modal-header">NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN</div>
+            <div class="modal-body">
+                <div class="campo-grupo">
+                    <label class="campo-label" for="inp-cliente">Nombre del cliente</label>
+                    <input type="text" class="campo-input" id="inp-cliente" placeholder="García López" oninput="actualizarPreview()">
+                </div>
+                <div class="campo-grupo">
+                    <label class="campo-label" for="inp-matricula">Matrícula del vehículo</label>
+                    <input type="text" class="campo-input" id="inp-matricula" placeholder="1234 ABC" oninput="actualizarPreview()">
+                </div>
+                <div class="preview-nombre" id="preview-nombre"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-crear" onclick="crearHoja()">Crear hoja →</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast"></div>
+
+    <script>
+    let dirHandle  = null;
+    let todasHojas = [];
+
+    const DB_NAME = 'loworkshop-db';
+    const STORE_NAME = 'config';
+
+    async function abrirDB() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+
+            req.onupgradeneeded = () => {
+                req.result.createObjectStore(STORE_NAME);
+            };
+
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function guardarRootHandle(handle) {
+        const db = await abrirDB();
+
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readwrite');
+
+            tx.objectStore(STORE_NAME)
+                .put(handle, 'rootFolder');
+
+            tx.oncomplete = () => resolve();
+            tx.onerror = () => reject(tx.error);
+        });
+    }
+
+    async function obtenerRootHandle() {
+        const db = await abrirDB();
+
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(STORE_NAME, 'readonly');
+
+            const req = tx.objectStore(STORE_NAME)
+                .get('rootFolder');
+
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    }
+
+    async function obtenerPlantilla() {
+        const rootHandle = await obtenerRootHandle();
+        const plantillasDir =
+            await rootHandle.getDirectoryHandle("plantillas");
+        const plantillaHandle =
+            await plantillasDir.getFileHandle("loworkshop_hoja.html");
+        const archivo =
+            await plantillaHandle.getFile();
+        return await archivo.text();
+    }
+
+    // ── INIT ─────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', async () => {
+        if (!('showDirectoryPicker' in window)) {
+            document.getElementById('aviso-navegador').style.display = 'block';
+            return;
+        }
+
+        try {
+            const rootHandle = await obtenerRootHandle();
+
+            if (!rootHandle)
+                return;
+
+            let permiso =
+                await rootHandle.queryPermission({
+                    mode: 'readwrite'
+                });
+            
+            if (permiso !== 'granted') {
+                permiso =
+                    await rootHandle.requestPermission({
+                        mode: 'readwrite'
+                    });
+            }
+
+            if (permiso === 'granted') {
+            
+                await conectarCarpetaRaiz(rootHandle);
+            
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+
+    });
+
+    async function conectarCarpetaRaiz(rootHandle) {
+        dirHandle =
+            await rootHandle.getDirectoryHandle(
+                'notas',
+                { create: true }
+            );
+        document.getElementById('dot-estado')
+            .classList.add('conectado');
+        document.getElementById('texto-estado')
+            .textContent =
+            '📂 ' + rootHandle.name;
+        document.getElementById('btn-conectar')
+            .textContent =
+            '↺ Cambiar carpeta';
+        document.getElementById('btn-recargar')
+            .disabled = false;
+        document.getElementById('buscador')
+            .disabled = false;
+
+        await cargarHojas();
+    }
+
+    // ── CARPETA ───────────────────────────────────────
+    async function seleccionarCarpeta() {
+        if (!('showDirectoryPicker' in window)) {
+            toast('Usa Chrome o Edge.', true);
+            return;
+        }
+
+        try {
+            const rootHandle =
+                await window.showDirectoryPicker({
+                    mode: 'readwrite'
+                });
+            await guardarRootHandle(rootHandle);
+            await conectarCarpetaRaiz(rootHandle);
+        }
+        catch (e) {
+            if (e.name !== 'AbortError')
+                toast(
+                    'No se pudo acceder a la carpeta.',
+                    true
+                );
+        }
+    }
+
+    async function cargarHojas() {
+        todasHojas = [];
+        try {
+            for await (const [nombre, handle] of dirHandle.entries()) {
+                if (handle.kind === 'file' && nombre.endsWith('.html')) {
+                    const file = await handle.getFile();
+                    todasHojas.push({ nombre, handle, fecha: new Date(file.lastModified) });
+                }
+            }
+            todasHojas.sort((a, b) => b.fecha - a.fecha);
+            actualizarStats();
+            renderHojas(todasHojas);
+        } catch (e) { toast('Error leyendo la carpeta.', true); }
+    }
+
+    async function recargarHojas() {
+        if (!dirHandle) return;
+        await cargarHojas();
+        toast('Lista actualizada');
+    }
+
+    // ── STATS ─────────────────────────────────────────
+    function actualizarStats() {
+        const ahora = new Date();
+        const esMes = h => h.fecha.getMonth() === ahora.getMonth()
+                        && h.fecha.getFullYear() === ahora.getFullYear();
+        document.getElementById('stat-total').textContent  = todasHojas.length;
+        document.getElementById('stat-mes').textContent    = todasHojas.filter(esMes).length;
+        document.getElementById('stat-ultima').textContent = todasHojas.length
+            ? todasHojas[0].fecha.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' })
+            : '—';
+    }
+
+    // ── RENDER ────────────────────────────────────────
+    function renderHojas(lista) {
+        const c = document.getElementById('lista-hojas');
+        if (!lista.length) {
+            c.innerHTML = `<div class="estado-vacio">No se encontraron hojas en esta carpeta.</div>`;
+            return;
+        }
+        c.innerHTML = lista.map(h => {
+            const n   = h.nombre.replace('.html','').replace(/_/g,' ');
+            const f   = h.fecha.toLocaleDateString('es-ES', { day:'2-digit', month:'short', year:'numeric' });
+            return `
+            <div class="hoja-item">
+                <div class="hoja-info">
+                    <div class="hoja-nombre">${n}</div>
+                    <div class="hoja-meta">Modificado: ${f}</div>
+                </div>
+                <div class="hoja-acciones">
+                    <button class="btn-hoja" onclick="abrirHoja('${h.nombre}')">↗ Abrir</button>
+                    <button class="btn-hoja eliminar" onclick="eliminarHoja('${h.nombre}')">✕ Eliminar</button>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    // ── ABRIR ─────────────────────────────────────────
+    async function abrirHoja(nombre) {
+        try {
+            const h = todasHojas.find(h => h.nombre === nombre);
+            if (!h) return;
+            const url = URL.createObjectURL(await h.handle.getFile());
+            window.open(url, '_blank');
+            setTimeout(() => URL.revokeObjectURL(url), 60000);
+        } catch (e) { toast('No se pudo abrir la hoja.', true); }
+    }
+
+    // ── ELIMINAR ──────────────────────────────────────
+    async function eliminarHoja(nombre) {
+        if (!confirm(`¿Eliminar "${nombre.replace('.html','').replace(/_/g,' ')}"?`)) return;
+        try {
+            await dirHandle.removeEntry(nombre);
+            todasHojas = todasHojas.filter(h => h.nombre !== nombre);
+            actualizarStats();
+            filtrarHojas();
+            toast('Hoja eliminada');
+        } catch (e) { toast('No se pudo eliminar.', true); }
+    }
+
+    // ── BUSCADOR ──────────────────────────────────────
+    function filtrarHojas() {
+        const q = document.getElementById('buscador').value.toLowerCase().trim();
+        renderHojas(q ? todasHojas.filter(h => h.nombre.toLowerCase().includes(q)) : todasHojas);
+    }
+
+    // ── MODAL ─────────────────────────────────────────
+    function abrirModal() {
+        if (!dirHandle) { toast('Primero selecciona la carpeta de hojas.', true); return; }
+        document.getElementById('inp-cliente').value   = '';
+        document.getElementById('inp-matricula').value = '';
+        document.getElementById('preview-nombre').textContent = '';
+        document.getElementById('overlay').classList.add('visible');
+        setTimeout(() => document.getElementById('inp-cliente').focus(), 80);
+    }
+
+    function cerrarModal() { document.getElementById('overlay').classList.remove('visible'); }
+    function cerrarModalFuera(e) { if (e.target.id === 'overlay') cerrarModal(); }
+
+    function actualizarPreview() {
+        const n = generarNombre(
+            document.getElementById('inp-cliente').value.trim(),
+            document.getElementById('inp-matricula').value.trim()
+        );
+        document.getElementById('preview-nombre').textContent =
+            n ? `Nombre del archivo: ${n}.html` : '';
+    }
+
+    function generarNombre(cliente, matricula) {
+        const limpiar = s => s
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '').toUpperCase();
+        const c = limpiar(cliente), m = limpiar(matricula);
+        if (!c && !m) return '';
+        return (c && m) ? `${c}_${m}` : (c || m);
+    }
+
+    // ── CREAR ─────────────────────────────────────────
+    async function crearHoja() {
+        const cliente   = document.getElementById('inp-cliente').value.trim();
+        const matricula = document.getElementById('inp-matricula').value.trim();
+        const nombre    = generarNombre(cliente, matricula);
+        if (!nombre) { toast('Introduce al menos el nombre o la matrícula.', true); return; }
+
+        const archivo   = nombre + '.html';
+        const fechaHoy  = new Date().toISOString().split('T')[0];
+        let contenido = await obtenerPlantilla();
+
+        contenido = contenido
+            .replace(/{CLIENTE}/g, cliente)
+            .replace(/{MATRICULA}/g, matricula)
+            .replace(/{FECHA}/g, fechaHoy);
+
+        try {
+            try {
+                await dirHandle.getFileHandle(archivo);
+                if (!confirm(`"${archivo}" ya existe. ¿Sobreescribir?`)) return;
+            } catch (_) {}
+
+            const fh = await dirHandle.getFileHandle(archivo, { create: true });
+            const wr = await fh.createWritable();
+            await wr.write(contenido);
+            await wr.close();
+
+            cerrarModal();
+            await cargarHojas();
+            toast(`Hoja "${archivo}" creada`);
+            setTimeout(() => abrirHoja(archivo), 400);
+        } catch (e) {
+            toast('No se pudo crear la hoja.', true);
+            console.error(e);
+        }
+    }
+
+    // ── TOAST ─────────────────────────────────────────
+    function toast(msg, error = false) {
+        const el = document.getElementById('toast');
+        el.textContent = msg;
+        el.className = 'visible' + (error ? ' error' : '');
+        clearTimeout(el._t);
+        el._t = setTimeout(() => el.className = '', 3000);
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') cerrarModal();
+        if (e.key === 'Enter' && document.getElementById('overlay').classList.contains('visible')) crearHoja();
+    });
+    </script>
+</body>
+</html>
