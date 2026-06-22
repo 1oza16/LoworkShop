@@ -1,3 +1,5 @@
+/* Principal */
+
 @page {
     size: A4;
     margin: 1cm;
@@ -12,8 +14,12 @@ body {
     color: #333;
 }
 
-/* ── HEADER ─────────────────────────────────── */
+/* Header */
+
 .header {
+    display: block;
+    align-items: center;
+    justify-content: space-between;
     border-bottom: 3px solid #c41e3a;
     padding-bottom: 15px;
     margin-bottom: 25px;
@@ -25,6 +31,7 @@ body {
 .logo {
     max-width: 300px;
     height: auto;
+    margin: 0px;
 }
 
 .model {
@@ -40,7 +47,7 @@ body {
 }
 
 #modelUpload {
-    display: none;
+    display: none; 
 }
 
 .model-upload-label {
@@ -55,7 +62,245 @@ body {
     color: #1e5aa8;
 }
 
-/* ── TÍTULO DOCUMENTO ───────────────────────── */
+.title-section {
+    text-align: right;
+}
+
+.title-section h1 {
+    color: #1e5aa8;
+    margin: 0;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.title-section p {
+    color: #1e5aa8;
+    margin: 5px 0 0 0;
+    font-size: 14px;
+}
+
+/* Album fotos coches */
+
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-overlay.open {
+    display: flex;
+}
+
+.modal-box {
+    background: white;
+    color: #333;
+    border-radius: 4px;
+    width: 600px;
+    max-width: 90vw;
+    font-family: 'Calibri', 'Arial', sans-serif;
+    position: relative;
+    border-top: 4px solid #1e5aa8;
+    overflow: hidden;
+}
+
+.modal-header {
+    background-color: #1e5aa8;
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: bold;
+    color: white;
+}
+
+.modal-body {
+    padding: 16px 20px 20px;
+}
+
+.modal-selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-field {
+    margin-bottom: 0;
+}
+
+.modal-field label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #2d5016;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+}
+
+.modal-field select {
+    width: 100%;
+    background: #fafafa;
+    color: #333;
+    border: 1px solid #ccc;
+    border-bottom: 2px solid #1e5aa8;
+    padding: 6px 8px;
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 14px;
+    border-radius: 0;
+    appearance: none;
+}
+
+.modal-field select:focus {
+    outline: none;
+    background: white;
+    border-color: #1e5aa8;
+}
+
+.modal-preview-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #2d5016;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    margin-top: 14px;
+}
+
+.modal-preview {
+    border: 1px solid #ddd;
+    border-left: 3px solid #1e5aa8;
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    background: #f9f9f9;
+    overflow: hidden;
+}
+
+.modal-preview img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.modal-preview span {
+    color: #aaa;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.modal-thumbs-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: #2d5016;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.modal-thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.modal-thumbs img {
+    width: 80px;
+    height: 62px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    cursor: pointer;
+    border-radius: 0;
+}
+
+.modal-thumbs img:hover,
+.modal-thumbs img.selected {
+    border-color: #1e5aa8;
+    outline: 1px solid #1e5aa8;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    border-top: 1px solid #eee;
+    padding-top: 14px;
+}
+
+.modal-cancel-btn {
+    background: white;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 8px 20px;
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.modal-cancel-btn:hover {
+    background: #f0f0f0;
+}
+
+.modal-select-btn {
+    background-color: #2d5016;
+    color: white;
+    border: none;
+    padding: 8px 24px;
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.modal-select-btn:hover:not(:disabled) {
+    background-color: #1e5aa8;
+}
+
+.modal-select-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 2px;
+    opacity: 0.85;
+}
+
+.modal-close:hover {
+    opacity: 1;
+}
+
+.modal-empty-msg {
+    color: #aaa;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0;
+    font-style: italic;
+}
+
+
+/* Titulo documento */
+
 .document-title {
     background-color: #2d5016;
     color: white;
@@ -66,7 +311,8 @@ body {
     text-align: center;
 }
 
-/* ── SECCIONES ──────────────────────────────── */
+/* Secciones */
+
 .section {
     margin-bottom: 25px;
     page-break-inside: auto;
@@ -81,7 +327,8 @@ body {
     margin-bottom: 10px;
 }
 
-/* ── GRID INFO ──────────────────────────────── */
+/* Informacion nota  */
+
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -115,7 +362,12 @@ body {
     background-color: #f9f9f9;
 }
 
-/* ── ÁREA EDITABLE ──────────────────────────── */
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* Area editable */
+
 .editable-box {
     border: 1px solid #ddd;
     padding: 7px;
@@ -124,7 +376,7 @@ body {
     font-size: 13px;
     line-height: 1.6;
     overflow: visible;
-    word-wrap: break-word;
+    word-wrap: break-word;    
 }
 
 .editable-box:focus {
@@ -132,7 +384,8 @@ body {
     background-color: white;
 }
 
-/* ── TOOLBAR ────────────────────────────────── */
+/* Barra de herramientas */
+
 .toolbar {
     background-color: #f0f0f0;
     padding: 8px;
@@ -156,11 +409,17 @@ body {
     background-color: #e8e8e8;
 }
 
-/* ── PRECIOS ────────────────────────────────── */
+.toolbar button.active {
+    background-color: #1e5aa8;
+    color: white;
+}
+
+/* Area precios */
+
 .precio-section {
     margin-top: 30px;
     text-align: right;
-    page-break-inside: avoid;
+    page-break-inside: avoid
 }
 
 .mano-obra-container {
@@ -178,7 +437,6 @@ body {
     border-radius: 3px;
     margin-bottom: 10px;
     display: block;
-    margin-left: auto;
 }
 
 .toggle-mano-obra:hover {
@@ -226,24 +484,6 @@ body {
     outline: 2px solid white;
 }
 
-/* ── BOTONES ACCIÓN ─────────────────────────── */
-.print-button {
-    background-color: #2d5016;
-    color: white;
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 35px auto;
-    display: block;
-}
-
-.print-button:hover {
-    background-color: #1e5aa8;
-}
-
 .clear-button {
     background-color: #c41e3a;
     color: white;
@@ -261,28 +501,54 @@ body {
     background-color: #a01528;
 }
 
-/* ── PRINT ──────────────────────────────────── */
+/* Botones imprimir y limpiar hoja */
+
+.print-button {
+    background-color: #2d5016;
+    color: white;
+    padding: 12px 30px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 35px auto;
+    display: block;
+}
+
+.print-button:hover {
+    background-color: #1e5aa8;
+}
+
+/* Estilo de impresion */
+
 @media print {
-    body { padding: 0; }
-
-    .toolbar,
-    .print-button,
-    .toggle-mano-obra,
-    .model-upload-label,
-    .clear-button {
-        display: none !important;
+    body {
+        padding: 0;
     }
-
+    .toolbar {
+        display: none;
+    }
+    .print-button {
+        display: none;
+    }
+    .toggle-mano-obra {
+        display: none;
+    }
+    .model-upload-label {
+        display: none;
+    }
+    .clear-button {
+        display: none;
+    }
     .model {
         border: none !important;
     }
-
     .editable-box {
         overflow: visible;
         height: auto;
         page-break-inside: auto;
     }
-
     .section {
         page-break-inside: auto;
     }
