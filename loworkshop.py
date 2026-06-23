@@ -20,7 +20,7 @@ os.chdir(ROOT)
 
 # Carpeta con fotos de vehiculos trabajados y extensiones admitidas
 CARPETA_FOTOS = "fotos_coches"
-EXTENSIONES_VALIDAS = {".jpg", ".jpeg", ".png", ".webp" }
+EXTENSIONES_VALIDAS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
 
 
 def generar_indice_coches():
@@ -69,38 +69,269 @@ def generar_indice_coches():
         "imagenes": total_imagenes,
     }
 
-
+# Clase LoworkShopHandler con las llamadas
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
     """
-    Extiende el servidor estático con un endpoint para regenerar
-    el índice de la biblioteca de vehículos sin salir del navegador.
+    API LoworkShop
+
+    GET
+    ----
+    /api/coches
+        Devuelve el catálogo de vehículos.
+
+    POST
+    ----
+
+    /api/subir-foto
+        Guarda una imagen subida desde el navegador.
+
+    /api/guardar-url
+        Descarga una imagen desde internet y la guarda.
     """
 
+    # =====================================================
+    # GET
+    # =====================================================
+
+    def do_GET(self):
+
+        # Devuelve el catálogo de vehículos
+        if self.path == "/api/coches":
+            return self.api_coches()
+
+        return super().do_GET()
+
+    # =====================================================
+    # POST
+    # =====================================================
+
     def do_POST(self):
+
+        # Regenerar index.json
         if self.path == "/api/regenerar-indice":
-            try:
-                resultado = generar_indice_coches()
-                self._responder_json(200, resultado)
-            except Exception as e:
-                self._responder_json(500, {"ok": False, "error": str(e)})
-        else:
-            self.send_error(404, "Ruta no encontrada")
+            return self.api_regenerar_indice()
+
+        # Subir imagen local
+        if self.path == "/api/subir-foto":
+            return self.api_subir_foto()
+
+        # Descargar imagen desde URL
+        if self.path == "/api/guardar-url":
+            return self.api_guardar_url()
+
+        self.send_error(404, "Ruta no encontrada")
+
+    # =====================================================
+    # API: catálogo de vehículos
+    # =====================================================
+
+    def api_coches(self):
+
+        try:
+
+            ruta_json = os.path.join(
+                CARPETA_FOTOS,
+                "index.json"
+            )
+
+            if not os.path.exists(ruta_json):
+                generar_indice_coches()
+
+            with open(
+                ruta_json,
+                "r",
+                encoding="utf-8"
+            ) as f:
+
+                datos = json.load(f)
+
+            self._responder_json(
+                200,
+                datos
+            )
+
+        except Exception as e:
+
+            self._responder_json(
+                500,
+                {
+                    "ok": False,
+                    "error": str(e)
+                }
+            )
+
+    # =====================================================
+    # API: subir imagen local
+    # =====================================================
+
+    def api_subir_foto(self):
+
+        try:
+
+            content_length = int(
+                self.headers.get(
+                    "Content-Length",
+                    0
+                )
+            )
+
+            body = self.rfile.read(
+                content_length
+            )
+
+            data = json.loads(body)
+
+            marca = data["marca"].strip().lower()
+            modelo = data["modelo"].strip().lower()
+            nombre = data["nombre"].strip()
+
+            imagen_base64 = data["imagen"]
+
+            carpeta_destino = os.path.join(
+                CARPETA_FOTOS,
+                marca,
+                modelo
+            )
+
+            os.makedirs(
+                carpeta_destino,
+                exist_ok=True
+            )
+
+            ruta_archivo = os.path.join(
+                carpeta_destino,
+                nombre
+            )
+
+            with open(
+                ruta_archivo,
+                "wb"
+            ) as f:
+
+                f.write(
+                    base64.b64decode(
+                        imagen_base64
+                    )
+                )
+
+            resultado = generar_indice_coches()
+
+            self._responder_json(
+                200,
+                {
+                    "ok": True,
+                    "archivo": ruta_archivo,
+                    "indice": resultado
+                }
+            )
+
+        except Exception as e:
+
+            self._responder_json(
+                500,
+                {
+                    "ok": False,
+                    "error": str(e)
+                }
+            )
+
+    # =====================================================
+    # API: guardar imagen desde URL
+    # =====================================================
+
+    def api_guardar_url(self):
+
+        try:
+
+            content_length = int(
+                self.headers.get(
+                    "Content-Length",
+                    0
+                )
+            )
+
+            body = self.rfile.read(
+                content_length
+            )
+
+            data = json.loads(body)
+
+            marca = data["marca"].strip().lower()
+            modelo = data["modelo"].strip().lower()
+            nombre = data["nombre"].strip()
+            url = data["url"].strip()
+
+            carpeta_destino = os.path.join(
+                CARPETA_FOTOS,
+                marca,
+                modelo
+            )
+
+            os.makedirs(
+                carpeta_destino,
+                exist_ok=True
+            )
+
+            ruta_archivo = os.path.join(
+                carpeta_destino,
+                nombre
+            )
+
+            urllib.request.urlretrieve(
+                url,
+                ruta_archivo
+            )
+
+            resultado = generar_indice_coches()
+
+            self._responder_json(
+                200,
+                {
+                    "ok": True,
+                    "archivo": ruta_archivo,
+                    "indice": resultado
+                }
+            )
+
+        except Exception as e:
+
+            self._responder_json(
+                500,
+                {
+                    "ok": False,
+                    "error": str(e)
+                }
+            )
+
+    # =====================================================
+    # Utilidad JSON
+    # =====================================================
 
     def _responder_json(self, codigo, datos):
-        cuerpo = json.dumps(datos, ensure_ascii=False).encode("utf-8")
+
+        cuerpo = json.dumps(
+            datos,
+            ensure_ascii=False
+        ).encode("utf-8")
+
         self.send_response(codigo)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.send_header("Content-Length", str(len(cuerpo)))
+        self.send_header(
+            "Content-Type",
+            "application/json; charset=utf-8"
+        )
+        self.send_header(
+            "Content-Length",
+            str(len(cuerpo))
+        )
         self.end_headers()
+
         self.wfile.write(cuerpo)
 
     def log_message(self, format, *args):
-        # Mantiene la consola limpia; comenta esta línea si quieres ver
-        # todas las peticiones HTTP en detalle.
         pass
 
 def iniciar_servidor():
-    Handler = http.server.SimpleHTTPRequestHandler
+    Handler = LoworkShopHandler
 
     with socketserver.TCPServer(("", PORT), Handler) as httpd:
         print(f"Servidor iniciado en http://localhost:{PORT}")

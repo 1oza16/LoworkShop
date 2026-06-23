@@ -23,34 +23,109 @@
     <!-- Album fotos coches -->
     <div class="modal-overlay" id="modalCoches" onclick="if(event.target===this) cerrarModalCoches()">
         <div class="modal-box">
-            <button class="modal-close" onclick="cerrarModalCoches()">&times;</button>
-            <h3>Biblioteca de vehículos</h3>
-
-            <div class="modal-field">
-                <label for="selectMarca">Marca</label>
-                <select id="selectMarca" onchange="onMarcaChange()">
-                    <option value="">-- Selecciona --</option>
-                </select>
+            <div class="modal-header">
+                <h3 id="modalTitulo">Biblioteca de vehículos</h3>
+                <button class="modal-close" onclick="cerrarModalCoches()">&times;</button>
             </div>
-º
-            <div class="modal-field">
-                <label for="selectModelo">Modelo</label>
-                <select id="selectModelo" onchange="onModeloChange()" disabled>
-                    <option value="">-- Selecciona --</option>
-                </select>
-            </div>
-
-            <div class="modal-field">
-                <label>Vista previa</label>
-                <div class="modal-preview" id="modalPreview">
-                    <span>imagen</span>
+        
+            <div class="modal-body">
+                <div class="modal-tabs">
+                    <button class="modal-tab active" onclick="cambiarTab('biblioteca', this)">Biblioteca</button>
+                    <button class="modal-tab" onclick="cambiarTab('url', this)">URL</button>
+                    <button class="modal-tab" onclick="cambiarTab('gestionar', this)">Gestionar</button>
                 </div>
+            
+                <!-- Apartado biblioteca -->
+            
+                <div id="tabBiblioteca" class="modal-tab-content active">
+                    <div class="modal-field">
+                        <label>Marca</label>
+                        <select id="selectMarca" onchange="onMarcaChange()">
+                            <option value="">-- Selecciona --</option>
+                        </select>
+                    </div>
+                    <div class="modal-field">
+                        <label>Modelo</label>
+                        <select id="selectModelo" onchange="onModeloChange()">
+                            <option value="">-- Selecciona --</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-preview-label">Vista previa</div>
+                
+                    <div class="modal-preview" id="modalPreview">
+                        <span>Selecciona una imagen</span>
+                    </div>
+                
+                    <div class="modal-thumbs-label">Imágenes disponibles</div>
+                
+                    <div class="modal-thumbs" id="modalThumbs"></div>
+                
+                </div>
+            
+                <!-- Apartado URL -->
+            
+                <div id="tabUrl" class="modal-tab-content">
+                    <div class="modal-field">
+                        <label>URL de la imagen</label>
+                        <input type="text" id="urlImagen" placeholder="https://...">
+                    </div>
+                    <button class="modal-action-btn" onclick="previsualizarUrl()"> Cargar imagen</button>
+
+                    <div class="modal-preview" id="urlPreview">
+                        <span>Vista previa</span>
+                    </div>
+                
+                    <hr>
+                
+                    <div class="modal-field">
+                        <label>Marca</label>
+                        <input type="text" id="urlMarca">
+                    </div>
+                
+                    <div class="modal-field">
+                        <label>Modelo</label>
+                        <input type="text" id="urlModelo">
+                    </div>
+                
+                    <div class="modal-field">
+                        <label>Nombre</label>
+                        <input type="text" id="urlNombre" placeholder="frontal.jpg">
+                    </div>
+                </div>
+
+                <!-- GESTIONAR -->
+            
+                <div id="tabGestionar" class="modal-tab-content">
+                    <div class="modal-field">
+                        <label>Marca</label>
+                        <input type="text" id="gestionMarca">
+                    </div>
+                
+                    <div class="modal-field">
+                        <label>Modelo</label>
+                        <input type="text" id="gestionModelo">
+                    </div>
+                
+                    <div class="modal-field">
+                        <label>Nombre imagen</label>
+                        <input type="text" id="gestionNombre" placeholder="frontal.jpg">
+                    </div>
+                
+                    <div class="modal-field">
+                        <label>Archivo</label>
+                        <input type="file" id="gestionArchivo" accept="image/*">
+                    </div>
+                </div>
+            
+                <!-- FOOTER -->
+            
+                <div class="modal-footer">
+                    <button class="modal-cancel-btn" onclick="cerrarModalCoches()">Cancelar</button>
+                    <button class="modal-select-btn" id="btnAccionPrincipal">Usar imagen</button>
+                </div>
+
             </div>
-
-            <div class="modal-thumbs" id="modalThumbs"></div>
-
-            <button class="btn-cancel" onclick="cerrarModalCoches()">Cancelar</button>
-            <button class="modal-select-btn" id="btnSeleccionarFoto" disabled onclick="confirmarSeleccionFoto()">Seleccionar</button>
         </div>
     </div>
 
