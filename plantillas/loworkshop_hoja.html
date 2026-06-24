@@ -150,13 +150,36 @@
     
     <div class="section">
         <div class="section-header">DESCRIPCIÓN DE REPARACIONES O TRABAJOS A REALIZAR</div>
-        <div class="toolbar">
-            <button onclick="document.execCommand('bold')"><b>Negrita</b></button>
-            <button onclick="document.execCommand('italic')"><i>Cursiva</i></button>
-            <button onclick="document.execCommand('underline')"><u>Subrayado</u></button>
-            <button onclick="document.execCommand('insertUnorderedList')">• Lista</button>
-            <button onclick="document.execCommand('insertOrderedList')">1. Lista Numerada</button>
-        </div>
+            <div class="editor-toolbar">
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('undo')">↶</button>
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('redo')">↷</button>
+                
+                <div class="toolbar-separator"></div>
+
+                <button type="button" class="toolbar-btn" id="btnCopiarFormato" onclick="accionCopiarFormato()" title="Copiar formato">🖌</button>
+
+                <div class="toolbar-separator"></div>
+
+                <button type="button" id="btnBold" class="toolbar-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+                <button type="button" id="btnItalic" class="toolbar-btn" onclick="formatDoc('italic')"><em>I</em></button>
+                <button type="button" id="btnUnderline" class="toolbar-btn" onclick="formatDoc('underline')"><u>U</u></button>
+
+                <div class="toolbar-separator"></div>
+
+                <button type="button" class="toolbar-btn" onclick="cambiarTamanoSeleccion(-1)">A-</button>
+                <span id="fontSizeDisplay">14</span>
+                <button type="button" class="toolbar-btn" onclick="cambiarTamanoSeleccion(1)">A+</button>
+
+                <div class="toolbar-separator"></div>
+
+                <button type="button" id="btnLista" class="toolbar-btn" onclick="formatDoc('insertUnorderedList')">• Lista</button>
+                <button type="button" id="btnListaNumerada" class="toolbar-btn" onclick="formatDoc('insertOrderedList')">1. Lista</button>
+
+                <div class="toolbar-separator"></div>
+
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('undo')">↶</button>
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('redo')">↷</button>
+            </div>
         <div class="editable-box" contenteditable="true" id="reparaciones">
             <!-- Espacio para escribir las reparaciones realizadas -->
         </div>
@@ -164,25 +187,41 @@
     
     <div class="section">
         <div class="section-header">MATERIALES NECESARIOS</div>
-        <div class="toolbar">
-            <button onclick="document.execCommand('bold')"><b>Negrita</b></button>
-            <button onclick="document.execCommand('italic')"><i>Cursiva</i></button>
-            <button onclick="document.execCommand('underline')"><u>Subrayado</u></button>
-            <button onclick="document.execCommand('insertUnorderedList')">• Lista</button>
-            <button onclick="document.execCommand('insertOrderedList')">1. Lista Numerada</button>
-        </div>
+            <div class="editor-toolbar">
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('undo')">↶</button>
+                <button type="button" class="toolbar-btn" onclick="document.execCommand('redo')">↷</button>
+
+                <div class="toolbar-separator"></div>
+
+                <button type="button" class="toolbar-btn" id="btnCopiarFormato" onclick="accionCopiarFormato()" title="Copiar formato">🖌</button>
+
+                <div class="toolbar-separator"></div>
+                
+                <button type="button" id="btnBold" class="toolbar-btn" onclick="formatDoc('bold')"><strong>B</strong></button>
+                <button type="button" id="btnItalic" class="toolbar-btn" onclick="formatDoc('italic')"><em>I</em></button>
+                <button type="button" id="btnUnderline" class="toolbar-btn" onclick="formatDoc('underline')"><u>U</u></button>
+                
+                <div class="toolbar-separator"></div>
+
+                <button type="button" class="toolbar-btn" onclick="cambiarTamanoSeleccion(-1)">A-</button>
+                <span id="fontSizeDisplay">14</span>
+                <button type="button" class="toolbar-btn" onclick="cambiarTamanoSeleccion(1)">A+</button>
+                
+                <div class="toolbar-separator"></div>
+
+                <button type="button" id="btnLista" class="toolbar-btn" onclick="formatDoc('insertUnorderedList')">• Lista</button>
+                <button type="button" id="btnListaNumerada" class="toolbar-btn" onclick="formatDoc('insertOrderedList')">1. Lista</button>
+            </div>
+
         <div class="editable-box" contenteditable="true" id="materiales">
             <!-- Espacio para escribir los materiales utilizados -->
         </div>
     </div>
     
     <div class="precio-section">
-        <button class="toggle-mano-obra" onclick="toggleManoObra()">
-            Mostrar/Ocultar Mano de Obra
-        </button>
-        
-        <div class="mano-obra-container" id="manoObraSection" style="display: block;">
-            <strong>Mano de obra:</strong> <input type="text" class="precio-input" placeholder="Introduce importe">
+        <div class="mano-obra-container" id="manoObraSection">
+            <strong>Mano de obra:</strong>
+            <input type="text" class="precio-input" placeholder="Introduce importe">
         </div>
         
         <div class="precio-total">
@@ -190,8 +229,14 @@
         </div>
     </div>
 
-    <button class="print-button" onclick="window.print()">Imprimir</button>
-    <button class="clear-button" onclick="clearForm()">Limpiar Formulario</button>
+    <hr class="acciones-separador">
+
+    <div class="acciones-finales">
+        <button class="toggle-mano-obra-mini" onclick="toggleManoObra()" title="Mostrar/Ocultar mano de obra">Ocultar mano de obra</button>
+        <button class="action-btn" onclick="clearForm()">Limpiar formulario</button>
+        <button class="action-btn" onclick="window.print()">Imprimir</button>
+        <button class="save-button" onclick="guardarHoja()">Guardar hoja</button>
+    </div>
 
 </body>
 </html>

@@ -460,7 +460,7 @@ body {
     padding: 7px;
     min-height: 25px;
     background-color: #fafafa;
-    font-size: 13px;
+    font-size: 14px;
     line-height: 1.6;
     overflow: visible;
     word-wrap: break-word;    
@@ -483,7 +483,59 @@ body {
     flex-wrap: wrap;
 }
 
-.toolbar button {
+.editor-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px;
+    background: #f4f4f4;
+    border: 1px solid #d8d8d8;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+}
+
+.toolbar-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.toolbar-btn:hover {
+    background: #e7e7e7;
+}
+
+.toolbar-btn.active {
+    background: #dce8ff;
+    color: #1e5aa8;
+}
+
+.toolbar-separator {
+    width: 1px;
+    height: 20px;
+    background: #cccccc;
+    margin: 0 4px;
+}
+
+.toolbar-active {
+    background: #dce8ff;
+    color: #1e5aa8;
+}
+
+#fontSizeDisplay {
+    min-width: 32px;
+    text-align: center;
+    border: 1px solid #ccc;
+    background: white;
+    padding: 4px 6px;
+    border-radius: 3px;
+    font-size: 13px;
+}
+
+/* .toolbar button {
     background-color: white;
     border: 1px solid #ccc;
     padding: 5px 10px;
@@ -499,7 +551,7 @@ body {
 .toolbar button.active {
     background-color: #1e5aa8;
     color: white;
-}
+} */
 
 /* Area precios */
 
@@ -514,20 +566,17 @@ body {
     margin-bottom: 10px;
 }
 
-.toggle-mano-obra {
-    background-color: #1e5aa8;
-    color: white;
+.toggle-mano-obra-mini {
+    background: transparent;
     border: none;
-    padding: 8px 15px;
     cursor: pointer;
-    font-size: 12px;
-    border-radius: 3px;
-    margin-bottom: 10px;
-    display: block;
+    margin-right: 150px;
+    font-size: 16px;
+    opacity: 0.55;
 }
 
-.toggle-mano-obra:hover {
-    background-color: #2d5016;
+.toggle-mano-obra-mini:hover {
+    opacity: 1;
 }
 
 .precio-total {
@@ -571,39 +620,54 @@ body {
     outline: 2px solid white;
 }
 
-.clear-button {
-    background-color: #c41e3a;
-    color: white;
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: bold;
+/* Seccion de botones limpiar hoja, imprimir y guardar */
+
+.acciones-separador {
+    margin: 40px 0 0 0;
     border: none;
-    border-radius: 5px;
+    border-top: 1px dashed #ccc;
+}
+
+.acciones-finales {
+    background-color: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    /* border-radius: 6px; */
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: white;
+    color: #333;
+    border: 1px solid #ccc;
+    padding: 10px 24px;
+    font-size: 14px;
     cursor: pointer;
-    margin: 20px auto;
-    display: block;
+    transition: 0.2s;
+    border-radius: 3px;
 }
 
-.clear-button:hover {
-    background-color: #a01528;
+.action-btn:hover {
+    background: #f0f0f0;
 }
 
-/* Botones imprimir y limpiar hoja */
-
-.print-button {
+.save-button {
     background-color: #2d5016;
     color: white;
-    padding: 12px 30px;
-    font-size: 16px;
-    font-weight: bold;
     border: none;
-    border-radius: 5px;
+    padding: 10px 24px;
+    font-size: 14px;
+    font-weight: bold;
     cursor: pointer;
-    margin: 35px auto;
-    display: block;
+    border-radius: 3px;
 }
 
-.print-button:hover {
+.save-button:hover {
     background-color: #1e5aa8;
 }
 
@@ -616,16 +680,10 @@ body {
     .toolbar {
         display: none;
     }
-    .print-button {
-        display: none;
-    }
-    .toggle-mano-obra {
+    .toggle-mano-obra-mini {
         display: none;
     }
     .model-upload-label {
-        display: none;
-    }
-    .clear-button {
         display: none;
     }
     .model {
@@ -638,5 +696,10 @@ body {
     }
     .section {
         page-break-inside: auto;
+    }
+    .acciones-separador,
+    .acciones-finales, 
+    .save-button {
+        display: none;
     }
 }
