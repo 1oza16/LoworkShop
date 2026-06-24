@@ -89,9 +89,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         Descarga una imagen desde internet y la guarda.
     """
 
-    # =====================================================
-    # GET
-    # =====================================================
+
+    # Endpoints GET
 
     def do_GET(self):
 
@@ -101,9 +100,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
         return super().do_GET()
 
-    # =====================================================
-    # POST
-    # =====================================================
+
+    # Endpoints POST
 
     def do_POST(self):
 
@@ -121,9 +119,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
         self.send_error(404, "Ruta no encontrada")
 
-    # =====================================================
+
     # API: catálogo de vehículos
-    # =====================================================
 
     def api_coches(self):
 
@@ -160,9 +157,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
                 }
             )
 
-    # =====================================================
+
     # API: subir imagen local
-    # =====================================================
 
     def api_subir_foto(self):
 
@@ -235,9 +231,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
                 }
             )
 
-    # =====================================================
+
     # API: guardar imagen desde URL
-    # =====================================================
 
     def api_guardar_url(self):
 
@@ -277,10 +272,24 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
                 nombre
             )
 
-            urllib.request.urlretrieve(
+            req = urllib.request.Request(
                 url,
-                ruta_archivo
+                headers={
+                    "User-Agent":
+                    "Mozilla/5.0"
+                }
             )
+            
+            with urllib.request.urlopen(req) as response:
+            
+                with open(
+                    ruta_archivo,
+                    "wb"
+                ) as f:
+            
+                    f.write(
+                        response.read()
+                    )
 
             resultado = generar_indice_coches()
 
@@ -303,9 +312,8 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
                 }
             )
 
-    # =====================================================
+
     # Utilidad JSON
-    # =====================================================
 
     def _responder_json(self, codigo, datos):
 

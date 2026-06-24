@@ -32,7 +32,6 @@
                 <div class="modal-tabs">
                     <button class="modal-tab active" onclick="cambiarTab('biblioteca', this)">Biblioteca</button>
                     <button class="modal-tab" onclick="cambiarTab('url', this)">URL</button>
-                    <button class="modal-tab" onclick="cambiarTab('gestionar', this)">Gestionar</button>
                 </div>
             
                 <!-- Apartado biblioteca -->
@@ -56,74 +55,68 @@
                     <div class="modal-preview" id="modalPreview">
                         <span>Selecciona una imagen</span>
                     </div>
-                
-                    <div class="modal-thumbs-label">Imágenes disponibles</div>
-                
+
+                    <div class="modal-thumbs-label">Imágenes disponibles</div>                
                     <div class="modal-thumbs" id="modalThumbs"></div>
-                
+
+                    <input type="file" id="inputArchivoBiblioteca" accept="image/*" style="display:none" onchange="prepararArchivoBiblioteca(event)">
                 </div>
             
                 <!-- Apartado URL -->
-            
+
                 <div id="tabUrl" class="modal-tab-content">
                     <div class="modal-field">
                         <label>URL de la imagen</label>
                         <input type="text" id="urlImagen" placeholder="https://...">
                     </div>
-                    <button class="modal-action-btn" onclick="previsualizarUrl()"> Cargar imagen</button>
 
+                    <button class="modal-action-btn" onclick="previsualizarUrl()">Cargar imagen</button>
+                
                     <div class="modal-preview" id="urlPreview">
                         <span>Vista previa</span>
                     </div>
+                </div>
+
+                <!-- Gestionar biblioteca (gestionar marcas, modelos y añadir fotos locales o mediante url) -->
                 
-                    <hr>
-                
+                <div id="vistaGestionBiblioteca" class="modal-tab-content">
                     <div class="modal-field">
                         <label>Marca</label>
-                        <input type="text" id="urlMarca">
+                            <select id="gestionMarca" onchange="onGestionMarcaChange()"></select>
+                    </div>
+                
+                    <div class="modal-field" id="contenedorMarcaNueva" style="display:none;">
+                        <label>Nueva marca</label>
+                            <input type="text" id="gestionMarcaNueva">
                     </div>
                 
                     <div class="modal-field">
                         <label>Modelo</label>
-                        <input type="text" id="urlModelo">
+                            <select id="gestionModelo" onchange="onGestionModeloChange()"></select>
+                    </div>
+                
+                    <div class="modal-field" id="contenedorModeloNuevo" style="display:none;">
+                        <label>Nuevo modelo</label>
+                            <input type="text" id="gestionModeloNuevo">
                     </div>
                 
                     <div class="modal-field">
                         <label>Nombre</label>
-                        <input type="text" id="urlNombre" placeholder="frontal.jpg">
+                            <input type="text" id="gestionNombre">
                     </div>
+                
+                    <div class="modal-preview" id="gestionPreview"></div>
+                </div>
+                
+                <!-- FOOTER -->
+
+                <div class="modal-footer">
+                    <button class="modal-cancel-btn" onclick="accionSecundariaModal()" id="btnSecundarioModal">Cancelar</button>
+                    <button class="modal-cancel-btn" onclick="accionMediaModal()" id="btnMedioModal">Añadir archivo local</button>
+                    <button class="modal-select-btn" onclick="guardarImagenBiblioteca()" id="btnPrincipalModal">Usar imagen</button>
                 </div>
 
-                <!-- GESTIONAR -->
-            
-                <div id="tabGestionar" class="modal-tab-content">
-                    <div class="modal-field">
-                        <label>Marca</label>
-                        <input type="text" id="gestionMarca">
-                    </div>
-                
-                    <div class="modal-field">
-                        <label>Modelo</label>
-                        <input type="text" id="gestionModelo">
-                    </div>
-                
-                    <div class="modal-field">
-                        <label>Nombre imagen</label>
-                        <input type="text" id="gestionNombre" placeholder="frontal.jpg">
-                    </div>
-                
-                    <div class="modal-field">
-                        <label>Archivo</label>
-                        <input type="file" id="gestionArchivo" accept="image/*">
-                    </div>
-                </div>
-            
-                <!-- FOOTER -->
-            
-                <div class="modal-footer">
-                    <button class="modal-cancel-btn" onclick="cerrarModalCoches()">Cancelar</button>
-                    <button class="modal-select-btn" id="btnAccionPrincipal">Usar imagen</button>
-                </div>
+                <input type="file" id="inputArchivoBiblioteca" accept="image/*" style="display:none">
 
             </div>
         </div>

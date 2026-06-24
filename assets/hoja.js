@@ -11,6 +11,22 @@ function toggleManoObra() {
 //#region Funciones album fotos coches
 let indiceCoches = null;
 let rutaSeleccionada = null; // ruta completa de la foto elegida en el modal
+let extensionPendiente = '';
+let imagenPendiente = null;
+let modoGestion = null;
+
+function cerrarModalCoches() {
+    document.getElementById('modalCoches').classList.remove('open');
+} // cerrarModalCoches()
+
+function capitalizar(texto) {
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
+} // capitalizar()
+
+// Abrir selector de archivo para subir a biblioteca
+function abrirSelectorArchivo() {
+    document.getElementById('inputArchivoBiblioteca').click();
+} // abrirSelectorArchivo()
 
 // Añadir indice de los coches a indiceCoches mediante el fichero (fotos_coches/index.json)
 async function cargarIndiceCoches() {
@@ -66,21 +82,14 @@ async function abrirModalCoches() {
 );
 } // abrirModalCoches()
 
-function cerrarModalCoches() {
-    document.getElementById('modalCoches').classList.remove('open');
-} // cerrarModalCoches()
-
-function capitalizar(texto) {
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-}
-
 // Subida de fotos locales a la biblioteca
 async function subirFotoBiblioteca() {
     const marca = document.getElementById('gestionMarca').value.trim();
     const modelo = document.getElementById('gestionModelo').value.trim();
     const nombre = document.getElementById('gestionNombre').value.trim();
     const archivo = document.getElementById('gestionArchivo').files[0];
-
+    const extension = archivo.name.substring(archivo.name.lastIndexOf('.'));
+    
     if (!marca || !modelo || !nombre || !archivo) {
         alert("Completa todos los campos");
         return;
@@ -124,8 +133,8 @@ async function subirFotoBiblioteca() {
 
 // Cambios de pestañas entre biblioteca, URL y gestionar
 function cambiarTab(nombre, boton) {
-
-    // Tabs
+    
+    // Reset tabs
     document.querySelectorAll('.modal-tab').forEach(tab =>
             tab.classList.remove('active')
         );
@@ -134,37 +143,66 @@ function cambiarTab(nombre, boton) {
             tab.classList.remove('active')
         );
 
-    boton.classList.add('active');
+    if (boton) {
+        boton.classList.add('active');
+    }
 
     const titulo = document.getElementById('modalTitulo');
-    const btn = document.getElementById('btnAccionPrincipal');
+    const btnCancelar =document.getElementById('btnSecundarioModal');
+    const btnMedio = document.getElementById('btnMedioModal');
+    const btnPrincipal = document.getElementById('btnPrincipalModal');
 
-    // Pestaña biblioteca
+    // Biblioteca
     if (nombre === 'biblioteca') {
         document.getElementById('tabBiblioteca').classList.add('active');
+
         titulo.textContent = 'Biblioteca de vehículos';
-        btn.textContent = 'Usar imagen';
-        btn.disabled = !rutaSeleccionada;
-        btn.onclick = confirmarSeleccionFoto;
+        btnCancelar.style.display = 'inline-block';
+        btnMedio.style.display = 'inline-block';
+        btnPrincipal.style.display = 'inline-block';
+        btnCancelar.textContent = 'Cancelar';
+        btnMedio.textContent = 'Añadir archivo local';
+        btnPrincipal.textContent = 'Usar imagen';
+        btnCancelar.onclick = cerrarModalCoches;
+        btnMedio.onclick = abrirSelectorArchivo;
+        btnPrincipal.onclick = confirmarSeleccionFoto;
+        return;
     }
 
-    // Pestaña URL
+    // Url
     if (nombre === 'url') {
         document.getElementById('tabUrl').classList.add('active');
-        titulo.textContent = 'Imagen desde URL';
-        btn.textContent = 'Guardar en biblioteca';
-        btn.disabled = false;
-        btn.onclick = guardarImagenUrl;
+
+        titulo.textContent ='Imagen desde URL';
+        btnCancelar.style.display ='inline-block';
+        btnMedio.style.display ='inline-block';
+        btnPrincipal.style.display ='inline-block';
+        btnCancelar.textContent ='Cancelar';
+        btnMedio.textContent ='Añadir foto URL';
+        btnPrincipal.textContent ='Usar imagen';
+        btnCancelar.onclick =cerrarModalCoches;
+        btnMedio.onclick =prepararUrlBiblioteca;
+        btnPrincipal.onclick =usarImagenUrl;
+        return;
     }
-    // Pestaña gestionar
-    if (nombre === 'gestionar') {
-        document.getElementById('tabGestionar').classList.add('active');
-        titulo.textContent = 'Gestión de biblioteca';
-        btn.textContent = 'Guardar en biblioteca';
-        btn.disabled = false;
-        btn.onclick = subirFotoBiblioteca;
+
+    // Gestion
+    if (nombre === 'gestion') {
+        document.getElementById('vistaGestionBiblioteca').classList.add('active');
+
+        titulo.textContent = 'Guardar imagen en biblioteca';
+        btnCancelar.style.display = 'inline-block';
+        btnMedio.style.display = 'none';
+        btnPrincipal.style.display = 'inline-block';
+        btnCancelar.textContent = 'Cancelar';
+        btnPrincipal.textContent = 'Guardar en biblioteca';
+        btnCancelar.onclick = cancelarGestionBiblioteca;
+        btnPrincipal.onclick = guardarImagenBiblioteca;
+        return;
     }
-} // cambiarTab()
+
+}
+// cambiarTab()
 
 // Previsualizacion de imagenes URL
 function previsualizarUrl() {
@@ -172,13 +210,47 @@ function previsualizarUrl() {
 
     if (!url) return;
 
-    const preview = document.getElementById('urlPreview');
-    preview.innerHTML = '';
+    document.getElementById('urlPreview').innerHTML = `<img src="${url}" alt="">`;
 
-    const img = document.createElement('img');
-    img.src = url;
-    preview.appendChild(img);
+    // const preview = document.getElementById('urlPreview');
+    // preview.innerHTML = '';
+
+    // const img = document.createElement('img');
+    // img.src = url;
+    // preview.appendChild(img);
 } // previsualizarUrl()
+
+// Uso de imagen URL en modelImg
+function usarImagenUrl() {
+    const url = document.getElementById('urlImagen').value.trim();
+
+    if (!url) {
+        alert('Introduce una URL')
+        return;
+    }
+
+    document.getElementById('modelImg').src = url;
+
+    cerrarModalCoches();
+} // usarImagenUrl()
+
+// Funcion para obtener la extensión de la imagen desde la URL
+function obtenerExtensionDesdeUrl(url) {
+
+    try {
+        const pathname = new URL(url).pathname;
+        const match = pathname.match(/\.(jpg|jpeg|png|webp|gif)$/i);
+
+        if (match) {
+            return '.' +
+                match[1]
+                .toLowerCase();
+        }
+    } catch {}
+
+    return '.jpg';
+} // obtenerExtensionDesdeUrl()
+
 
 // Guardado de imagenes URL en biblioteca local
 async function guardarImagenUrl() {
@@ -242,6 +314,37 @@ function archivoABase64(file) {
         }
     );
 } // archivoABase64()
+
+// Preparar archivo para subir a biblioteca
+function prepararArchivoBiblioteca(event) {
+    const archivo = event.target.files[0];
+
+    if (!archivo) return;
+
+    imagenPendiente = archivo;
+    modoGestion = 'archivo';
+    extensionPendiente = archivo.name.substring(archivo.name.lastIndexOf('.'));
+
+    mostrarGestionBiblioteca();
+} // prepararArchivoBiblioteca()
+
+// Preparar foto URL para subir a biblioteca
+function prepararUrlBiblioteca() {
+    const url = document.getElementById('urlImagen').value.trim();
+
+    if (!url) {
+        alert(
+            'Introduce una URL'
+        );
+        return;
+    }
+
+    imagenPendiente = url;
+    modoGestion = 'url';
+    extensionPendiente = obtenerExtensionDesdeUrl(url);
+
+    mostrarGestionBiblioteca();
+} // prepararUrlBiblioteca()
 
 // Funcion para rellenar el <select> de modelos una vez seleccionas la marca
 function onMarcaChange() {
@@ -327,6 +430,209 @@ function confirmarSeleccionFoto() {
     document.getElementById('modelImg').src = rutaSeleccionada;
     cerrarModalCoches();
 } // confirmarSeleccionFoto()
+
+// Mostrar la vista de gestión de biblioteca
+function mostrarGestionBiblioteca() {
+    cambiarTab('gestion');
+    document.getElementById('modalTitulo').textContent = 'Guardar imagen en biblioteca';
+
+    cargarMarcasGestion();
+
+    document.getElementById('gestionNombre').value = '';
+
+    const preview = document.getElementById('gestionPreview');
+
+    if (modoGestion === 'url') {
+        preview.innerHTML = `<img src="${imagenPendiente}">`;
+    }
+
+    if (modoGestion === 'archivo') {
+        preview.innerHTML = `<img src="${URL.createObjectURL(imagenPendiente)}">`;
+    }
+} // mostrarGestionBiblioteca()
+
+// Cancelar la gestión de biblioteca y volver a la vista principal
+function cancelarGestionBiblioteca() {
+    cambiarTab('biblioteca', document.querySelectorAll('.modal-tab')[0]);
+} // cancelarGestionBiblioteca()
+
+// Cargar marcas en el select de gestión
+function cargarMarcasGestion() {
+    const select = document.getElementById('gestionMarca');
+    select.innerHTML = '';
+
+    Object.keys(indiceCoches)
+        .forEach(marca => {
+            const opt =
+                document.createElement(
+                    'option'
+                );
+
+            opt.value = marca;
+            opt.textContent =
+                capitalizar(marca);
+
+            select.appendChild(opt);
+        });
+
+    const nueva = document.createElement('option');
+
+    nueva.value = '__NUEVA_MARCA__';
+
+    nueva.textContent = '+ Nueva marca';
+    select.appendChild(nueva);
+
+    onGestionMarcaChange();
+} // cargarMarcasGestion()
+
+// Cambios en el select de marca en la gestión de biblioteca
+function onGestionMarcaChange() {
+    const marca = document.getElementById('gestionMarca').value;
+    const nuevaMarca = document.getElementById('contenedorMarcaNueva');
+    const selectModelo = document.getElementById('gestionModelo');
+    selectModelo.innerHTML = '';
+
+    if (marca === '__NUEVA_MARCA__') {
+        nuevaMarca.style.display = 'block';
+    } else {
+        nuevaMarca.style.display = 'none';
+
+        Object.keys(
+            indiceCoches[marca] || {}
+        ).forEach(modelo => {
+            const opt =
+                document.createElement(
+                    'option'
+                );
+
+            opt.value = modelo;
+            opt.textContent =
+                capitalizar(modelo);
+
+            selectModelo.appendChild(opt);
+        });
+    }
+
+    const nuevo = document.createElement('option');
+
+    nuevo.value = '__NUEVO_MODELO__';
+    nuevo.textContent = '+ Nuevo modelo';
+    selectModelo.appendChild(nuevo);
+
+    onGestionModeloChange();
+} // onGestionMarcaChange()
+
+// Cambios en el select de modelo en la gestión de biblioteca
+function onGestionModeloChange() {
+    const modelo = document.getElementById('gestionModelo').value;
+
+    document.getElementById('contenedorModeloNuevo').style.display = modelo === '__NUEVO_MODELO__' ? 'block' : 'none';
+} // onGestionModeloChange()
+
+// Guardar imagen en biblioteca (ya sea desde URL o archivo)
+async function guardarImagenBiblioteca() {
+    let marca = document.getElementById('gestionMarca').value;
+    let modelo = document.getElementById('gestionModelo').value;
+    const nombre = document.getElementById('gestionNombre').value.trim();
+
+    // Nueva marca
+
+    if (marca === '__NUEVA_MARCA__') {
+        marca = document.getElementById('gestionMarcaNueva').value.trim();
+    }
+
+    // Nuevo modelo
+
+    if (modelo === '__NUEVO_MODELO__') {
+        modelo = document.getElementById('gestionModeloNuevo').value.trim();
+    }
+
+    // Validaciones
+
+    if (!marca || !modelo || !nombre) {
+        alert(
+            'Completa todos los campos'
+        );
+        return;
+    }
+
+    const nombreFinal = nombre + extensionPendiente;
+
+    try {
+
+        // Url
+
+        if (modoGestion === 'url') {
+            const resp =
+                await fetch(
+                    '/api/guardar-url',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+                        body: JSON.stringify({
+                            marca,
+                            modelo,
+                            nombre: nombreFinal,
+                            url: imagenPendiente
+                        })
+                    }
+                );
+
+            const data = await resp.json();
+
+            if (!data.ok) {
+                throw new Error(data.error);
+            }
+        }
+
+        // Archivo
+
+        if (modoGestion === 'archivo') {
+
+            const base64 = await archivoABase64(imagenPendiente);
+
+            const resp =
+                await fetch(
+                    '/api/subir-foto',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+                        body: JSON.stringify({
+                            marca,
+                            modelo,
+                            nombre: nombreFinal,
+                            imagen: base64
+                        })
+                    }
+                );
+
+            const data = await resp.json();
+
+            if (!data.ok) {
+                throw new Error(data.error);
+            }
+
+        }
+
+        // Recargar indice de coches 
+
+        indiceCoches = null;
+        await cargarIndiceCoches();
+
+        alert('Imagen guardada correctamente');
+        cancelarGestionBiblioteca();
+    } catch (err) {
+        console.error(err);
+        alert('Error guardando imagen');
+    }
+
+} // guardarImagenBiblioteca()
 
 //#endregion
 
