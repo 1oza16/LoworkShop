@@ -83,10 +83,13 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
     ----
 
     /api/subir-foto
-        Guarda una imagen subida desde el navegador.
+        Guarda las imagenes locales en la biblioteca de vehículos (fotos_coches).
 
     /api/guardar-url
-        Descarga una imagen desde internet y la guarda.
+        Guarda las imagenes por url en la biblioteca de vehículos (fotos_coches).
+
+    /api/guardar-hoja
+        Guarda las hojas informativas en .html una vez finalizadas para poder modificarlas de nuevo (notas) y genera un .pdf con la información de la hoja (pdf).
     """
 
 
@@ -105,10 +108,6 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_POST(self):
 
-        # Regenerar index.json
-        if self.path == "/api/regenerar-indice":
-            return self.api_regenerar_indice()
-
         # Subir imagen local
         if self.path == "/api/subir-foto":
             return self.api_subir_foto()
@@ -116,6 +115,10 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         # Descargar imagen desde URL
         if self.path == "/api/guardar-url":
             return self.api_guardar_url()
+
+        # Guardar hoja informativa
+        if self.path == "/api/guardar-hoja":
+            return self.api_guardar_hoja()
 
         self.send_error(404, "Ruta no encontrada")
 
@@ -312,6 +315,94 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
                 }
             )
 
+    # API: guardar hoja informativa
+
+    def api_guardar_hoja(self):
+
+        try:
+
+            content_length = int(
+                self.headers.get(
+                    "Content-Length",
+                    0
+                )
+            )
+
+            body = self.rfile.read(
+                content_length
+            )
+
+            data = json.loads(body)
+
+            ruta = data["ruta"]
+            html = data["html"]
+
+            ruta_relativa = ruta.lstrip("/")
+
+            ruta_fichero = os.path.join(
+                ROOT,
+                ruta_relativa
+            )
+
+            if not os.path.isfile(
+                ruta_fichero
+            ):
+
+                raise Exception(
+                    f"No existe la hoja: {ruta_fichero}"
+                )
+
+            with open(
+                ruta_fichero,
+                "w",
+                encoding="utf-8"
+            ) as f:
+
+                f.write(html)
+            
+            nombre_pdf = (
+                os.path.splitext(
+                    os.path.basename(
+                        ruta_fichero
+                    )
+                )[0]
+                + ".pdf"
+            )
+
+            ruta_pdf = os.path.join(
+                ROOT,
+                "pdf",
+                nombre_pdf
+            )
+
+            from weasyprint import HTML
+
+            HTML(
+                filename=ruta_fichero,
+                base_url=os.path.dirname(ruta_fichero)
+            ).write_pdf(ruta_pdf)
+
+            self._responder_json(
+                200,
+                {
+                    "ok": True
+                }
+            )
+
+        except Exception as e:
+
+            print(
+                "ERROR GUARDANDO HOJA:",
+                e
+            )
+
+            self._responder_json(
+                500,
+                {
+                    "ok": False,
+                    "error": str(e)
+                }
+            )
 
     # Utilidad JSON
 

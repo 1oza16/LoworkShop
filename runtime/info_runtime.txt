@@ -1,0 +1,14 @@
+Cuando este todo finalizado y queramos empaquetar el .exe copiaremos todas las DLL necesarias que estamos haciendo uso aqui y PyInstaller los incluirá.
+
+libgobject-2.0-0.dll
+libpango-1.0-0.dll
+libpangocairo-1.0-0.dll
+libharfbuzz-0.dll
+...
+
+NOTA: Uno de los comandos recomendados para reconstruir el .exe para evitar residuos de compilaciones anteriores:
+
+Remove-Item build -Recurse -Force
+Remove-Item dist -Recurse -Force
+pyinstaller loworkshop.spec
+

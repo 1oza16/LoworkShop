@@ -38,6 +38,15 @@ function toggleManoObra() {
     }
 } // toggleManoObra()
 
+// Función para mostrar un mensaje toast
+function toast(msg, error = false) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'visible' + (error ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = '', 3000);
+} // toast()
+
 //#region Funciones edición de texto
 
 // Copiar formato de texto seleccionado
@@ -288,7 +297,7 @@ async function subirFotoBiblioteca() {
     const extension = archivo.name.substring(archivo.name.lastIndexOf('.'));
     
     if (!marca || !modelo || !nombre || !archivo) {
-        alert("Completa todos los campos");
+        toast("Completa todos los campos", true);
         return;
     }
 
@@ -878,6 +887,45 @@ function clearForm() {
         location.reload();
     }
 } // clearForm()
+
+// Guardar hoja 
+async function guardarHoja() {
+    try {
+        const ruta = window.location.pathname;
+        const html = document.documentElement.cloneNode(true).outerHTML;
+
+        const resp =
+            await fetch(
+                '/api/guardar-hoja',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+                    body: JSON.stringify({
+                        ruta,
+                        html
+                    })
+                }
+            );
+
+        const data = await resp.json();
+
+        if (!data.ok) {
+            throw new Error(data.error);
+        }
+
+        // alert('Hoja guardada correctamente');
+        toast('Hoja guardada correctamente', false);
+
+    } catch (err) {
+        console.error(err);
+        // alert('Error al guardar la hoja');
+        toast('Error al guardar la hoja', true);
+    }
+
+} // guardarHoja()
 
 // Aplicar formato copiado si el pincel está activo
 document.addEventListener(

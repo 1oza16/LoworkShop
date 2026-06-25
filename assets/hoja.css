@@ -473,16 +473,6 @@ body {
 
 /* Barra de herramientas */
 
-.toolbar {
-    background-color: #f0f0f0;
-    padding: 8px;
-    margin-bottom: 5px;
-    border: 1px solid #ddd;
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-}
-
 .editor-toolbar {
     display: flex;
     align-items: center;
@@ -534,24 +524,6 @@ body {
     border-radius: 3px;
     font-size: 13px;
 }
-
-/* .toolbar button {
-    background-color: white;
-    border: 1px solid #ccc;
-    padding: 5px 10px;
-    cursor: pointer;
-    font-size: 12px;
-    border-radius: 3px;
-}
-
-.toolbar button:hover {
-    background-color: #e8e8e8;
-}
-
-.toolbar button.active {
-    background-color: #1e5aa8;
-    color: white;
-} */
 
 /* Area precios */
 
@@ -671,19 +643,47 @@ body {
     background-color: #1e5aa8;
 }
 
+/* Mensajes */
+
+#toast {
+    position: fixed; 
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%) translateY(-60px);
+    background: #2d5016;
+    color: white;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 2px;
+    border-bottom: 4px solid #1f3a0f;
+    opacity: 0;
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease;
+    z-index: 9999;
+    max-width: 80%;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    /* Ver si modificar el posicionamiento */
+}
+
+#toast.error { background: #c41e3a; border-bottom-color: #a01528; }
+#toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* Estilo de impresion */
 
 @media print {
     body {
         padding: 0;
     }
-    .toolbar {
-        display: none;
-    }
-    .toggle-mano-obra-mini {
-        display: none;
-    }
-    .model-upload-label {
+    .editor-toolbar, 
+    .toggle-mano-obra-mini,
+    .model-upload-label,
+    .acciones-separador,
+    .acciones-finales, 
+    .save-button {
         display: none;
     }
     .model {
@@ -696,10 +696,5 @@ body {
     }
     .section {
         page-break-inside: auto;
-    }
-    .acciones-separador,
-    .acciones-finales, 
-    .save-button {
-        display: none;
     }
 }

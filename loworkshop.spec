@@ -6,7 +6,12 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=[],
+    hiddenimports=[
+        "weasyprint",
+        "weasyprint.text",
+        "weasyprint.text.fonts",
+        "weasyprint.css",
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
