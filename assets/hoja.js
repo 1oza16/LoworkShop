@@ -1,5 +1,12 @@
 // Variables globales 
 
+// Variables guardado automático
+let autoSaveTimer = null;
+let guardando = false;
+let cambiosPendientes = false;
+const AUTO_SAVE_DELAY = 800;
+// const hoja = document.querySelector(".page");
+
 // Variables formato de texto
 let formatoCopiado = null;
 let pincelActivo = false;
@@ -38,7 +45,7 @@ function toggleManoObra() {
     }
 } // toggleManoObra()
 
-// Función para mostrar un mensaje toast
+// Función para mostrar notificaciones dinámicas
 function toast(msg, error = false) {
     const el = document.getElementById('toast');
     el.textContent = msg;
@@ -46,6 +53,128 @@ function toast(msg, error = false) {
     clearTimeout(el._t);
     el._t = setTimeout(() => el.className = '', 3000);
 } // toast()
+
+// #region Funciones de guardado y barra superior 
+
+// Actualizar la barra de guardado según el estado
+function actualizarBarraGuardado(estado){
+    const estadoEl = document.getElementById("saveState");
+    const horaEl = document.getElementById("saveTime");
+
+    estadoEl.className = "save-state " + estado;
+
+    switch(estado){
+        case "saved":
+            estadoEl.textContent = "Guardado";
+            horaEl.textContent = obtenerHoraActual();
+            break;
+
+        case "saving":
+            estadoEl.textContent = "Guardando...";
+            break;
+
+        case "pending":
+            estadoEl.textContent = "Cambios pendientes";
+            break;
+
+        case "error":
+            estadoEl.textContent = "Error";
+            break;
+    }
+
+} // actualizarBarraGuardado()
+
+function obtenerHoraActual(){
+    return new Date().toLocaleTimeString(
+        "es-ES",
+        {
+            hour:"2-digit",
+            minute:"2-digit",
+            second:"2-digit"
+        }
+    );
+} // obtenerHoraActual()
+
+function actualizarNombreHoja(){
+    let nombre = window.location.pathname.split('/').pop();
+    nombre = decodeURIComponent(nombre.replace(/\.html$/i, ""));
+
+    document.getElementById("saveFileName").textContent = nombre || "Nueva hoja";
+} // actualizarNombreHoja()
+
+function marcarComoModificada() {
+    cambiosPendientes = true;
+    actualizarBarraGuardado("pending");
+    clearTimeout(autoSaveTimer);
+
+    autoSaveTimer = setTimeout(() => {
+        guardarHoja(false);
+    }, AUTO_SAVE_DELAY);
+} // marcarComoModificada()
+
+// Guardar hoja 
+async function guardarHoja(forzar = true) {
+    if (guardando)
+        return;
+
+    if (!forzar && !cambiosPendientes)
+        return;
+
+    guardando = true;
+    actualizarBarraGuardado("saving");
+
+    try {
+        const ruta = window.location.pathname;
+        const html = document.documentElement.cloneNode(true).outerHTML;
+        const clon = document.documentElement.cloneNode(true);
+
+        // Reemplazo inputs para guardado correcto al generar PDF (Debido a limitaciones de WeasyPrint)
+        clon.querySelectorAll(".precio-input, .precio-total-input, .info-value").forEach(input => {
+            const span = document.createElement("span");
+
+            span.className = input.className;
+            span.textContent = input.value;
+
+            span.style.cssText = input.style.cssText;
+            input.replaceWith(span);
+        });
+
+        const htmlPDF = "<!DOCTYPE html>\n" + clon.outerHTML;
+
+        const resp =
+            await fetch(
+                '/api/guardar-hoja',
+                {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+                    body: JSON.stringify({
+                        ruta,
+                        html,
+                        htmlPDF
+                    })
+                }
+            );
+
+        const data = await resp.json();
+
+        if (!data.ok) {
+            throw new Error(data.error);
+        }
+        cambiosPendientes = false;
+        actualizarBarraGuardado("saved");
+
+    } catch (err) {
+        console.error(err);
+    } finally {
+        guardando = false;
+    }
+
+} // guardarHoja()
+
+// #endregion
 
 //#region Funciones edición de texto
 
@@ -324,7 +453,8 @@ async function subirFotoBiblioteca() {
     const resultado = await resp.json();
 
     if (!resultado.ok) {
-        alert(resultado.error || "Error al guardar");
+        // alert(resultado.error || "Error al guardar");
+        toast(resultado.error || "Error al guardar", true);
         return;
     }
 
@@ -332,9 +462,7 @@ async function subirFotoBiblioteca() {
 
     await cargarIndiceCoches();
 
-    alert(
-        "Imagen añadida correctamente"
-    );
+    toast("Imagen añadida correctamente",);
 } // subirFotoBiblioteca()
 
 // Cambios de pestañas entre biblioteca, URL y gestionar
@@ -438,6 +566,7 @@ function usarImagenUrl() {
     document.getElementById('modelImg').src = url;
 
     cerrarModalCoches();
+    marcarComoModificada();
 } // usarImagenUrl()
 
 // Funcion para obtener la extensión de la imagen desde la URL
@@ -635,6 +764,7 @@ function confirmarSeleccionFoto() {
     if (!rutaSeleccionada) return;
     document.getElementById('modelImg').src = rutaSeleccionada;
     cerrarModalCoches();
+    marcarComoModificada();
 } // confirmarSeleccionFoto()
 
 // Mostrar la vista de gestión de biblioteca
@@ -888,54 +1018,29 @@ function clearForm() {
     }
 } // clearForm()
 
-// Guardar hoja 
-async function guardarHoja() {
-    try {
-        const ruta = window.location.pathname;
-        const html = document.documentElement.cloneNode(true).outerHTML;
+// Eventos de guardado automático y actualización de la barra superior
+document.addEventListener("DOMContentLoaded", () => {
+    actualizarNombreHoja();
+    actualizarBarraGuardado("saved");
+});
 
-        const resp =
-            await fetch(
-                '/api/guardar-hoja',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':
-                            'application/json'
-                    },
-                    body: JSON.stringify({
-                        ruta,
-                        html
-                    })
-                }
-            );
+document.addEventListener("input", (e)=>{
+    if(e.target.closest(".editable-box"))
+        marcarComoModificada();
+});
 
-        const data = await resp.json();
-
-        if (!data.ok) {
-            throw new Error(data.error);
-        }
-
-        // alert('Hoja guardada correctamente');
-        toast('Hoja guardada correctamente', false);
-
-    } catch (err) {
-        console.error(err);
-        // alert('Error al guardar la hoja');
-        toast('Error al guardar la hoja', true);
+document.addEventListener("change",(e)=>{
+    if(
+        e.target.matches("input") ||
+        e.target.matches("select") ||
+        e.target.matches("textarea")
+    ){
+        marcarComoModificada();
     }
-
-} // guardarHoja()
-
-// Aplicar formato copiado si el pincel está activo
-document.addEventListener(
-    'mouseup',
-    aplicarPincelSiActivo
-); 
+});
 
 // Actualizar estado del toolbar al cambiar el texto seleccionado
-document.addEventListener(
-    'selectionchange', () => {
+document.addEventListener('selectionchange', () => {
         actualizarEstadoToolbar();
         actualizarTamanoToolbar();
     }

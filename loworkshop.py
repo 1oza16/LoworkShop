@@ -336,6 +336,7 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
             ruta = data["ruta"]
             html = data["html"]
+            htmlPDF = data["htmlPDF"]
 
             ruta_relativa = ruta.lstrip("/")
 
@@ -378,7 +379,7 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
             from weasyprint import HTML
 
             HTML(
-                filename=ruta_fichero,
+                string=htmlPDF,
                 base_url=os.path.dirname(ruta_fichero)
             ).write_pdf(ruta_pdf)
 

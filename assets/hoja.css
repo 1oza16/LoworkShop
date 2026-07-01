@@ -14,6 +14,103 @@ body {
     color: #333;
 }
 
+/* Barra de información de la hoja */
+
+.save-status-bar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:12px;
+    padding:10px 18px;
+    background: #f7f7f7; 
+    border:1px solid #d7d7d7;
+    font-family:Calibri, Arial, sans-serif;
+    box-shadow:0 1px 3px rgba(0,0,0,.08);
+}
+
+.save-status-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.save-status-icon{
+    font-size:18px;
+}
+
+#saveFileName{
+    font-size:15px;
+    font-weight:bold;
+    color:#1e5aa8;
+}
+
+.save-status-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+    font-size:13px;
+}
+
+.save-state{
+    font-weight:bold;
+}
+
+.save-state.saved{
+    color:#2d7d32;
+}
+
+.save-state.saving{
+    color:#d48a00;
+}
+
+.save-state.error{
+    color:#c62828;
+}
+
+.save-state.pending{
+    color:#666;
+}
+
+.save-time{
+    color:#777;
+    font-style:italic;
+}
+
+/* Barra separadora */
+
+.separador {
+    margin: 20px 0 10px 0;
+    border: none;
+    border-top: 1px dashed #ccc;
+}
+
+/* Notificaciones dinámicas */
+
+#toast {
+    position: fixed; 
+    top: 20px; 
+    left: 50%;
+    transform: translateX(-50%) translateY(-60px);
+    background: #2d5016;
+    color: white;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: bold;
+    border-radius: 2px;
+    border-bottom: 4px solid #1f3a0f;
+    opacity: 0;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 9999;
+    max-width: 80%;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    /* Ver si modificar el posicionamiento */
+}
+
+#toast.error { background: #c41e3a; border-bottom-color: #a01528; }
+#toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+
 /* Header */
 
 .header {
@@ -594,12 +691,6 @@ body {
 
 /* Seccion de botones limpiar hoja, imprimir y guardar */
 
-.acciones-separador {
-    margin: 40px 0 0 0;
-    border: none;
-    border-top: 1px dashed #ccc;
-}
-
 .acciones-finales {
     background-color: #f7f7f7;
     border: 1px solid #e0e0e0;
@@ -643,45 +734,17 @@ body {
     background-color: #1e5aa8;
 }
 
-/* Mensajes */
-
-#toast {
-    position: fixed; 
-    top: 20px; 
-    left: 50%;
-    transform: translateX(-50%) translateY(-60px);
-    background: #2d5016;
-    color: white;
-    padding: 10px 18px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 2px;
-    border-bottom: 4px solid #1f3a0f;
-    opacity: 0;
-    transition:
-        opacity 0.25s ease,
-        transform 0.25s ease;
-    z-index: 9999;
-    max-width: 80%;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-    /* Ver si modificar el posicionamiento */
-}
-
-#toast.error { background: #c41e3a; border-bottom-color: #a01528; }
-#toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 /* Estilo de impresion */
 
 @media print {
     body {
         padding: 0;
     }
+    .save-status-bar,
     .editor-toolbar, 
     .toggle-mano-obra-mini,
     .model-upload-label,
-    .acciones-separador,
+    .separador,
     .acciones-finales, 
     .save-button {
         display: none;

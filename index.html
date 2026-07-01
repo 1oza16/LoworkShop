@@ -454,15 +454,13 @@
             <span class="dot" id="dot-estado"></span>
             <span id="texto-estado">Sin carpeta seleccionada — haz clic en el botón para comenzar</span>
         </div>
-        <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">
-            📁 Seleccionar carpeta de hojas
-        </button>
+        <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">Seleccionar carpeta de hojas</button>
     </div>
 
     <main>
 
         <div class="aviso-navegador" id="aviso-navegador">
-            ⚠️ <strong>Navegador no compatible.</strong>
+            <strong>Navegador no compatible.</strong>
             Esta aplicación requiere <strong>Chrome, Edge o Brave</strong> (v86+).
             Firefox y Safari no soportan File System Access API.
         </div>
@@ -534,6 +532,10 @@
                 <div class="campo-grupo">
                     <label class="campo-label" for="inp-matricula">Matrícula del vehículo</label>
                     <input type="text" class="campo-input" id="inp-matricula" placeholder="1234 ABC" oninput="actualizarPreview()">
+                </div>
+                <div class="campo-grupo">
+                    <label class="campo-label" for="inp-modelo">Modelo del vehículo</label>
+                    <input type="text" class="campo-input" id="inp-modelo" placeholder="MG-B 74" oninput="actualizarPreview()">
                 </div>
                 <div class="preview-nombre" id="preview-nombre"></div>
             </div>
@@ -650,8 +652,8 @@
         document.getElementById('dot-estado')
             .classList.add('conectado');
         document.getElementById('texto-estado')
-            .textContent =
-            '📂 ' + rootHandle.name;
+            .textContent = 
+            rootHandle.name;
         document.getElementById('btn-conectar')
             .textContent =
             '↺ Cambiar carpeta';
@@ -805,6 +807,7 @@
     async function crearHoja() {
         const cliente   = document.getElementById('inp-cliente').value.trim();
         const matricula = document.getElementById('inp-matricula').value.trim();
+        const modelo    = document.getElementById('inp-modelo').value.trim();
         const nombre    = generarNombre(cliente, matricula);
         if (!nombre) { toast('Introduce al menos el nombre o la matrícula.', true); return; }
 
@@ -815,7 +818,8 @@
         contenido = contenido
             .replace(/{CLIENTE}/g, cliente)
             .replace(/{MATRICULA}/g, matricula)
-            .replace(/{FECHA}/g, fechaHoy);
+            .replace(/{FECHA}/g, fechaHoy)
+            .replace(/{MODELO}/g, modelo);
 
         try {
             try {

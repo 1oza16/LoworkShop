@@ -6,10 +6,26 @@
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../assets/hoja.css">
     <script src="../assets/hoja.js"></script>
+    <!-- <title>LoworkShop pITO</title> -->
     <title>LoworkShop_{CLIENTE}_{MATRICULA}</title>
 </head>
 
 <body>
+    <div id="saveStatusBar" class="save-status-bar">
+
+        <div class="save-status-left">
+            <img src="../img/favicon.ico" alt="LoworkShop" width="18px">
+            <span id="saveFileName">Nueva hoja</span>
+        </div>
+        
+        <div class="save-status-right">
+            <span id="saveState" class="save-state saved">Guardado</span>
+            <span id="saveTime" class="save-time">--</span>
+        </div>
+    </div>
+
+    <hr class="separador">
+
     <div class="header">
         
         <img src="../img/isologo.png" alt="Lozano Workshop" class="logo">
@@ -108,7 +124,7 @@
                     <div class="modal-preview" id="gestionPreview"></div>
                 </div>
                 
-                <!-- FOOTER -->
+                <!-- Botones opciones -->
 
                 <div class="modal-footer">
                     <button class="modal-cancel-btn" onclick="accionSecundariaModal()" id="btnSecundarioModal">Cancelar</button>
@@ -139,7 +155,7 @@
             </div>
             <div class="info-item">
                 <div class="info-label">MODELO DEL VEHÍCULO:</div>
-                <input type="text" class="info-value">
+                <input type="text" class="info-value" id="modelo" value="{MODELO}">
             </div>
             <div class="info-item">
                 <div class="info-label">MATRÍCULA:</div>
@@ -174,11 +190,6 @@
 
                 <button type="button" id="btnLista" class="toolbar-btn" onclick="formatDoc('insertUnorderedList')">• Lista</button>
                 <button type="button" id="btnListaNumerada" class="toolbar-btn" onclick="formatDoc('insertOrderedList')">1. Lista</button>
-
-                <div class="toolbar-separator"></div>
-
-                <button type="button" class="toolbar-btn" onclick="document.execCommand('undo')">↶</button>
-                <button type="button" class="toolbar-btn" onclick="document.execCommand('redo')">↷</button>
             </div>
         <div class="editable-box" contenteditable="true" id="reparaciones">
             <!-- Espacio para escribir las reparaciones realizadas -->
@@ -225,17 +236,18 @@
         </div>
         
         <div class="precio-total">
-            TOTAL: <input type="text" class="precio-total-input" placeholder="Introduce total">
+            TOTAL: 
+            <input type="text" class="precio-total-input" placeholder="Introduce total">
         </div>
     </div>
 
-    <hr class="acciones-separador">
+    <hr class="separador">
 
     <div class="acciones-finales">
         <button class="toggle-mano-obra-mini" onclick="toggleManoObra()" title="Mostrar/Ocultar mano de obra">Ocultar mano de obra</button>
-        <button class="action-btn" onclick="clearForm()">Limpiar formulario</button>
+        <button class="action-btn" onclick="clearForm(); marcarComoModificada();">Limpiar formulario</button>
         <button class="action-btn" onclick="window.print()">Imprimir</button>
-        <button class="save-button" onclick="guardarHoja()">Guardar hoja</button>
+        <button class="save-button" onclick="clearTimeout(autoSaveTimer); guardarHoja(true);">Guardar hoja</button>
     </div>
 
     <div id="toast"></div>
