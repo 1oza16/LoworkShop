@@ -2,126 +2,238 @@
 
 # LoworkShop
 
-LoworkShop es una aplicación local orientada a la gestión y documentación de reparaciones de vehículos mediante fichas de trabajo en formato HTML.
+LoworkShop es una aplicación de escritorio orientada a la gestión y documentación de reparaciones de vehículos mediante fichas de trabajo HTML totalmente editables.
 
-El proyecto está diseñado para funcionar completamente en local, sin bases de datos ni servicios externos, permitiendo almacenar y organizar toda la información directamente en el sistema de archivos del usuario.
+El proyecto está diseñado para funcionar completamente en local, almacenando toda la información directamente en el sistema de archivos del usuario, sin utilizar bases de datos ni servicios externos.
 
+---
 
-## Características actuales
+# Características actuales
 
-- Panel central (`index.html`) para la gestión de fichas.
-- Creación automática de hojas de trabajo a partir de una plantilla base.
-- Almacenamiento local mediante File System Access API.
-- Organización de las fichas dentro de la carpeta `notas`.
-- Apertura de fichas mediante servidor HTTP local.
-- Gestión de permisos persistentes sobre la carpeta raíz del proyecto.
-- Lanzador en Python para:
-  - Iniciar el servidor local.
-  - Abrir automáticamente la aplicación en el navegador.
-- Ejecutable independiente generado mediante PyInstaller.
-- Recursos compartidos organizados en carpetas separadas.
+## Gestión de fichas
 
-## Estructura del proyecto
+- Creación automática de hojas de trabajo desde una plantilla.
+- Edición mediante HTML enriquecido (`contenteditable`).
+- Apertura de fichas existentes.
+- Guardado manual.
+- Sistema de autoguardado (en desarrollo).
+- Barra superior con:
+  - Nombre de la hoja.
+  - Estado del guardado.
+  - Hora del último guardado.
 
-```text
+---
+
+## Exportación
+
+- Guardado automático de la ficha HTML.
+- Generación automática del PDF asociado.
+- Carpeta independiente para documentos PDF.
+
+```
+notas/
+    Reparación A.html
+
+pdf/
+    Reparación A.pdf
+```
+
+La generación del PDF mantiene la hoja HTML completamente editable.
+
+---
+
+## Biblioteca de vehículos
+
+Biblioteca local organizada por:
+
+```
+fotos_coches/
+
+    marca/
+
+        modelo/
+
+            imagen1.jpg
+            imagen2.png
+```
+
+Características:
+
+- Selección de imágenes mediante modal.
+- Organización por marca y modelo.
+- Vista previa.
+- Miniaturas.
+- Índice automático (`index.json`).
+- Actualización automática del índice al añadir imágenes.
+
+El índice tiene la estructura:
+
+```
+fotos_coches/
+    index.json
+```
+
+---
+
+## Gestión de imágenes
+
+Desde el navegador es posible:
+
+- Utilizar imágenes ya existentes.
+- Añadir imágenes locales.
+- Añadir imágenes mediante URL.
+- Crear automáticamente nuevas marcas.
+- Crear automáticamente nuevos modelos.
+- Guardar imágenes dentro de la biblioteca.
+
+Todo ello sin abandonar la aplicación.
+
+---
+
+## Editor enriquecido
+
+La hoja dispone de un editor similar al de un procesador de textos.
+
+Incluye:
+
+- Negrita.
+- Cursiva.
+- Subrayado.
+- Listas.
+- Alineaciones.
+- Copiar formato.
+- Tamaño de fuente.
+- Inserción de imágenes.
+- Edición directa sobre la hoja.
+
+---
+
+## Servidor Python
+
+El lanzador Python incorpora distintos endpoints para gestionar los recursos del proyecto.
+
+Actualmente permite:
+
+- Crear fichas.
+- Guardar hojas HTML.
+- Generar PDF.
+- Gestionar imágenes.
+- Descargar imágenes desde URL.
+- Regenerar automáticamente `index.json`.
+- Servir los recursos de la aplicación.
+
+Toda la lógica relacionada con el sistema de archivos reside en Python.
+
+---
+
+# Estructura del proyecto
+
+```
 LoworkShop/
+
 │
 ├── assets/
 │
-├── build/
-│
 ├── config/
 │
-├── dist/
+├── fotos_coches/
+│   ├── marca/
+│   └── index.json
 │
 ├── img/
 │
 ├── notas/
 │
+├── pdf/
+│
 ├── plantillas/
 │
-├── .gitignore
 ├── index.html
+├── loworkshop.html
 │
 ├── loworkshop.py
 ├── loworkshop.spec
-├── loworkshop.exe
 │
 └── README.md
 ```
 
-## Descripción de carpetas
+---
 
-| Carpeta | Función |
-|----------|----------|
-| assets | Recursos compartidos (CSS, JavaScript, etc.) |
-| config | Configuración futura del proyecto |
-| img | Imágenes generales de la aplicación |
-| notas | Fichas de reparación generadas |
-| plantillas | Plantillas HTML utilizadas para crear nuevas fichas |
-
-## Tecnologías utilizadas
+# Tecnologías utilizadas
 
 - HTML5
 - CSS3
-- JavaScript
-- File System Access API
+- JavaScript (ES6)
 - Python
+- WeasyPrint
 - PyInstaller
 
-## Filosofía del proyecto
+---
 
-LoworkShop busca ser una herramienta sencilla, ligera y completamente local.
+# Arquitectura
 
-Toda la información permanece bajo control del usuario, evitando dependencias de servicios externos, bases de datos o aplicaciones de terceros.
+Actualmente la aplicación utiliza un servidor HTTP local implementado en Python.
 
-## Objetivos futuros
-
-### Biblioteca de vehículos
-
-Implementar una biblioteca local de imágenes organizada por marcas y modelos.
-
-Ejemplo:
-
-```text
-coches/
-├── seat/
-├── volkswagen/
-├── renault/
-└── peugeot/
+```
+HTML
+     │
+JavaScript
+     │
+fetch()
+     │
+Servidor Python
+     │
+Sistema de archivos
 ```
 
-Las fichas podrán seleccionar imágenes directamente desde esta biblioteca sin depender de recursos externos.
+Toda la manipulación de archivos se realiza desde Python.
 
-### Generación de PDF
+El frontend únicamente solicita operaciones mediante la API interna.
 
-Añadir exportación de fichas a PDF desde la propia hoja de trabajo.
+---
 
-Objetivos:
+# Próximas implementaciones
 
-- Generación bajo demanda.
-- Almacenamiento en una carpeta dedicada.
-- Mantener la ficha HTML editable.
-- Conservar una versión PDF para impresión o archivo.
+## Autoguardado
 
-Estructura prevista:
+- Guardado automático mediante debounce.
+- Indicador visual de estado.
+- Sincronización HTML + PDF.
 
-```text
-notas/
-├── CLIENTE.html
+---
 
-pdf/
-├── CLIENTE.pdf
+## Compartir PDF
+
+Nuevo modal para compartir el PDF generado mediante distintas opciones.
+
+---
+
+## Migración a PyWebView
+
+En una fase posterior el servidor HTTP será sustituido por PyWebView.
+
+La lógica permanecerá en Python y el frontend accederá a ella mediante una API JavaScript, eliminando la necesidad de utilizar endpoints HTTP.
+
+La arquitectura prevista será:
+
+```
+HTML
+     │
+JavaScript
+     │
+pywebview.api
+     │
+Python
+     │
+Sistema de archivos
 ```
 
-### Mejoras de gestión
+El objetivo es convertir LoworkShop en una aplicación de escritorio completamente autocontenida.
 
-- Búsqueda avanzada de fichas.
-- Clasificación por cliente o matrícula.
-- Configuración centralizada.
-- Copias de seguridad.
-- Exportación de datos.
+---
 
-## Estado del proyecto
+# Filosofía del proyecto
 
-Actualmente LoworkShop se encuentra en desarrollo activo y continúa evolucionando con el objetivo de convertirse en una herramienta práctica para la gestión diaria de reparaciones y trabajos de taller.
+LoworkShop pretende ser una herramienta profesional para talleres, ligera, rápida y completamente local.
+Todos los documentos permanecen bajo control del usuario, sin depender de servicios externos, bases de datos ni almacenamiento en la nube.
+El proyecto está siendo desarrollado con una arquitectura modular para facilitar futuras ampliaciones y mantener un código sencillo de mantener.
