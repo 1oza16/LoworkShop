@@ -86,7 +86,6 @@ async function conectarCarpetaRaiz(rootHandle) {
             { create: true }
         );
 
-    document.getElementById('dot-estado').classList.add('conectado');
     document.getElementById('texto-estado').textContent = rootHandle.name;
     document.getElementById('btn-conectar').textContent ='↺ Cambiar carpeta';
     document.getElementById('btn-recargar').disabled = false;
@@ -290,6 +289,7 @@ async function crearHoja() {
         console.error(e);
     }
 }
+
 // ── TOAST ─────────────────────────────────────────
 function toast(msg, error = false) {
     const el = document.getElementById('toast');

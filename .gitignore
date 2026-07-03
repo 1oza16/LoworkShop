@@ -5,3 +5,4 @@ __pycache__/
 *.pyc
 notas/*.html
 fotos_coches/index.json
+temp/

@@ -21,14 +21,13 @@
     <div class="barra-estado">
         <div class="estado-texto">
             <button id="btnMenu" class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <span class="dot" id="dot-estado"></span>
             <span id="texto-estado">Sin carpeta seleccionada — haz clic en el botón para comenzar</span>
         </div>
         <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">Seleccionar carpeta de hojas</button>
     </div>
 
     <div class="app-container">
-        <aside id="sidebar">
+        <aside id="sidebar" class="collapsed">
             <button onclick="cambiarVista('inicio')">
                 <img src="img/icons/panel_principal.png" alt="panel_principal" class="icon">
                 <span>Inicio</span>
@@ -81,7 +80,7 @@
                 <div class="section-box">
                     <div class="acciones-grid">
                         <button class="btn-accion nueva" onclick="abrirModal()">
-                            <div class="accion-icono rojo">
+                            <div class="marco-icono rojo">
                                 <img src="img/icons/sheet.png" alt="loworkshop_sheet" class="icon">
                             </div>
 
@@ -91,7 +90,7 @@
                             </div>
                         </button>
                         <button class="btn-accion" id="btn-recargar" onclick="recargarHojas()" disabled>
-                            <div class="accion-icono azul">
+                            <div class="marco-icono azul">
                                 <img src="img/icons/reload.png" alt="reload" class="icon">
                             </div>
                             <div>
@@ -140,7 +139,12 @@
     <!-- MODAL -->
     <div class="overlay" id="overlay" onclick="cerrarModalFuera(event)">
         <div class="modal">
-            <div class="modal-header">NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN</div>
+            <div class="modal-header">
+                <div class="marco-icono blanco">
+                    <img src="img/favicon.ico" alt="isologo" width="30px">
+                </div>
+                NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN
+            </div>
             <div class="modal-body">
                 <div class="campo-grupo">
                     <label class="campo-label" for="inp-cliente">Nombre del cliente</label>
