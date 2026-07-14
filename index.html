@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="assets/common/variables.css">
+    <link rel="stylesheet" href="assets/common/common.css">
     <link rel="stylesheet" href="assets/index/index.css">
-    <script src="assets/index/index.js"></script>
     <title>LoworkShop — Panel Principal</title>
 </head>
 <body>
@@ -79,20 +80,15 @@
                 <div class="section-header">ACCIONES RÁPIDAS</div>
                 <div class="section-box">
                     <div class="acciones-grid">
-                        <button class="btn-accion nueva" onclick="abrirModal()">
-                            <div class="marco-icono rojo">
-                                <img src="img/icons/sheet.png" alt="loworkshop_sheet" class="icon">
-                            </div>
-
+                        <button class="btn-accion" onclick="abrirModal()">
+                                <img src="img/icons/sheet1.png" alt="loworkshop_sheet" class="icon">
                             <div>
                                 <div class="accion-titulo">Nueva hoja</div>
                                 <div class="accion-desc">Crear hoja de presupuesto y reparación en blanco</div>
                             </div>
                         </button>
                         <button class="btn-accion" id="btn-recargar" onclick="recargarHojas()" disabled>
-                            <div class="marco-icono azul">
-                                <img src="img/icons/reload.png" alt="reload" class="icon">
-                            </div>
+                                <img src="img/icons/reload1.png" alt="reload" class="icon">
                             <div>
                                 <div class="accion-titulo">Actualizar lista</div>
                                 <div class="accion-desc">Recargar las hojas desde la carpeta seleccionada</div>
@@ -137,13 +133,13 @@
     </div>
 
     <!-- MODAL -->
-    <div class="overlay" id="overlay" onclick="cerrarModalFuera(event)">
-        <div class="modal">
+    <div class="modal-overlay" id="overlay" onclick="cerrarModalFuera(event)">
+        <div class="modal-box">
             <div class="modal-header">
-                <div class="marco-icono blanco">
+                <div class="marco-icono">
                     <img src="img/favicon.ico" alt="isologo" width="30px">
                 </div>
-                NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN
+                <h3>NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN</h3>
             </div>
             <div class="modal-body">
                 <div class="campo-grupo">
@@ -159,14 +155,18 @@
                     <input type="text" class="campo-input" id="inp-modelo" placeholder="MG-B 74" oninput="actualizarPreview()">
                 </div>
                 <div class="preview-nombre" id="preview-nombre"></div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
-                <button class="btn-crear" onclick="crearHoja()">Crear hoja →</button>
+
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                    <button class="btn-primary" onclick="crearHoja()">Crear hoja →</button>
+                </div>
+
             </div>
         </div>
     </div>
+</div>
 
-    <div id="toast"></div>
+<script src="assets/common/common.js"></script>
+<script src="assets/index/index.js"></script>
 </body>
 </html>

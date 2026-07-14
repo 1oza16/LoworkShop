@@ -25,7 +25,7 @@ function actualizarBarraGuardado(estado){
             break;
 
         case "error":
-            estadoEl.textContent = "Error";
+            estadoEl.textContent = "Error en guardado";
             break;
     }
 
@@ -115,6 +115,7 @@ async function guardarHoja(forzar = true) {
 
     } catch (err) {
         console.error(err);
+        actualizarBarraGuardado("error");
     } finally {
         guardando = false;
     }

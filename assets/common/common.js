@@ -1,0 +1,108 @@
+let resolverConfirmacion = null;
+
+//#region Toast
+
+function crearToast(){
+    if(document.getElementById("toast"))
+        return;
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        `<div id="toast"></div>`
+    );
+}
+
+function toast(msg, error = false) {
+    crearToast();
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'visible' + (error ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.className = '', 3000);
+} // toast()
+
+//#endregion
+
+//#region Panel de confirmacion 
+
+function getPath() {
+    const ruta = window.location.pathname.toLowerCase();
+    if (ruta.includes("/stencil/") || ruta.includes("/notas/"))
+        return "../";
+    return "";
+}
+
+function crearConfirmDialog() {
+
+    if (document.getElementById("confirmOverlay"))
+        return;
+
+    const path = getPath();
+
+    document.body.insertAdjacentHTML(
+        "beforeend",
+        `
+<div class="modal-overlay" id="confirmOverlay">
+    <div class="modal-box confirm-box">
+
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img id="confirmIcon" src="${path}img/favicon.ico" class="icon">
+            </div>
+            <h3 id="confirmTitle">Confirmar acción</h3>
+        </div>
+
+        <div class="modal-body">
+            <p id="confirmMessage">¿Seguro que deseas continuar?</p>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="confirmNo">No</button>
+                <button class="btn-primary" id="confirmYes">Sí</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+`
+    );
+
+    inicializarConfirmDialog();
+
+}
+
+function confirmar(titulo, mensaje) {
+    crearConfirmDialog();
+
+    return new Promise(resolve => {
+        resolverConfirmacion = resolve;
+        document.getElementById("confirmTitle").textContent = titulo;
+        document.getElementById("confirmMessage").textContent = mensaje;
+        document.getElementById("confirmOverlay").classList.add("visible");
+    });
+} // confirmar()
+
+function cerrarConfirmacion(resultado) {
+    document.getElementById("confirmOverlay").classList.remove("visible");
+
+    if (resolverConfirmacion) {
+        resolverConfirmacion?.(resultado);
+        resolverConfirmacion = null;
+    }
+}
+
+// Inicializacion de eventos del panel de confirmacion
+function inicializarConfirmDialog() {
+    document.getElementById("confirmYes").addEventListener("click",()=>{
+        cerrarConfirmacion(true);
+    });
+
+    document.getElementById("confirmNo").addEventListener("click",()=>{
+        cerrarConfirmacion(false);
+    });
+
+    document.getElementById("confirmOverlay").addEventListener("click",(e)=>{
+        if (e.target.id === "confirmOverlay")
+            cerrarConfirmacion(false);
+    });
+}
+
+//#endregion

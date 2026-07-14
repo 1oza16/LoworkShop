@@ -17,7 +17,7 @@ function changeLogo(event) {
 } // changeLogo()
 
 function cerrarModalCoches() {
-    document.getElementById('modalCoches').classList.remove('open');
+    document.getElementById('modalCoches').classList.remove('visible');
 } // cerrarModalCoches()
 
 function capitalizar(texto) {
@@ -78,7 +78,7 @@ async function abrirModalCoches() {
         });
     }
 
-    document.getElementById('modalCoches').classList.add('open');
+    document.getElementById('modalCoches').classList.add('visible');
     cambiarTab('biblioteca',document.querySelector('.modal-tab')
 );
 } // abrirModalCoches()
@@ -156,7 +156,7 @@ function cambiarTab(nombre, boton) {
     if (nombre === 'biblioteca') {
         document.getElementById('tabBiblioteca').classList.add('active');
 
-        titulo.textContent = 'Biblioteca de vehículos';
+        titulo.textContent = 'BIBLIOTECA DE VEHÍCULOS';
         btnCancelar.style.display = 'inline-block';
         btnMedio.style.display = 'inline-block';
         btnPrincipal.style.display = 'inline-block';
@@ -173,7 +173,7 @@ function cambiarTab(nombre, boton) {
     if (nombre === 'url') {
         document.getElementById('tabUrl').classList.add('active');
 
-        titulo.textContent ='Imagen desde URL';
+        titulo.textContent ='IMAGEN DESDE URL';
         btnCancelar.style.display ='inline-block';
         btnMedio.style.display ='inline-block';
         btnPrincipal.style.display ='inline-block';
@@ -190,7 +190,7 @@ function cambiarTab(nombre, boton) {
     if (nombre === 'gestion') {
         document.getElementById('vistaGestionBiblioteca').classList.add('active');
 
-        titulo.textContent = 'Guardar imagen en biblioteca';
+        titulo.textContent = 'GUARDAR IMAGEN EN LA BIBLIOTECA';
         btnCancelar.style.display = 'inline-block';
         btnMedio.style.display = 'none';
         btnPrincipal.style.display = 'inline-block';
@@ -436,7 +436,7 @@ function confirmarSeleccionFoto() {
 // Mostrar la vista de gestión de biblioteca
 function mostrarGestionBiblioteca() {
     cambiarTab('gestion');
-    document.getElementById('modalTitulo').textContent = 'Guardar imagen en biblioteca';
+    document.getElementById('modalTitulo').textContent = 'GUARDAR IMAGEN EN LA BIBLIOTECA';
 
     cargarMarcasGestion();
 

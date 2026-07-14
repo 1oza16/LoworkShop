@@ -11,7 +11,7 @@ body {
     margin: 0 auto;
     padding: 5px;
     background: white;
-    color: #333;
+    color: var(--texto);
 }
 
 /* Barra de información de la hoja */
@@ -41,7 +41,7 @@ body {
 #saveFileName{
     font-size:15px;
     font-weight:bold;
-    color:#1e5aa8;
+    color:var(--azul);
 }
 
 .save-status-right{
@@ -84,52 +84,7 @@ body {
     border-top: 1px dashed #ccc;
 }
 
-/* Notificaciones dinámicas */
-
-#toast {
-    position: fixed; 
-    top: 20px; 
-    left: 50%;
-    transform: translateX(-50%) translateY(-60px);
-    background: #2d5016;
-    color: white;
-    padding: 10px 18px;
-    font-size: 13px;
-    font-weight: bold;
-    border-radius: 2px;
-    border-bottom: 4px solid #1f3a0f;
-    opacity: 0;
-    transition: opacity 0.25s ease, transform 0.25s ease;
-    z-index: 9999;
-    max-width: 80%;
-    text-align: center;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-
-    /* Ver si modificar el posicionamiento */
-}
-
-#toast.error { background: #c41e3a; border-bottom-color: #a01528; }
-#toast.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
-
 /* Header */
-
-.header {
-    display: block;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 3px solid #c41e3a;
-    padding-bottom: 15px;
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo {
-    max-width: 300px;
-    height: auto;
-    margin: 0px;
-}
 
 .model {
     max-width: 120px;
@@ -140,7 +95,7 @@ body {
 }
 
 .model:hover {
-    border: 2px dashed #1e5aa8;
+    border: 2px dashed var(--azul);
 }
 
 #modelUpload {
@@ -156,7 +111,7 @@ body {
 }
 
 .model-upload-label:hover {
-    color: #1e5aa8;
+    color: var(--azul);
 }
 
 .title-section {
@@ -164,65 +119,19 @@ body {
 }
 
 .title-section h1 {
-    color: #1e5aa8;
+    color: var(--azul);
     margin: 0;
     font-size: 28px;
     font-weight: bold;
 }
 
 .title-section p {
-    color: #1e5aa8;
+    color: var(--azul);
     margin: 5px 0 0 0;
     font-size: 14px;
 }
 
-/* Album fotos coches */
-
-.modal-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal-overlay.open {
-    display: flex;
-}
-
-.modal-box {
-    background: white;
-    color: #333;
-    border-radius: 4px;
-    width: 600px;
-    max-width: 90vw;
-    font-family: 'Calibri', 'Arial', sans-serif;
-    position: relative;
-    border-top: 4px solid #1e5aa8;
-    overflow: hidden;
-}
-
-.modal-header {
-    background-color: #1e5aa8;
-    color: white;
-    padding: 10px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.modal-header h3 {
-    margin: 0;
-    font-size: 15px;
-    font-weight: bold;
-    color: white;
-}
-
-.modal-body {
-    padding: 16px 20px 20px;
-}
+/* Modal del album de coches */
 
 .modal-selects {
     display: grid;
@@ -231,43 +140,10 @@ body {
     margin-bottom: 16px;
 }
 
-.modal-field {
-    margin-bottom: 0;
-}
-
-.modal-field label {
-    display: block;
-    font-size: 12px;
-    font-weight: bold;
-    color: #2d5016;
-    margin-top: 12px;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-}
-
-.modal-field select {
-    width: 100%;
-    background: #fafafa;
-    color: #333;
-    border: 1px solid #ccc;
-    border-bottom: 2px solid #1e5aa8;
-    padding: 6px 8px;
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 14px;
-    border-radius: 0;
-    appearance: none;
-}
-
-.modal-field select:focus {
-    outline: none;
-    background: white;
-    border-color: #1e5aa8;
-}
-
 .modal-preview-label {
     font-size: 12px;
     font-weight: bold;
-    color: #2d5016;
+    color: var(--verde);
     text-transform: uppercase;
     margin-bottom: 6px;
     margin-top: 14px;
@@ -275,7 +151,7 @@ body {
 
 .modal-preview {
     border: 1px solid #ddd;
-    border-left: 3px solid #1e5aa8;
+    border-left: 3px solid var(--azul);
     min-height: 180px;
     display: flex;
     align-items: center;
@@ -300,7 +176,7 @@ body {
 .modal-thumbs-label {
     font-size: 12px;
     font-weight: bold;
-    color: #2d5016;
+    color: var(--verde);
     text-transform: uppercase;
     margin-bottom: 8px;
 }
@@ -325,67 +201,8 @@ body {
 
 .modal-thumbs img:hover,
 .modal-thumbs img.selected {
-    border-color: #1e5aa8;
-    outline: 1px solid #1e5aa8;
-}
-
-.modal-footer {
-    display: flex;
-    gap: 10px;
-    justify-content: flex-end;
-    border-top: 1px solid #eee;
-    padding-top: 14px;
-}
-
-.modal-cancel-btn {
-    background: white;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 8px 20px;
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 14px;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.modal-cancel-btn:hover {
-    background: #f0f0f0;
-}
-
-.modal-select-btn {
-    background-color: #2d5016;
-    color: white;
-    border: none;
-    padding: 8px 24px;
-    font-family: 'Calibri', 'Arial', sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.modal-select-btn:hover:not(:disabled) {
-    background-color: #1e5aa8;
-}
-
-.modal-select-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-}
-
-.modal-close {
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-    line-height: 1;
-    padding: 0 2px;
-    opacity: 0.85;
-}
-
-.modal-close:hover {
-    opacity: 1;
+    border-color: var(--azul);
+    outline: 1px solid var(--azul);
 }
 
 .modal-empty-msg {
@@ -413,7 +230,7 @@ body {
 }
 
 .modal-tab.active {
-    background: #1e5aa8;
+    background: var(--verde);
     color: white;
 }
 
@@ -425,43 +242,8 @@ body {
     display: block;
 }
 
-.modal-field input {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-bottom: 2px solid #1e5aa8;
-    padding: 8px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.modal-field input:focus {
-    outline: none;
-}
-
-.modal-action-btn {
-    background: #1e5aa8;
-    color: white;
-    border: none;
-    padding: 8px 18px;
-    margin-bottom: 12px;
-    cursor: pointer;
-}
-
-.modal-action-btn:hover {
-    opacity: 0.9;
-}
-
 #urlPreview {
     min-height: 220px;
-}
-
-#vistaGestionBiblioteca input,
-#vistaGestionBiblioteca select {
-    width: 100%;
-    border: 1px solid #ccc;
-    border-bottom: 2px solid #1e5aa8;
-    padding: 8px;
-    box-sizing: border-box;
 }
 
 #gestionPreview {
@@ -486,7 +268,7 @@ body {
 /* Titulo documento */
 
 .document-title {
-    background-color: #2d5016;
+    background-color: var(--verde);
     color: white;
     padding: 10px 15px;
     margin: 20px 0;
@@ -502,16 +284,9 @@ body {
     page-break-inside: auto;
 }
 
-.section-header {
-    background-color: #1e5aa8;
-    color: white;
-    padding: 8px 12px;
-    font-weight: bold;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
+.section-header { margin-bottom: 10px; }
 
-/* Informacion nota  */
+/* Informacion de la nota (Nombre, fecha, modelo vehiculo y matricula)  */
 
 .info-grid {
     display: grid;
@@ -525,13 +300,6 @@ body {
     padding-bottom: 5px;
 }
 
-.info-label {
-    font-weight: bold;
-    color: #2d5016;
-    font-size: 12px;
-    margin-bottom: 3px;
-}
-
 .info-value {
     font-size: 14px;
     min-height: 20px;
@@ -542,7 +310,7 @@ body {
 }
 
 .info-value:focus {
-    outline: 1px solid #1e5aa8;
+    outline: 1px solid var(--azul);
     background-color: #f9f9f9;
 }
 
@@ -564,7 +332,7 @@ body {
 }
 
 .editable-box:focus {
-    outline: 2px solid #1e5aa8;
+    outline: 2px solid var(--azul);
     background-color: white;
 }
 
@@ -597,19 +365,19 @@ body {
 
 .toolbar-btn.active {
     background: #dce8ff;
-    color: #1e5aa8;
+    color: var(--azul);
 }
 
 .toolbar-separator {
     width: 1px;
     height: 20px;
-    background: #cccccc;
+    background: var(--gris-borde);
     margin: 0 4px;
 }
 
 .toolbar-active {
     background: #dce8ff;
-    color: #1e5aa8;
+    color: var(--azul);
 }
 
 #fontSizeDisplay {
@@ -650,7 +418,7 @@ body {
 
 .precio-total {
     display: inline-block;
-    background-color: #2d5016;
+    background-color: var(--verde);
     color: white;
     padding: 15px 30px;
     font-size: 20px;
@@ -660,7 +428,7 @@ body {
 
 .precio-input {
     border: none;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid var(--texto);
     background: transparent;
     font-size: 16px;
     font-weight: bold;
@@ -671,7 +439,7 @@ body {
 
 .precio-input:focus {
     outline: none;
-    border-bottom: 2px solid #1e5aa8;
+    border-bottom: 2px solid var(--azul);
     background-color: #f9f9f9;
 }
 
@@ -694,7 +462,6 @@ body {
 .acciones-finales {
     background-color: #f7f7f7;
     border: 1px solid #e0e0e0;
-    /* border-radius: 6px; */
     padding: 10px;
     margin-bottom: 20px;
     margin-top: 20px;
@@ -704,42 +471,13 @@ body {
     flex-wrap: wrap;
 }
 
-.action-btn {
-    background: white;
-    color: #333;
-    border: 1px solid #ccc;
-    padding: 10px 24px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: 0.2s;
-    border-radius: 3px;
-}
-
-.action-btn:hover {
-    background: #f0f0f0;
-}
-
-.save-button {
-    background-color: #2d5016;
-    color: white;
-    border: none;
-    padding: 10px 24px;
-    font-size: 14px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 3px;
-}
-
-.save-button:hover {
-    background-color: #1e5aa8;
-}
-
 /* Estilo de impresion */
 
 @media print {
     body {
         padding: 0;
     }
+    .modal-overlay,
     .save-status-bar,
     .editor-toolbar, 
     .toggle-mano-obra-mini,

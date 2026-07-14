@@ -4,11 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../assets/common/variables.css">
+    <link rel="stylesheet" href="../assets/common/common.css">
     <link rel="stylesheet" href="../assets/sheet/sheet.css">
-    <script src="../assets/sheet/sheet.js"></script>
-    <script src="../assets/sheet/editor.js"></script>
-    <script src="../assets/sheet/save.js"></script>
-    <script src="../assets/sheet/album.js"></script>
     <title>LoworkShop_{CLIENTE}_{MATRICULA}</title>
 </head>
 
@@ -42,8 +40,10 @@
     <div class="modal-overlay" id="modalCoches" onclick="if(event.target===this) cerrarModalCoches()">
         <div class="modal-box">
             <div class="modal-header">
-                <h3 id="modalTitulo">Biblioteca de vehículos</h3>
-                <button class="modal-close" onclick="cerrarModalCoches()">&times;</button>
+                <div class="marco-icono">
+                    <img src="../img/favicon.ico" alt="isologo" width="30px">
+                </div>
+                <h3 id="modalTitulo">BIBLIOTECA DE VEHÍCULOS</h3>
             </div>
         
             <div class="modal-body">
@@ -55,15 +55,15 @@
                 <!-- Apartado biblioteca -->
             
                 <div id="tabBiblioteca" class="modal-tab-content active">
-                    <div class="modal-field">
-                        <label>Marca</label>
-                        <select id="selectMarca" onchange="onMarcaChange()">
+                    <div class="campo-grupo">
+                        <label class="campo-label">Marca</label>
+                        <select id="selectMarca" class="campo-input" onchange="onMarcaChange()">
                             <option value="">-- Selecciona --</option>
                         </select>
                     </div>
-                    <div class="modal-field">
-                        <label>Modelo</label>
-                        <select id="selectModelo" onchange="onModeloChange()">
+                    <div class="campo-grupo">
+                        <label class="campo-label">Modelo</label>
+                        <select id="selectModelo" class="campo-input" onchange="onModeloChange()">
                             <option value="">-- Selecciona --</option>
                         </select>
                     </div>
@@ -83,12 +83,12 @@
                 <!-- Apartado URL -->
 
                 <div id="tabUrl" class="modal-tab-content">
-                    <div class="modal-field">
-                        <label>URL de la imagen</label>
-                        <input type="text" id="urlImagen" placeholder="https://...">
+                    <div class="campo-grupo">
+                        <label class="campo-label">URL de la imagen</label>
+                        <input type="text" id="urlImagen" class="campo-input" placeholder="https://...">
                     </div>
 
-                    <button class="modal-action-btn" onclick="previsualizarUrl()">Cargar imagen</button>
+                    <button class="btn-action" style="margin-bottom: 12px;" onclick="previsualizarUrl()">Cargar imagen</button>
                 
                     <div class="modal-preview" id="urlPreview">
                         <span>Vista previa</span>
@@ -98,29 +98,29 @@
                 <!-- Gestionar biblioteca (gestionar marcas, modelos y añadir fotos locales o mediante url) -->
                 
                 <div id="vistaGestionBiblioteca" class="modal-tab-content">
-                    <div class="modal-field">
-                        <label>Marca</label>
-                            <select id="gestionMarca" onchange="onGestionMarcaChange()"></select>
+                    <div class="campo-grupo">
+                        <label class="campo-label">Marca</label>
+                            <select id="gestionMarca" class="campo-input" onchange="onGestionMarcaChange()"></select>
                     </div>
                 
-                    <div class="modal-field" id="contenedorMarcaNueva" style="display:none;">
-                        <label>Nueva marca</label>
-                            <input type="text" id="gestionMarcaNueva">
+                    <div class="campo-grupo" id="contenedorMarcaNueva" style="display:none;">
+                        <label class="campo-label">Nueva marca</label>
+                            <input type="text" id="gestionMarcaNueva" class="campo-input">
                     </div>
                 
-                    <div class="modal-field">
-                        <label>Modelo</label>
-                            <select id="gestionModelo" onchange="onGestionModeloChange()"></select>
+                    <div class="campo-grupo">
+                        <label class="campo-label">Modelo</label>
+                            <select id="gestionModelo" class="campo-input" onchange="onGestionModeloChange()"></select>
                     </div>
                 
-                    <div class="modal-field" id="contenedorModeloNuevo" style="display:none;">
-                        <label>Nuevo modelo</label>
-                            <input type="text" id="gestionModeloNuevo">
+                    <div class="campo-grupo" id="contenedorModeloNuevo" style="display:none;">
+                        <label class="campo-label">Nuevo modelo</label>
+                            <input type="text" id="gestionModeloNuevo" class="campo-input">
                     </div>
                 
-                    <div class="modal-field">
-                        <label>Nombre</label>
-                            <input type="text" id="gestionNombre">
+                    <div class="campo-grupo">
+                        <label class="campo-label">Nombre</label>
+                            <input type="text" id="gestionNombre" class="campo-input">
                     </div>
                 
                     <div class="modal-preview" id="gestionPreview"></div>
@@ -128,10 +128,11 @@
                 
                 <!-- Botones opciones -->
 
-                <div class="modal-footer">
-                    <button class="modal-cancel-btn" onclick="accionSecundariaModal()" id="btnSecundarioModal">Cancelar</button>
-                    <button class="modal-cancel-btn" onclick="accionMediaModal()" id="btnMedioModal">Añadir archivo local</button>
-                    <button class="modal-select-btn" onclick="guardarImagenBiblioteca()" id="btnPrincipalModal">Usar imagen</button>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="accionSecundariaModal()" id="btnSecundarioModal">Cancelar</button>
+                        <button class="btn-action" onclick="accionMediaModal()" id="btnMedioModal">Añadir archivo local</button>
+                        <button class="btn-primary" onclick="guardarImagenBiblioteca()" id="btnPrincipalModal">Usar imagen</button>
+                    </div>
                 </div>
 
                 <input type="file" id="inputArchivoBiblioteca" accept="image/*" style="display:none">
@@ -148,19 +149,19 @@
         <div class="section-header">INFORMACIÓN DEL CLIENTE Y VEHÍCULO</div>
         <div class="info-grid">
             <div class="info-item">
-                <div class="info-label">NOMBRE DEL CLIENTE:</div>
+                <div class="campo-label">NOMBRE DEL CLIENTE:</div>
                 <input type="text" class="info-value" id="cliente" value="{CLIENTE}">
             </div>
             <div class="info-item">
-                <div class="info-label">FECHA:</div>
+                <div class="campo-label">FECHA:</div>
                 <input type="date" class="info-value" id="fecha" value="{FECHA}">
             </div>
             <div class="info-item">
-                <div class="info-label">MODELO DEL VEHÍCULO:</div>
+                <div class="campo-label">MODELO DEL VEHÍCULO:</div>
                 <input type="text" class="info-value" id="modelo" value="{MODELO}">
             </div>
             <div class="info-item">
-                <div class="info-label">MATRÍCULA:</div>
+                <div class="campo-label">MATRÍCULA:</div>
                 <input type="text" class="info-value" id="matricula" value="{MATRICULA}">
             </div>
         </div>
@@ -247,11 +248,15 @@
 
     <div class="acciones-finales">
         <button class="toggle-mano-obra-mini" onclick="toggleManoObra()" title="Mostrar/Ocultar mano de obra">Ocultar mano de obra</button>
-        <button class="action-btn" onclick="clearForm(); marcarComoModificada();">Limpiar formulario</button>
-        <button class="action-btn" onclick="window.print()">Imprimir</button>
-        <button class="save-button" onclick="clearTimeout(autoSaveTimer); guardarHoja(true);">Guardar hoja</button>
+        <button class="btn-cancel" onclick="clearForm();;">Limpiar formulario</button>
+        <button class="btn-action" onclick="window.print()">Imprimir</button>
+        <button class="btn-primary" onclick="clearTimeout(autoSaveTimer); guardarHoja(true);">Guardar hoja</button>
     </div>
 
-    <div id="toast"></div>
+    <script src="../assets/common/common.js"></script>
+    <script src="../assets/sheet/sheet.js"></script>
+    <script src="../assets/sheet/editor.js"></script>
+    <script src="../assets/sheet/save.js"></script>
+    <script src="../assets/sheet/album.js"></script>
 </body>
 </html>

@@ -190,7 +190,7 @@ function abrirHoja(nombreArchivo) {
 
 // ── ELIMINAR ──────────────────────────────────────
 async function eliminarHoja(nombre) {
-    if (!confirm(`¿Eliminar "${nombre.replace('.html','').replace(/_/g,' ')}"?`)) return;
+    if (!await confirmar(`Eliminar ${nombre.replace('.html','').replace(/_/g,' ')}`, "¿Seguro que deseas eliminar esta hoja?")) return;
     try {
         await dirHandle.removeEntry(nombre);
         todasHojas = todasHojas.filter(h => h.nombre !== nombre);
@@ -259,7 +259,7 @@ async function crearHoja() {
         toast('Introduce al menos el nombre o la matrícula.', true); 
         return; 
     }
-
+    
     const archivo   = nombre + '.html';
     const fechaHoy  = new Date().toISOString().split('T')[0];
     let contenido = await obtenerPlantilla();
@@ -273,7 +273,7 @@ async function crearHoja() {
         try {
             await dirHandle.getFileHandle(archivo);
             
-            if (!confirm(`"${archivo}" ya existe. ¿Sobreescribir?`)) 
+            if (!await confirmar(`"${archivo}" ya existe. ¿Sobreescribir?`, "¿Seguro que desea sobreescribir el archivo?")) 
                 return;
         } catch (_) {}
         const fh = await dirHandle.getFileHandle(archivo, { create: true });
@@ -290,16 +290,8 @@ async function crearHoja() {
     }
 }
 
-// ── TOAST ─────────────────────────────────────────
-function toast(msg, error = false) {
-    const el = document.getElementById('toast');
-    
-    el.textContent = msg;
-    el.className = 'visible' + (error ? ' error' : '');
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.className = '', 3000);
-}
 // Menu lateral
+
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("collapsed");
 }

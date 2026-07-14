@@ -12,15 +12,6 @@ function toggleManoObra() {
     }
 } // toggleManoObra()
 
-// Función para mostrar notificaciones dinámicas
-function toast(msg, error = false) {
-    const el = document.getElementById('toast');
-    el.textContent = msg;
-    el.className = 'visible' + (error ? ' error' : '');
-    clearTimeout(el._t);
-    el._t = setTimeout(() => el.className = '', 3000);
-} // toast()
-
 // Auto-guardar cada cambio
 function setupAutoSave() {
     // IDs que necesitan ser únicos para cada input
@@ -55,8 +46,8 @@ function loadData() {
 } // loadData()
 
 // Limpiar hoja
-function clearForm() {
-    if(confirm('¿Seguro que quieres borrar todos los datos del formulario?')) {
+async function clearForm() {
+    if(await confirmar('Limpiar formulario', '¿Seguro que quieres borrar todos los datos del formulario?')) {
         // Limpiar localStorage
         Object.keys(localStorage).forEach(key => {
             if(key.startsWith('taller_')) {

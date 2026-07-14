@@ -1,0 +1,13 @@
+/* Colores principales y variables CSS */
+:root {
+    --azul:      #1e5aa8;
+    --azul-osc:  #174a8c;
+    --verde:     #2d5016;
+    --verde-osc: #1f3a0f;
+    --rojo:      #c41e3a;
+    --rojo-osc:  #a01528;
+    --gris-bg:   #f2f2f2;
+    --gris-borde:#cccccc;
+    --texto:     #333333;
+    --blanco:    #ffffff;
+}
