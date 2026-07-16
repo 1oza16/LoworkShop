@@ -1,0 +1,58 @@
+<div class="aviso-navegador" id="aviso-navegador">
+    <strong>Navegador no compatible.</strong>
+    Esta aplicación requiere <strong>Chrome, Edge o Brave</strong> (v86+).
+    Firefox y Safari no soportan File System Access API.
+</div>
+
+<div class="section-header">RESUMEN</div>
+<div class="section-box">
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-num" id="stat-total">—</div>
+            <div class="stat-label">Hojas guardadas</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" id="stat-mes">—</div>
+            <div class="stat-label">Este mes</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-num" id="stat-ultima">—</div>
+            <div class="stat-label">Última creada</div>
+        </div>
+    </div>
+</div>
+
+<div class="section-header">ACCIONES RÁPIDAS</div>
+<div class="section-box">
+    <div class="acciones-grid">
+        <button class="btn-accion" onclick="abrirModal()">
+                <img src="img/icons/sheet1.png" alt="loworkshop_sheet" class="icon">
+            <div>
+                <div class="accion-titulo">Nueva hoja</div>
+                <div class="accion-desc">Crear hoja de presupuesto y reparación en blanco</div>
+            </div>
+        </button>
+        <button class="btn-accion" id="btn-recargar" onclick="recargarHojas()" disabled>
+                <img src="img/icons/reload1.png" alt="reload" class="icon">
+            <div>
+                <div class="accion-titulo">Actualizar lista</div>
+                <div class="accion-desc">Recargar las hojas desde la carpeta seleccionada</div>
+            </div>
+        </button>
+    </div>
+</div>
+
+<div class="section-header">HOJAS GUARDADAS</div>
+<div class="section-box">
+    <div class="buscador-wrap">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="buscador" placeholder="Buscar por nombre de hoja…" oninput="filtrarHojas()" disabled>
+    </div>
+    <div id="lista-hojas">
+        <div class="estado-vacio">
+            Selecciona la carpeta de hojas para ver los archivos guardados.
+        </div>
+    </div>
+</div>

@@ -146,14 +146,6 @@ main {
     overflow-y: auto;
 }
 
-.view{
-    display:none;
-}
-
-.view.active{
-    display:block;
-}
-
 /* Aviso de navegador no soportado */
 
 .aviso-navegador {
