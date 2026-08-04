@@ -71,7 +71,7 @@ async function guardarHoja(forzar = true) {
     actualizarBarraGuardado("saving");
 
     try {
-        const ruta = window.location.pathname;
+        const nombre = window.location.pathname.split("/").pop().replace(".html", "");
         const html = document.documentElement.cloneNode(true).outerHTML;
         const clon = document.documentElement.cloneNode(true);
 
@@ -88,28 +88,14 @@ async function guardarHoja(forzar = true) {
 
         const htmlPDF = "<!DOCTYPE html>\n" + clon.outerHTML;
 
-        const resp =
-            await fetch(
-                '/api/guardar-hoja',
-                {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type':
-                            'application/json'
-                    },
-                    body: JSON.stringify({
-                        ruta,
-                        html,
-                        htmlPDF
-                    })
-                }
-            );
+        const resp = await API.guardarHoja(nombre, html, htmlPDF);
 
-        const data = await resp.json();
+        // const data = await resp.json();
 
-        if (!data.ok) {
-            throw new Error(data.error);
+        if (!resp.ok) {
+            throw new Error(resp.error);
         }
+        
         cambiosPendientes = false;
         actualizarBarraGuardado("saved");
 

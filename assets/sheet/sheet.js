@@ -32,18 +32,18 @@ function setupAutoSave() {
 } // setupAutoSave()
 
 // Cargar datos guardados
-function loadData() {
-    document.querySelectorAll('input').forEach((input, index) => {
-        if(!input.id) input.id = 'input_' + index;
-        const saved = localStorage.getItem('taller_' + input.id);
-        if(saved) input.value = saved;
-    });
+// function loadData() {
+//     document.querySelectorAll('input').forEach((input, index) => {
+//         if(!input.id) input.id = 'input_' + index;
+//         const saved = localStorage.getItem('taller_' + input.id);
+//         if(saved) input.value = saved;
+//     });
 
-    document.querySelectorAll('[contenteditable="true"]').forEach(editable => {
-        const saved = localStorage.getItem('taller_' + editable.id);
-        if(saved) editable.innerHTML = saved;
-    });
-} // loadData()
+//     document.querySelectorAll('[contenteditable="true"]').forEach(editable => {
+//         const saved = localStorage.getItem('taller_' + editable.id);
+//         if(saved) editable.innerHTML = saved;
+//     });
+// } // loadData()
 
 // Limpiar hoja
 async function clearForm() {
@@ -60,6 +60,6 @@ async function clearForm() {
 
 // Inicializar
 window.addEventListener('DOMContentLoaded', function() {
-    loadData();
+    // loadData();
     setupAutoSave();
 });

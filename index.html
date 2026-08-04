@@ -22,30 +22,30 @@
     <div class="barra-estado">
         <div class="estado-texto">
             <button id="btnMenu" class="menu-toggle" onclick="toggleSidebar()">☰</button>
-            <span id="texto-estado">Sin carpeta seleccionada — haz clic en el botón para comenzar</span>
+            <h3 id="texto-estado">Pestaña sin seleccionar</h3>
         </div>
         <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">Seleccionar carpeta de hojas</button>
     </div>
 
     <div class="app-container">
         <aside id="sidebar" class="collapsed">
-            <button onclick="changeView('home')">
+            <button onclick="changeView('home')" id="home">
                 <img src="img/icons/panel_principal.png" alt="panel_principal" class="icon">
                 <span>Inicio</span>
             </button>
-            <button onclick="changeView('pdf')">
+            <button onclick="changeView('pdf')" id="pdf">
                 <img src="img/icons/pdf.png" alt="panel_principal" class="icon">
                 <span>PDFs</span>
             </button>
-            <button onclick="changeView('album')">
+            <button onclick="changeView('album')" id="album">
                 <img src="img/icons/album_coches.png" alt="panel_principal" class="icon">
                 <span>Álbum</span>
             </button>
-            <button onclick="changeView('statistics')">
+            <button onclick="changeView('statistics')" id="statistics">
                 <img src="img/icons/estadisticas.png" alt="panel_principal" class="icon">
                 <span>Estadísticas</span>
             </button>
-            <button onclick="changeView('settings')">
+            <button onclick="changeView('settings')" id="settings">
                 <img src="img/icons/ajustes.png" alt="panel_principal" class="icon">
                 <span>Configuración</span>
             </button>
@@ -90,6 +90,7 @@
 </div>
 
 <script src="assets/common/common.js"></script>
+<script src="assets/common/api.js"></script>
 <script src="assets/index/index.js"></script>
 <script src="assets/index/home.js"></script>
 </body>

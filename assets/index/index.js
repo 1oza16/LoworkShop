@@ -1,5 +1,3 @@
-// ----------------------------------------------------- Meter en home.js lo de Arriba ↑ y mantener en index.js lo de abajo ↓ -----------------------------------------------------
-
 const main = document.getElementById("mainContent");
 
 // Menu lateral
@@ -16,6 +14,11 @@ async function loadView(nameView) {
 
         const html = await response.text();
         main.innerHTML = html;
+
+        const btn = document.getElementById(nameView);
+        document.querySelector(".active")?.classList.remove("active");
+        document.getElementById('texto-estado').textContent = btn.querySelector("span").textContent;
+        btn.classList.add('active');
     }
     catch (error) {
         console.error(error);

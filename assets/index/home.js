@@ -86,7 +86,6 @@ async function conectarCarpetaRaiz(rootHandle) {
             { create: true }
         );
 
-    document.getElementById('texto-estado').textContent = rootHandle.name;
     document.getElementById('btn-conectar').textContent ='↺ Cambiar carpeta';
     document.getElementById('btn-recargar').disabled = false;
     document.getElementById('buscador').disabled = false;

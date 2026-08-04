@@ -116,7 +116,6 @@ body {
     background: none;
     border: none;
     color: var(--blanco);
-    
     text-align: left;
     padding: 14px 18px;
     cursor: pointer;
@@ -130,7 +129,7 @@ body {
 }
 
 #sidebar button.active {
-    background: white;
+    background: var(--blanco);
     color: var(--azul);
     font-weight: bold;
     border-left: 4px solid var(--verde);

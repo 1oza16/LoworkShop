@@ -32,15 +32,8 @@ function abrirSelectorArchivo() {
 // Añadir indice de los coches a indiceCoches mediante el fichero (fotos_coches/index.json)
 async function cargarIndiceCoches() {
     try {
-        const resp = await fetch(
-            "/api/coches",
-            { cache: "no-store" }
-        );
-
-        if (!resp.ok) {
-            throw new Error("No se pudo cargar catálogo");
-        }
-        indiceCoches = await resp.json();
+        const resp = await API.obtenerCoches();
+        indiceCoches = resp;
     } catch (err) {
         console.error(err);
         indiceCoches = {};
@@ -68,7 +61,7 @@ async function abrirModalCoches() {
 
     const marcas = Object.keys(datos);
     if (marcas.length === 0) {
-        thumbs.innerHTML = '<div class="modal-empty-msg">No hay fotos en fotos_coches/. Añade imágenes y regenera index.json.</div>';
+        thumbs.innerHTML = '<div class="modal-empty-msg">Añade fotos en el album para poder usar las imágenes</div>';
     } else {
         marcas.forEach(marca => {
             const opt = document.createElement('option');
@@ -84,52 +77,51 @@ async function abrirModalCoches() {
 } // abrirModalCoches()
 
 // Subida de fotos locales a la biblioteca
-async function subirFotoBiblioteca() {
-    const marca = document.getElementById('gestionMarca').value.trim();
-    const modelo = document.getElementById('gestionModelo').value.trim();
-    const nombre = document.getElementById('gestionNombre').value.trim();
-    const archivo = document.getElementById('gestionArchivo').files[0];
-    const extension = archivo.name.substring(archivo.name.lastIndexOf('.'));
+// async function subirFotoBiblioteca() {
+//     const marca = document.getElementById('gestionMarca').value.trim();
+//     const modelo = document.getElementById('gestionModelo').value.trim();
+//     const nombre = document.getElementById('gestionNombre').value.trim();
+//     const archivo = document.getElementById('gestionArchivo').files[0];
+//     const extension = archivo.name.substring(archivo.name.lastIndexOf('.'));
     
-    if (!marca || !modelo || !nombre || !archivo) {
-        toast("Completa todos los campos", true);
-        return;
-    }
+//     if (!marca || !modelo || !nombre || !archivo) {
+//         toast("Completa todos los campos", true);
+//         return;
+//     }
 
-    const base64 = await archivoABase64(archivo);
+//     const base64 = await archivoABase64(archivo);
 
-    const resp =
-        await fetch(
-            "/api/subir-foto",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type":
-                        "application/json"
-                },
-                body: JSON.stringify({
-                    marca,
-                    modelo,
-                    nombre,
-                    imagen: base64
-                })
-            }
-        );
+//     const resp =
+//         await fetch(
+//             "/api/subir-foto",
+//             {
+//                 method: "POST",
+//                 headers: {
+//                     "Content-Type":
+//                         "application/json"
+//                 },
+//                 body: JSON.stringify({
+//                     marca,
+//                     modelo,
+//                     nombre,
+//                     imagen: base64
+//                 })
+//             }
+//         );
 
-    const resultado = await resp.json();
+//     const resultado = await resp.json();
 
-    if (!resultado.ok) {
-        // alert(resultado.error || "Error al guardar");
-        toast(resultado.error || "Error al guardar", true);
-        return;
-    }
+//     if (!resultado.ok) {
+//         toast(resultado.error || "Error al guardar", true);
+//         return;
+//     }
 
-    indiceCoches = null;
+//     indiceCoches = null;
 
-    await cargarIndiceCoches();
+//     await cargarIndiceCoches();
 
-    toast("Imagen añadida correctamente",);
-} // subirFotoBiblioteca()
+//     toast("Imagen añadida correctamente");
+// } // subirFotoBiblioteca()
 
 // Cambios de pestañas entre biblioteca, URL y gestionar
 function cambiarTab(nombre, boton) {
@@ -225,7 +217,7 @@ function usarImagenUrl() {
     const url = document.getElementById('urlImagen').value.trim();
 
     if (!url) {
-        alert('Introduce una URL')
+        toast('Introduce una URL', true)
         return;
     }
 
@@ -254,47 +246,47 @@ function obtenerExtensionDesdeUrl(url) {
 
 
 // Guardado de imagenes URL en biblioteca local
-async function guardarImagenUrl() {
-    const marca = document.getElementById('urlMarca').value.trim();
-    const modelo = document.getElementById('urlModelo').value.trim();
-    const nombre = document.getElementById('urlNombre').value.trim();
-    const url = document.getElementById('urlImagen').value.trim();
+// async function guardarImagenUrl() {
+//     const marca = document.getElementById('urlMarca').value.trim();
+//     const modelo = document.getElementById('urlModelo').value.trim();
+//     const nombre = document.getElementById('urlNombre').value.trim();
+//     const url = document.getElementById('urlImagen').value.trim();
 
-    if ( !marca || !modelo || !nombre || !url) {
-        alert("Completa todos los campos");
-        return;
-    }
+//     if ( !marca || !modelo || !nombre || !url) {
+//         alert("Completa todos los campos");
+//         return;
+//     }
 
-    const resp = await fetch(
-        "/api/guardar-url",
-        {
-            method: "POST",
-            headers: {
-                "Content-Type":
-                    "application/json"
-            },
-            body: JSON.stringify({
-                marca,
-                modelo,
-                nombre,
-                url
-            })
-        }
-    );
+//     const resp = await fetch(
+//         "/api/guardar-url",
+//         {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type":
+//                     "application/json"
+//             },
+//             body: JSON.stringify({
+//                 marca,
+//                 modelo,
+//                 nombre,
+//                 url
+//             })
+//         }
+//     );
 
-    const resultado = await resp.json();
+//     const resultado = await resp.json();
 
-    if (!resultado.ok) {
-        alert(resultado.error || "Error guardando imagen");
-        return;
-    }
+//     if (!resultado.ok) {
+//         alert(resultado.error || "Error guardando imagen");
+//         return;
+//     }
 
-    indiceCoches = null;
+//     indiceCoches = null;
 
-    await cargarIndiceCoches();
+//     await cargarIndiceCoches();
 
-    alert("Imagen añadida correctamente");
-} // guardarImagenUrl()
+//     alert("Imagen añadida correctamente");
+// } // guardarImagenUrl()
 
 // Conversor a Base64
 function archivoABase64(file) {
@@ -334,9 +326,7 @@ function prepararUrlBiblioteca() {
     const url = document.getElementById('urlImagen').value.trim();
 
     if (!url) {
-        alert(
-            'Introduce una URL'
-        );
+        toast('Introduce una URL', true);
         return;
     }
 
@@ -422,7 +412,7 @@ function seleccionarThumb(thumbEl, ruta) {
     const tabBiblioteca = document.getElementById('tabBiblioteca');
 
     if (tabBiblioteca.classList.contains('active')) {
-        btn.disabled = false;
+        // btn.disabled = false;
     }
 } // seleccionarThumb()
 
@@ -538,23 +528,18 @@ async function guardarImagenBiblioteca() {
     const nombre = document.getElementById('gestionNombre').value.trim();
 
     // Nueva marca
-
     if (marca === '__NUEVA_MARCA__') {
         marca = document.getElementById('gestionMarcaNueva').value.trim();
     }
 
     // Nuevo modelo
-
     if (modelo === '__NUEVO_MODELO__') {
         modelo = document.getElementById('gestionModeloNuevo').value.trim();
     }
 
     // Validaciones
-
     if (!marca || !modelo || !nombre) {
-        alert(
-            'Completa todos los campos'
-        );
+        toast('Completa todos los campos', true);
         return;
     }
 
@@ -563,63 +548,14 @@ async function guardarImagenBiblioteca() {
     try {
 
         // Url
-
         if (modoGestion === 'url') {
-            const resp =
-                await fetch(
-                    '/api/guardar-url',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type':
-                                'application/json'
-                        },
-                        body: JSON.stringify({
-                            marca,
-                            modelo,
-                            nombre: nombreFinal,
-                            url: imagenPendiente
-                        })
-                    }
-                );
-
-            const data = await resp.json();
-
-            if (!data.ok) {
-                throw new Error(data.error);
-            }
+            const resp = API.guardarFotoURL(marca, modelo, nombreFinal, imagenPendiente);
         }
-
+        
         // Archivo
-
         if (modoGestion === 'archivo') {
-
             const base64 = await archivoABase64(imagenPendiente);
-
-            const resp =
-                await fetch(
-                    '/api/subir-foto',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type':
-                                'application/json'
-                        },
-                        body: JSON.stringify({
-                            marca,
-                            modelo,
-                            nombre: nombreFinal,
-                            imagen: base64
-                        })
-                    }
-                );
-
-            const data = await resp.json();
-
-            if (!data.ok) {
-                throw new Error(data.error);
-            }
-
+            const resp = API.subirFoto(marca, modelo, nombreFinal, base64)
         }
 
         // Recargar indice de coches 
@@ -627,11 +563,11 @@ async function guardarImagenBiblioteca() {
         indiceCoches = null;
         await cargarIndiceCoches();
 
-        alert('Imagen guardada correctamente');
+        toast('Imagen guardada correctamente');
         cancelarGestionBiblioteca();
     } catch (err) {
         console.error(err);
-        alert('Error guardando imagen');
+        toast('Error guardando imagen', true);
     }
 
 } // guardarImagenBiblioteca()
