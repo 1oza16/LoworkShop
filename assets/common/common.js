@@ -1,4 +1,12 @@
 let resolverConfirmacion = null;
+let spinner = null;
+
+function getPath() {
+    const ruta = window.location.pathname.toLowerCase();
+    if (ruta.includes("/stencil/") || ruta.includes("/notas/"))
+        return "../";
+    return "";
+}
 
 //#region Toast
 
@@ -24,15 +32,7 @@ function toast(msg, error = false) {
 
 //#region Panel de confirmacion 
 
-function getPath() {
-    const ruta = window.location.pathname.toLowerCase();
-    if (ruta.includes("/stencil/") || ruta.includes("/notas/"))
-        return "../";
-    return "";
-}
-
 function crearConfirmDialog() {
-
     if (document.getElementById("confirmOverlay"))
         return;
 
@@ -106,3 +106,39 @@ function inicializarConfirmDialog() {
 }
 
 //#endregion
+
+//#region Spinner de carga
+
+function crearSpinner() {
+    if (spinner)
+        return spinner;
+
+    const path = getPath();
+
+    spinner = document.createElement("div");
+    spinner.className = "spinner-overlay";
+    spinner.innerHTML = `
+        <div class="spinner-box">
+            <img src="${path}img/favicon.ico" alt="Cargando">
+        </div>
+    `;
+
+    return spinner;
+}
+
+function abrirSpinner() {
+    if (document.querySelector(".spinner-overlay"))
+        return;
+
+    document.body.appendChild(
+        crearSpinner()
+    );
+}
+
+function cerrarSpinner() {
+    spinner?.remove();
+    spinner = null;
+}
+
+//#endregion
+

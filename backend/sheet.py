@@ -1,4 +1,6 @@
 from core import filesystem
+from bs4 import BeautifulSoup
+from .album import INDEX_IMAGES
 
 #  Guarda las hojas informativas en .html una vez finalizadas para poder modificarlas de nuevo (notas) y genera un .pdf con la información de la hoja (pdf).
 def api_guardar_hoja(handler):
@@ -9,6 +11,17 @@ def api_guardar_hoja(handler):
         name = data["nombre"]
         html = data["html"]
         htmlPDF = data["htmlPDF"]
+
+        soup = BeautifulSoup(htmlPDF, "html.parser")
+        
+        for img in soup.select("img[data-image-id]"):
+            image_id = img.get("data-image-id")
+            ruta = INDEX_IMAGES.get(image_id)
+
+            if ruta is not None:
+                img["src"] = ruta.resolve().as_uri()
+        
+        htmlPDF = str(soup)
 
         ruta_html = filesystem.NOTES/ f"{name}.html"
 

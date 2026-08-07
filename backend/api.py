@@ -6,6 +6,9 @@ from backend import album
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
+        if self.path.startswith("/api/retornar-imagen/"):
+            return album.api_retornar_imagen(self)
+    
         endpoint = GET_ENDPOINTS.get(self.path)
 
         if endpoint:
@@ -59,4 +62,5 @@ POST_ENDPOINTS = {
         "/api/guardar-hoja": sheet.api_guardar_hoja,
         "/api/subir-foto": album.api_subir_foto,
         "/api/guardar-url": album.api_guardar_url,
+        "/api/eliminar-imagen": album.api_eliminar_imagen,
     }

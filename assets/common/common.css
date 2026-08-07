@@ -235,3 +235,45 @@ body {
 #confirmMessage {
     margin-bottom: 10px;
 }
+
+/* Spinner de carga */
+
+.spinner-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 9999;
+}
+
+.spinner-box {
+    width: 110px;
+    height: 110px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--blanco);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+
+.spinner-box img {
+    width: 62px;
+    height: 62px;
+    animation: spinnerLogo 1.6s infinite ease-in-out;
+}
+
+@keyframes spinnerLogo {
+    0% {
+        transform: rotate(0deg);
+    }
+    65% {
+        transform: rotate(360deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+
+}

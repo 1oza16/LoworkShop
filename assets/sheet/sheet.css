@@ -86,6 +86,11 @@ body {
 
 /* Header */
 
+.model-image-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .model {
     max-width: 120px;
     height: auto;
@@ -190,19 +195,54 @@ body {
     overflow-y: auto;
 }
 
-.modal-thumbs img {
-    width: 80px;
-    height: 62px;
+.modal-thumbs img.thumb {
+    width: 129px;
+    height: 85px;
     object-fit: cover;
     border: 2px solid #ddd;
     cursor: pointer;
-    border-radius: 0;
 }
 
-.modal-thumbs img:hover,
-.modal-thumbs img.selected {
+.modal-thumbs .thumb-item {
+    position: relative;
+    display: inline-block;
+}
+
+.modal-thumbs .thumb-item:hover img.thumb,
+.modal-thumbs .thumb-item.selected img {
     border-color: var(--azul);
     outline: 1px solid var(--azul);
+}
+
+.thumb-action,
+.thumb-delete {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    border: none;
+    background: var(--blanco);
+    border-radius: 3px;
+    cursor: pointer;
+    transition: opacity .15s;
+}
+
+.thumb-item:hover .thumb-action,
+.thumb-item:hover .thumb-delete,
+.model-image-wrapper:hover .thumb-action {
+    opacity: 1;
+}
+
+.thumb-action img,
+.thumb-delete img {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
 }
 
 .modal-empty-msg {

@@ -40,8 +40,11 @@ async function post(url, datos) {
 
 const API = {
     // GET
-    obtenerCoches() {
+    obtenerIndiceCoches() {
         return get("/api/coches");
+    },
+    retornarImagen(id) {
+        return `/api/retornar-imagen/${id}`;
     },
 
     // POST
@@ -67,5 +70,10 @@ const API = {
             nombreFinal, 
             imagenPendiente
         });
-    }
+    }, 
+    eliminarImagen(id) {
+        return post("/api/eliminar-imagen", {
+            id
+        })
+    }, 
 };

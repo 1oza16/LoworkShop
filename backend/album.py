@@ -1,11 +1,13 @@
 from core import filesystem
-import os
 import json
 import base64
 import urllib
+import hashlib
+import mimetypes
 
 INDEX = filesystem.PHOTOS / "index.json"
 VALID_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+INDEX_IMAGES = {}
 
 # Devuelve el catálogo de vehículos.
 def api_coches(handler):
@@ -45,6 +47,106 @@ def api_coches(handler):
             }
         )
 
+def api_retornar_imagen(handler):
+
+    image_id = handler.path.removeprefix("/api/retornar-imagen/")
+
+    try:
+
+        ruta = INDEX_IMAGES.get(image_id)
+
+        if ruta is None or not ruta.is_file():
+
+            handler.send_error(
+                404,
+                "Imagen no encontrada"
+            )
+
+            return
+
+        mime = (
+            mimetypes.guess_type(ruta)[0]
+            or "application/octet-stream"
+        )
+
+        with open(
+            ruta,
+            "rb"
+        ) as f:
+
+            contenido = f.read()
+
+        handler.send_response(200)
+
+        handler.send_header(
+            "Content-Type",
+            mime
+        )
+
+        handler.send_header(
+            "Content-Length",
+            str(len(contenido))
+        )
+
+        handler.end_headers()
+
+        handler.wfile.write(contenido)
+
+    except Exception as e:
+
+        print(
+            "ERROR ENVIANDO IMAGEN:",
+            e
+        )
+
+        handler.send_error(
+            500,
+            str(e)
+        )
+
+def api_eliminar_imagen(handler):
+
+    try:
+
+        data = handler.read_json()
+
+        image_id = data["id"]
+
+        ruta = INDEX_IMAGES.get(image_id)
+
+        if ruta is None or not ruta.is_file():
+
+            return handler.send_json(
+                404,
+                {
+                    "ok": False,
+                    "mensaje": "Imagen no encontrada"
+                }
+            )
+
+        ruta.unlink()
+
+        generar_indice_coches()
+
+        return handler.send_json(
+            200,
+            {
+                "ok": True
+            }
+        )
+
+    except Exception as e:
+
+        print("ERROR ELIMINANDO IMAGEN:", e)
+
+        return handler.send_json(
+            500,
+            {
+                "ok": False,
+                "mensaje": str(e)
+            }
+        )
+    
 # Guarda las imagenes locales en la biblioteca de vehículos (fotos_coches).
 def api_subir_foto(handler):
 
@@ -76,17 +178,23 @@ def api_subir_foto(handler):
 
         resultado = generar_indice_coches()
 
+        
         handler.send_json(
             200,
             {
                 "ok": True,
-                "archivo": ruta_archivo,
+                "archivo": str(ruta_archivo),
                 "indice": resultado
             }
         )
 
     except Exception as e:
 
+        print(
+            "ERROR GUARDANDO IMAGEN LOCAL:",
+            e
+        )
+        
         handler.send_json(
             500,
             {
@@ -138,13 +246,18 @@ def api_guardar_url(handler):
             200,
             {
                 "ok": True,
-                "archivo": ruta_archivo,
+                "archivo": str(ruta_archivo),
                 "indice": resultado
             }
         )
 
     except Exception as e:
 
+        print(
+            "ERROR GUARDANDO IMAGEN URL:",
+            e
+        )
+        
         handler.send_json(
             500,
             {
@@ -154,48 +267,6 @@ def api_guardar_url(handler):
         )
 
 # Escanea fotos_coches/marca/modelo/imagen.ext y genera fotos_coches/index.json. Devuelve un dict con el resultado (para poder informar al front-end).
-# def generar_indice_coches():
-#     indice = {}
-
-#     if not filesystem.PHOTOS.is_file():
-#         filesystem.PHOTOS.mkdir(parents=True, exist_ok=True)
-
-#     for marca in sorted(filesystem.PHOTOS.iterdir()):
-#         ruta_marca = filesystem.PHOTOS / marca
-#         if not ruta_marca.is_dir():
-#             continue
-
-#         modelos = {}
-#         for modelo in sorted(ruta_marca.iterdir()):
-#             ruta_modelo = ruta_marca / modelo
-#             if not ruta_modelo.is_dir():
-#                 continue
-
-#             imagenes = sorted(
-#                 f for f in ruta_modelo.iterdir()
-#                 if os.path.splitext(f)[1].lower() in VALID_EXTENSIONS
-#             )
-#             if imagenes:
-#                 modelos[modelo] = imagenes
-
-#         if modelos: 
-#             indice[marca] = modelos
-
-#     ruta_salida = INDEX
-#     with open(ruta_salida, "w", encoding="utf-8") as f:
-#         json.dump(indice, f, ensure_ascii=False, indent=2)
-
-#     total_marcas = len(indice)
-#     total_modelos = sum(len(m) for m in indice.values())
-#     total_imagenes = sum(len(imgs) for m in indice.values() for imgs in m.values())
-
-#     return {
-#         "ok": True,
-#         "marcas": total_marcas,
-#         "modelos": total_modelos,
-#         "imagenes": total_imagenes,
-#     }
-
 def generar_indice_coches():
 
     indice = {}
@@ -230,13 +301,21 @@ def generar_indice_coches():
                     ruta_imagen.is_file()
                     and ruta_imagen.suffix.lower() in VALID_EXTENSIONS
                 ):
-                    imagenes.append(ruta_imagen.name)
+                    nombre = ruta_imagen.name
+                    imagen_id = generar_id_imagen(marca, modelo, nombre)
 
-            if imagenes:
-                modelos[modelo] = imagenes
+                    INDEX_IMAGES[imagen_id] = ruta_imagen
 
-        if modelos:
-            indice[marca] = modelos
+                    imagenes.append({
+                        "id": imagen_id,
+                        "nombre": nombre
+                    })
+
+            # if imagenes:
+            modelos[modelo] = imagenes
+
+        # if modelos:
+        indice[marca] = modelos
 
     with INDEX.open(
         "w",
@@ -267,3 +346,11 @@ def generar_indice_coches():
         "modelos": total_modelos,
         "imagenes": total_imagenes
     }
+
+def generar_id_imagen(brand, model, name):
+
+    texto = f"{brand}/{model}/{name}"
+
+    return hashlib.sha1(
+        texto.encode("utf-8")
+    ).hexdigest()[:8]

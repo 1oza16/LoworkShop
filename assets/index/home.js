@@ -259,6 +259,8 @@ async function crearHoja() {
         return; 
     }
     
+    abrirSpinner();
+
     const archivo   = nombre + '.html';
     const fechaHoy  = new Date().toISOString().split('T')[0];
     let contenido = await obtenerPlantilla();
@@ -271,8 +273,10 @@ async function crearHoja() {
     try {
         try {
             await dirHandle.getFileHandle(archivo);
-            
-            if (!await confirmar(`"${archivo}" ya existe. ¿Sobreescribir?`, "¿Seguro que desea sobreescribir el archivo?")) 
+
+            const confirmar = await confirmar(`"${archivo}" ya existe. ¿Sobreescribir?`, "¿Seguro que desea sobreescribir el archivo?");
+
+            if (!confirmar) 
                 return;
         } catch (_) {}
         const fh = await dirHandle.getFileHandle(archivo, { create: true });
@@ -282,8 +286,10 @@ async function crearHoja() {
         cerrarModal();
         await cargarHojas();
         toast(`Hoja "${archivo}" creada`);
+        cerrarSpinner();
         setTimeout(() => abrirHoja(archivo), 400);
     } catch (e) {
+        cerrarSpinner();
         toast('No se pudo crear la hoja.', true);
         console.error(e);
     }

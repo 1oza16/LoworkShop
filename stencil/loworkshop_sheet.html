@@ -30,9 +30,14 @@
         
         <img src="../img/isologo.png" alt="Lozano Workshop" class="logo">
         <div>
-            <img src="" alt="" class="model" id="modelImg" onclick="abrirModalCoches()">
+            <div class="model-image-wrapper">
+                <img src="" alt="" class="model" id="modelImg" data-image-id="" onclick="abrirModalCoches()">
+                <button type="button" class="thumb-action" onclick="quitarImagen(event)" title="Quitar imagen" aria-label="Quitar imagen" style="display:none;">
+                    <img src="../img/icons/cancel.png" alt="">
+                </button>
+            </div>
             <input type="file" id="modelUpload" accept="image/*" onchange="changeLogo(event)" style="display:none;">
-            <label class="model-upload-label" onclick="abrirModalCoches()" style="cursor:pointer;">Cambiar foto de modelo</label>
+            <label id="changeModelImg" class="model-upload-label" onclick="abrirModalCoches()">Añadir foto coche</label>
         </div>
     </div>
     

@@ -1,24 +1,60 @@
 let indiceCoches = null;
-let rutaSeleccionada = null; 
+let imagenSeleccionada = null;
 let extensionPendiente = '';
 let imagenPendiente = null;
 let modoGestion = null;
 
+const modelImg = document.getElementById('modelImg');
+const preview = document.getElementById('modalPreview');
+
+function actualizarEstadoModelImg() {
+    
+    const boton = document.querySelector('.thumb-action');
+    const texto = document.getElementById('changeModelImg');
+
+    if (!modelImg || !boton || !texto) {
+        return;
+    }
+
+    const hayImagen = Boolean(modelImg.getAttribute('src'));
+    boton.style.display = hayImagen ? 'flex' : 'none';
+    texto.style.display = hayImagen ? 'none' : 'block';
+} // actualizarEstadoModelImg()
+
 // Cambio de foto modelImg
 function changeLogo(event) {
-    const file = event.target.files[0];  // Obtiene el archivo seleccionado
+    const file = event.target.files[0]; 
     if (file) {
-        const reader = new FileReader();  // Crea un lector de archivos
+        const reader = new FileReader(); 
         reader.onload = function(e) {
-            document.getElementById('modelImg').src = e.target.result;  // Cambia el src del img
+            modelImg.src = e.target.result;
+            modelImg.dataset.imageId = '';
+            actualizarEstadoModelImg();
         };
-        reader.readAsDataURL(file);  // Lee el archivo como Data URL (base64)
+        reader.readAsDataURL(file);  
     }
 } // changeLogo()
+
+function quitarImagen(event) {
+    if (event) {
+        event.stopPropagation();
+    }
+
+    if (!modelImg) {
+        return;
+    }
+
+    modelImg.src = '';
+    modelImg.dataset.imageId = '';
+    actualizarEstadoModelImg();
+    marcarComoModificada();
+} // quitarImagen()
 
 function cerrarModalCoches() {
     document.getElementById('modalCoches').classList.remove('visible');
 } // cerrarModalCoches()
+
+
 
 function capitalizar(texto) {
     return texto.charAt(0).toUpperCase() + texto.slice(1);
@@ -32,8 +68,7 @@ function abrirSelectorArchivo() {
 // Añadir indice de los coches a indiceCoches mediante el fichero (fotos_coches/index.json)
 async function cargarIndiceCoches() {
     try {
-        const resp = await API.obtenerCoches();
-        indiceCoches = resp;
+        indiceCoches = await API.obtenerIndiceCoches();
     } catch (err) {
         console.error(err);
         indiceCoches = {};
@@ -47,8 +82,6 @@ async function abrirModalCoches() {
     const selectMarca = document.getElementById('selectMarca');
     const selectModelo = document.getElementById('selectModelo');
     const thumbs = document.getElementById('modalThumbs');
-    const preview = document.getElementById('modalPreview');
-    // const btnSeleccionar = document.getElementById('btnSeleccionarFoto');
 
     // Reset
     selectMarca.innerHTML = '<option value="">-- Selecciona --</option>';
@@ -56,8 +89,7 @@ async function abrirModalCoches() {
     selectModelo.disabled = true;
     thumbs.innerHTML = '';
     preview.innerHTML = '<span>imagen</span>';
-    // btnSeleccionar.disabled = true; --- IGNORE ---
-    rutaSeleccionada = null;
+    imagenSeleccionada = null;
 
     const marcas = Object.keys(datos);
     if (marcas.length === 0) {
@@ -72,56 +104,8 @@ async function abrirModalCoches() {
     }
 
     document.getElementById('modalCoches').classList.add('visible');
-    cambiarTab('biblioteca',document.querySelector('.modal-tab')
-);
+    cambiarTab('biblioteca',document.querySelector('.modal-tab'));
 } // abrirModalCoches()
-
-// Subida de fotos locales a la biblioteca
-// async function subirFotoBiblioteca() {
-//     const marca = document.getElementById('gestionMarca').value.trim();
-//     const modelo = document.getElementById('gestionModelo').value.trim();
-//     const nombre = document.getElementById('gestionNombre').value.trim();
-//     const archivo = document.getElementById('gestionArchivo').files[0];
-//     const extension = archivo.name.substring(archivo.name.lastIndexOf('.'));
-    
-//     if (!marca || !modelo || !nombre || !archivo) {
-//         toast("Completa todos los campos", true);
-//         return;
-//     }
-
-//     const base64 = await archivoABase64(archivo);
-
-//     const resp =
-//         await fetch(
-//             "/api/subir-foto",
-//             {
-//                 method: "POST",
-//                 headers: {
-//                     "Content-Type":
-//                         "application/json"
-//                 },
-//                 body: JSON.stringify({
-//                     marca,
-//                     modelo,
-//                     nombre,
-//                     imagen: base64
-//                 })
-//             }
-//         );
-
-//     const resultado = await resp.json();
-
-//     if (!resultado.ok) {
-//         toast(resultado.error || "Error al guardar", true);
-//         return;
-//     }
-
-//     indiceCoches = null;
-
-//     await cargarIndiceCoches();
-
-//     toast("Imagen añadida correctamente");
-// } // subirFotoBiblioteca()
 
 // Cambios de pestañas entre biblioteca, URL y gestionar
 function cambiarTab(nombre, boton) {
@@ -203,13 +187,6 @@ function previsualizarUrl() {
     if (!url) return;
 
     document.getElementById('urlPreview').innerHTML = `<img src="${url}" alt="">`;
-
-    // const preview = document.getElementById('urlPreview');
-    // preview.innerHTML = '';
-
-    // const img = document.createElement('img');
-    // img.src = url;
-    // preview.appendChild(img);
 } // previsualizarUrl()
 
 // Uso de imagen URL en modelImg
@@ -221,7 +198,9 @@ function usarImagenUrl() {
         return;
     }
 
-    document.getElementById('modelImg').src = url;
+    modelImg.src = url;
+    modelImg.dataset.imageId = '';
+    actualizarEstadoModelImg();
 
     cerrarModalCoches();
     marcarComoModificada();
@@ -243,50 +222,6 @@ function obtenerExtensionDesdeUrl(url) {
 
     return '.jpg';
 } // obtenerExtensionDesdeUrl()
-
-
-// Guardado de imagenes URL en biblioteca local
-// async function guardarImagenUrl() {
-//     const marca = document.getElementById('urlMarca').value.trim();
-//     const modelo = document.getElementById('urlModelo').value.trim();
-//     const nombre = document.getElementById('urlNombre').value.trim();
-//     const url = document.getElementById('urlImagen').value.trim();
-
-//     if ( !marca || !modelo || !nombre || !url) {
-//         alert("Completa todos los campos");
-//         return;
-//     }
-
-//     const resp = await fetch(
-//         "/api/guardar-url",
-//         {
-//             method: "POST",
-//             headers: {
-//                 "Content-Type":
-//                     "application/json"
-//             },
-//             body: JSON.stringify({
-//                 marca,
-//                 modelo,
-//                 nombre,
-//                 url
-//             })
-//         }
-//     );
-
-//     const resultado = await resp.json();
-
-//     if (!resultado.ok) {
-//         alert(resultado.error || "Error guardando imagen");
-//         return;
-//     }
-
-//     indiceCoches = null;
-
-//     await cargarIndiceCoches();
-
-//     alert("Imagen añadida correctamente");
-// } // guardarImagenUrl()
 
 // Conversor a Base64
 function archivoABase64(file) {
@@ -342,14 +277,12 @@ function onMarcaChange() {
     const marca = document.getElementById('selectMarca').value;
     const selectModelo = document.getElementById('selectModelo');
     const thumbs = document.getElementById('modalThumbs');
-    const preview = document.getElementById('modalPreview');
     // const btnSeleccionar = document.getElementById('btnSeleccionarFoto');
 
     selectModelo.innerHTML = '<option value="">-- Selecciona --</option>';
     thumbs.innerHTML = '';
     preview.innerHTML = '<span>imagen</span>';
     // btnSeleccionar.disabled = true; 
-    rutaSeleccionada = null;
 
     if (!marca || !indiceCoches[marca]) {
         selectModelo.disabled = true;
@@ -366,59 +299,68 @@ function onMarcaChange() {
 } // onMarcaChange()
 
 // Pintado de las miniaturas del modelo seleccionado 
-function onModeloChange() {
+async function onModeloChange() {
+    await cargarIndiceCoches();
     const marca = document.getElementById('selectMarca').value;
     const modelo = document.getElementById('selectModelo').value;
     const thumbs = document.getElementById('modalThumbs');
-    const preview = document.getElementById('modalPreview');
-    // const btnSeleccionar = document.getElementById('btnSeleccionarFoto');
 
     thumbs.innerHTML = '';
     preview.innerHTML = '<span>imagen</span>';
-    // btnSeleccionar.disabled = true;
-    rutaSeleccionada = null;
 
     if (!marca || !modelo) return;
 
     const imagenes = indiceCoches[marca][modelo] || [];
     if (imagenes.length === 0) {
-        thumbs.innerHTML = '<div class="modal-empty-msg">Sin imágenes para este modelo.</div>';
+        thumbs.innerHTML = '<div class="modal-empty-msg">No se encuentran imágenes para este modelo.</div>';
         return;
     }
 
-    imagenes.forEach(nombreArchivo => {
-        const ruta = `${"../fotos_coches"}/${marca}/${modelo}/${nombreArchivo}`;
-        const thumb = document.createElement('img');
-        thumb.src = ruta;
-        thumb.alt = nombreArchivo;
-        thumb.onclick = () => seleccionarThumb(thumb, ruta);
-        thumbs.appendChild(thumb);
-    });
+    imagenes.forEach(imagen => {
+        const item = document.createElement("div");
+        item.className = "thumb-item";
+
+        const thumb = document.createElement("img");
+        thumb.className = "thumb";
+        thumb.src = API.retornarImagen(imagen.id);
+        thumb.alt = imagen.nombre;
+        thumb.onclick = () => seleccionarImagen(imagen);
+
+        const borrar = document.createElement("button");
+        borrar.className = "thumb-delete";
+
+        const icono = document.createElement("img");
+        icono.src = "../img/icons/delete.png";
+
+        borrar.onclick = (e) => {
+            e.stopPropagation();
+            eliminarImagenBiblioteca(imagen);
+        };
+
+        item.append(thumb, borrar);
+        borrar.appendChild(icono)
+        thumbs.appendChild(item);
+});
 } // onModeloChange()
 
 // Mostrar miniatura en grande tras seleccionarla
-function seleccionarThumb(thumbEl, ruta) {
-    document.querySelectorAll('.modal-thumbs img').forEach(img => img.classList.remove('selected'));
-    thumbEl.classList.add('selected');
+function seleccionarImagen(imagen) {
+    imagenSeleccionada = imagen;
 
-    const preview = document.getElementById('modalPreview');
     preview.innerHTML = '';
     const img = document.createElement('img');
-    img.src = ruta;
+    img.src = API.retornarImagen(imagen.id);
     preview.appendChild(img);
-
-    rutaSeleccionada = ruta;
-    const btn = document.getElementById('btnAccionPrincipal');
-    const tabBiblioteca = document.getElementById('tabBiblioteca');
-
-    if (tabBiblioteca.classList.contains('active')) {
-        // btn.disabled = false;
-    }
 } // seleccionarThumb()
 
 function confirmarSeleccionFoto() {
-    if (!rutaSeleccionada) return;
-    document.getElementById('modelImg').src = rutaSeleccionada;
+    if (!imagenSeleccionada) 
+        return;
+
+    modelImg.dataset.imageId = imagenSeleccionada.id;
+    modelImg.src = API.retornarImagen(imagenSeleccionada.id);
+    actualizarEstadoModelImg();
+
     cerrarModalCoches();
     marcarComoModificada();
 } // confirmarSeleccionFoto()
@@ -561,13 +503,45 @@ async function guardarImagenBiblioteca() {
         // Recargar indice de coches 
 
         indiceCoches = null;
-        await cargarIndiceCoches();
+        // await cargarIndiceCoches();
 
         toast('Imagen guardada correctamente');
         cancelarGestionBiblioteca();
+
+        // Recargar las miniaturas del modelo actual
+        onModeloChange()
     } catch (err) {
         console.error(err);
         toast('Error guardando imagen', true);
     }
 
 } // guardarImagenBiblioteca()
+
+async function eliminarImagenBiblioteca(imagen) {
+
+    const confirm = await confirmar("Eliminar imagen", `¿Deseas eliminar la imagen "${imagen.nombre}"?`);
+
+    if (!confirm)
+        return;
+
+    try {
+        await API.eliminarImagen(imagen.id);
+
+        toast("Imagen eliminada correctamente.");
+
+        // Si era la imagen seleccionada, limpiar preview
+        if (
+            imagenSeleccionada && imagenSeleccionada.id === imagen.id) {
+            imagenSeleccionada = null;
+            preview.src = "";
+        }
+
+        // Recargar las miniaturas del modelo actual
+        onModeloChange();
+
+    } catch (error) {
+        console.error(error);
+        toast("No se pudo eliminar la imagen.", true);
+    }
+
+}
