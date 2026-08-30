@@ -1,0 +1,231 @@
+/* Seccion de contenido */
+
+.section-box {
+	background: var(--blanco);
+	border: 1px solid var(--gris-borde);
+	border-top: none;
+	margin-bottom: 24px;
+}
+
+/* Seccion de estadísticas */
+
+.stats-grid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+}
+
+.stat-item {
+	padding: 18px 20px;
+	border-right: 1px solid var(--gris-borde);
+	text-align: center;
+}
+
+.stat-item:last-child { border-right: none; }
+
+.stat-num {
+	font-size: 32px;
+	font-weight: bold;
+	color: var(--azul);
+	line-height: 1;
+	margin-bottom: 4px;
+}
+
+.stat-label {
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #888;
+	letter-spacing: 0.5px;
+}
+
+/* Seccion de acciones */
+
+.acciones-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+}
+
+.btn-accion {
+	padding: 18px 22px;
+	border: none;
+	border-right: 1px solid var(--gris-borde);
+	background: white;
+	text-align: left;
+	cursor: pointer;
+	font-family: 'Calibri', 'Arial', sans-serif;
+	transition: background 0.15s;
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.btn-accion:last-child { border-right: none; }
+.btn-accion:hover { background: #ebebeb; }
+.btn-accion:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-accion:disabled:hover { background: white; }
+
+.btn-accion .icon {
+	width: 20px;
+}
+
+.accion-titulo {
+	font-size: 14px;
+	font-weight: bold;
+	color: var(--texto);
+	margin-bottom: 2px;
+}
+
+.accion-desc {
+	font-size: 12px;
+	color: #888;
+	line-height: 1.4;
+}
+
+/* Buscador */
+
+.buscador-wrap {
+	padding: 9px 12px;
+	border-bottom: 1px solid var(--gris-borde);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.buscador-wrap img.icon { 
+    width: 13px;
+}
+
+#buscador {
+	border: none;
+	outline: none;
+	font-family: 'Calibri', 'Arial', sans-serif;
+	font-size: 14px;
+	color: var(--texto);
+	width: 100%;
+	background: transparent;
+}
+
+#buscador::placeholder { color: #bbb; }
+#buscador:disabled { cursor: not-allowed; }
+
+/* Listado de hojas */
+.lista-hojas-home {
+	max-height: 320px; /* 4 filas de 80px */
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+/* Contenedor general de hojas */
+.hoja-item {
+	display: grid;
+	grid-template-columns: 120px 1fr;
+	align-items: stretch;
+	position: relative;
+	transition: background 0.1s;
+	cursor: pointer;
+}
+
+.hoja-item:hover {
+	background: #f5f8ff;
+	outline: 1px solid var(--azul);
+	outline-offset: -1px;
+}
+
+/* Imagen de la hoja */
+.hoja-imagen {
+	width: 120px;
+	height: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background: #f9f9f9;
+	box-sizing: border-box;
+}
+
+.hoja-imagen-contenido {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;;
+}
+
+/* Contenido de la hoja */
+.hoja-contenido {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 16px;
+	gap: 16px;
+	border-left: 1px solid var(--gris-borde);
+	border-bottom: 1px solid var(--gris-borde);
+}
+
+.hoja-item:last-child .hoja-contenido {
+	border-bottom: none;
+}
+
+.hoja-info { 
+	flex: 1; 
+	min-width: 0; 
+}
+
+.hoja-nombre {
+	font-size: 15px;
+	font-weight: bold;
+	color: var(--azul);
+	margin-bottom: 1px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.hoja-meta { 
+	font-size: 12px; 
+	color: #999; 
+}
+
+.hoja-acciones {
+	display: flex;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.btn-hoja {
+	padding: 5px 13px;
+	font-family: 'Calibri', 'Arial', sans-serif;
+	font-size: 12px;
+	font-weight: bold;
+	border: 1px solid var(--gris-borde);
+	background: white;
+	color: var(--texto);
+	cursor: pointer;
+	border-radius: 2px;
+	transition: all 0.12s;
+}
+
+.btn-hoja:hover          { background: var(--azul); border-color: var(--azul); color: white; }
+.btn-hoja.eliminar:hover { background: var(--rojo); border-color: var(--rojo); color: white; }
+
+/* Estado de vacio */
+
+.estado-vacio {
+	padding: 36px 20px;
+	text-align: center;
+	color: #aaa;
+	font-size: 13px;
+	line-height: 1.7;
+}
+
+/* Modal creacion de hoja */
+
+.modal-box {
+	max-width: 440px;
+}
+
+.preview-nombre {
+	font-size: 12px;
+	color: var(--azul);
+	margin-top: 4px;
+	font-style: italic;
+	min-height: 18px;
+}

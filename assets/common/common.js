@@ -109,7 +109,7 @@ function inicializarConfirmDialog() {
 
 //#region Spinner de carga
 
-function crearSpinner() {
+function createSpinner(inMainContent = false) {
     if (spinner)
         return spinner;
 
@@ -117,6 +117,8 @@ function crearSpinner() {
 
     spinner = document.createElement("div");
     spinner.className = "spinner-overlay";
+    if (inMainContent)
+        spinner.classList.add("main-content");
     spinner.innerHTML = `
         <div class="spinner-box">
             <img src="${path}img/favicon.ico" alt="Cargando">
@@ -126,16 +128,20 @@ function crearSpinner() {
     return spinner;
 }
 
-function abrirSpinner() {
+function openSpinner(inMainContent = false) {
     if (document.querySelector(".spinner-overlay"))
         return;
 
-    document.body.appendChild(
-        crearSpinner()
-    );
+    const contenedor = inMainContent
+        ? document.getElementById("mainContent")
+        : null;
+
+    const destino = contenedor || document.body;
+
+    destino.appendChild(createSpinner(Boolean(contenedor)));
 }
 
-function cerrarSpinner() {
+function closeSpinner() {
     spinner?.remove();
     spinner = null;
 }

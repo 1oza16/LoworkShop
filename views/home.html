@@ -1,10 +1,4 @@
-<div class="aviso-navegador" id="aviso-navegador">
-    <strong>Navegador no compatible.</strong>
-    Esta aplicación requiere <strong>Chrome, Edge o Brave</strong> (v86+).
-    Firefox y Safari no soportan File System Access API.
-</div>
-
-<div class="section-header">RESUMEN</div>
+<div class="section-header section-header-more" id="summary">RESUMEN</div>
 <div class="section-box">
     <div class="stats-grid">
         <div class="stat-item">
@@ -25,14 +19,14 @@
 <div class="section-header">ACCIONES RÁPIDAS</div>
 <div class="section-box">
     <div class="acciones-grid">
-        <button class="btn-accion" onclick="abrirModal()">
+        <button class="btn-accion" id="btn-abrir-modal">
                 <img src="img/icons/sheet1.png" alt="loworkshop_sheet" class="icon">
             <div>
                 <div class="accion-titulo">Nueva hoja</div>
                 <div class="accion-desc">Crear hoja de presupuesto y reparación en blanco</div>
             </div>
         </button>
-        <button class="btn-accion" id="btn-recargar" onclick="recargarHojas()" disabled>
+        <button class="btn-accion" id="btn-recargar">
                 <img src="img/icons/reload1.png" alt="reload" class="icon">
             <div>
                 <div class="accion-titulo">Actualizar lista</div>
@@ -42,17 +36,53 @@
     </div>
 </div>
 
-<div class="section-header">HOJAS GUARDADAS</div>
+<div class="section-header section-header-more" id="sheets">HOJAS GUARDADAS</div>
 <div class="section-box">
     <div class="buscador-wrap">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-        </svg>
-        <input type="text" id="buscador" placeholder="Buscar por nombre de hoja…" oninput="filtrarHojas()" disabled>
+        <img src="img/icons/tracker.png" alt="reload" class="icon">
+        <input type="text" id="buscador" placeholder="Buscar por nombre de hoja…">
     </div>
-    <div id="lista-hojas">
+    <div id="lista-hojas" class="lista-hojas-home">
         <div class="estado-vacio">
-            Selecciona la carpeta de hojas para ver los archivos guardados.
+        </div>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="overlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="img/favicon.ico" alt="isologo" width="30px">
+            </div>
+            
+            <h3>NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-cliente">Nombre del cliente</label>
+                <input type="text" class="campo-input" id="inp-cliente" placeholder="García López">
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-matricula">Matrícula del vehículo</label>
+                <input type="text" class="campo-input" id="inp-matricula" placeholder="1234 ABC">
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-modelo">Modelo del vehículo</label>
+                <input type="text" class="campo-input" id="inp-modelo" placeholder="MG-B 74">
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-fecha">Fecha de reparación</label>
+                <input type="date" class="campo-input" id="inp-fecha">
+            </div>
+
+            <div class="preview-nombre" id="preview-nombre"></div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="btn-cerrar-modal">Cancelar</button>
+                <button class="btn-primary" id="btn-crear-hoja">Crear hoja</button>
+            </div>
         </div>
     </div>
 </div>

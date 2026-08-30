@@ -68,7 +68,7 @@ function abrirSelectorArchivo() {
 // Añadir indice de los coches a indiceCoches mediante el fichero (fotos_coches/index.json)
 async function cargarIndiceCoches() {
     try {
-        indiceCoches = await API.obtenerIndiceCoches();
+        indiceCoches = await API.getIndexCars();
     } catch (err) {
         console.error(err);
         indiceCoches = {};
@@ -322,7 +322,7 @@ async function onModeloChange() {
 
         const thumb = document.createElement("img");
         thumb.className = "thumb";
-        thumb.src = API.retornarImagen(imagen.id);
+        thumb.src = API.getImage(imagen.id);
         thumb.alt = imagen.nombre;
         thumb.onclick = () => seleccionarImagen(imagen);
 
@@ -349,7 +349,7 @@ function seleccionarImagen(imagen) {
 
     preview.innerHTML = '';
     const img = document.createElement('img');
-    img.src = API.retornarImagen(imagen.id);
+    img.src = API.getImage(imagen.id);
     preview.appendChild(img);
 } // seleccionarThumb()
 
@@ -358,7 +358,7 @@ function confirmarSeleccionFoto() {
         return;
 
     modelImg.dataset.imageId = imagenSeleccionada.id;
-    modelImg.src = API.retornarImagen(imagenSeleccionada.id);
+    modelImg.src = API.getImage(imagenSeleccionada.id);
     actualizarEstadoModelImg();
 
     cerrarModalCoches();
@@ -491,13 +491,13 @@ async function guardarImagenBiblioteca() {
 
         // Url
         if (modoGestion === 'url') {
-            const resp = API.guardarFotoURL(marca, modelo, nombreFinal, imagenPendiente);
+            const resp = API.postUrlImage(marca, modelo, nombreFinal, imagenPendiente);
         }
         
         // Archivo
         if (modoGestion === 'archivo') {
             const base64 = await archivoABase64(imagenPendiente);
-            const resp = API.subirFoto(marca, modelo, nombreFinal, base64)
+            const resp = API.postLocalImage(marca, modelo, nombreFinal, base64)
         }
 
         // Recargar indice de coches 
@@ -525,7 +525,7 @@ async function eliminarImagenBiblioteca(imagen) {
         return;
 
     try {
-        await API.eliminarImagen(imagen.id);
+        await API.eliminateImage(imagen.id);
 
         toast("Imagen eliminada correctamente.");
 

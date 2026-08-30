@@ -16,13 +16,23 @@ async function get(url) {
     return data;
 }
 
-async function post(url, datos) {
+async function getHtml(url) {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+    }
+
+    return response.text();
+}
+
+async function post(url, payload) {
     const response = await fetch(url, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(datos)
+        body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
@@ -40,38 +50,60 @@ async function post(url, datos) {
 
 const API = {
     // GET
-    obtenerIndiceCoches() {
+    getIndexCars() {
         return get("/api/coches");
     },
-    retornarImagen(id) {
+    listSheets() {
+        return get("/api/listar-hojas");
+    },
+    getImage(id) {
         return `/api/retornar-imagen/${id}`;
+    },
+    loadView(view) {
+        return getHtml(`/api/retornar-view/${view}`);
+    },
+    loadSheet(sheet) {
+        return get(`/api/retornar-hoja/${encodeURIComponent(sheet)}`);
     },
 
     // POST
-    guardarHoja(nombre, html, htmlPDF) {
+    createSheet(client, plate, model, date) {
+        return post("/api/crear-hoja", {
+            client,
+            plate,
+            model,
+            date
+        })
+    },
+    saveSheet(name, html, pdfHtml) { 
         return post("/api/guardar-hoja", {
-            nombre,
+            name,
             html,
-            htmlPDF
+            pdfHtml
         });
     },
-    subirFoto(marca, modelo, nombreFinal, base64) {
+    eliminateSheet(name) {
+        return post("/api/eliminar-hoja", {
+            name
+        })
+    },
+    postLocalImage(brand, model, name, image) {
         return post("/api/subir-foto", {
-            marca, 
-            modelo, 
-            nombreFinal, 
-            base64
+            brand,
+            model,
+            name,
+            image
         });
     },
-    guardarFotoURL(marca, modelo, nombreFinal, imagenPendiente) {
+    postUrlImage(brand, model, name, image) {
         return post("/api/guardar-url", {
-            marca, 
-            modelo, 
-            nombreFinal, 
-            imagenPendiente
+            brand,
+            model,
+            name,
+            image
         });
-    }, 
-    eliminarImagen(id) {
+    },
+    eliminateImage(id) {
         return post("/api/eliminar-imagen", {
             id
         })

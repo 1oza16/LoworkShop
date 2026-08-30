@@ -9,3 +9,4 @@ NOTES = ROOT / "notas"
 PDF = ROOT / "pdf"
 IMG = ROOT / "img" # Comprobar uso
 VIEWS = ROOT / "views"
+STENCIL = ROOT / "stencil"

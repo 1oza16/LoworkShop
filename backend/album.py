@@ -34,10 +34,7 @@ def api_coches(handler):
 
     except Exception as e:
 
-        print(
-            "ERROR CARGANDO INDEX:",
-            e
-        )
+        print("ERROR CARGANDO INDEX:", e)
         
         handler.send_json(
             500,
@@ -94,10 +91,7 @@ def api_retornar_imagen(handler):
 
     except Exception as e:
 
-        print(
-            "ERROR ENVIANDO IMAGEN:",
-            e
-        )
+        print("ERROR ENVIANDO IMAGEN:", e)
 
         handler.send_error(
             500,
@@ -154,10 +148,10 @@ def api_subir_foto(handler):
 
         data = handler.read_json()
 
-        marca = data["marca"].strip().lower()
-        modelo = data["modelo"].strip().lower()
-        nombre = data["nombreFinal"].strip()
-        imagen_base64 = data["base64"]
+        marca = data["brand"].strip().lower()
+        modelo = data["model"].strip().lower()
+        nombre = data["name"].strip()
+        imagen_base64 = data["image"]
 
         carpeta_destino = filesystem.PHOTOS / marca / modelo
 
@@ -190,10 +184,7 @@ def api_subir_foto(handler):
 
     except Exception as e:
 
-        print(
-            "ERROR GUARDANDO IMAGEN LOCAL:",
-            e
-        )
+        print("ERROR GUARDANDO IMAGEN LOCAL:", e)
         
         handler.send_json(
             500,
@@ -210,10 +201,10 @@ def api_guardar_url(handler):
 
         data = handler.read_json()
 
-        marca = data["marca"].strip().lower()
-        modelo = data["modelo"].strip().lower()
-        nombre = data["nombreFinal"].strip()
-        url = data["imagenPendiente"].strip()
+        marca = data["brand"].strip().lower()
+        modelo = data["model"].strip().lower()
+        nombre = data["name"].strip()
+        url = data["image"].strip()
 
         carpeta_destino = filesystem.PHOTOS / marca / modelo
 
@@ -253,10 +244,7 @@ def api_guardar_url(handler):
 
     except Exception as e:
 
-        print(
-            "ERROR GUARDANDO IMAGEN URL:",
-            e
-        )
+        print("ERROR GUARDANDO IMAGEN URL:", e)
         
         handler.send_json(
             500,

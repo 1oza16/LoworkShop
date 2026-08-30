@@ -87,10 +87,7 @@ async function guardarHoja(forzar = true) {
         });
 
         const htmlPDF = "<!DOCTYPE html>\n" + clon.outerHTML;
-
-        const resp = await API.guardarHoja(nombre, html, htmlPDF);
-
-        // const data = await resp.json();
+        const resp = await API.saveSheet(nombre, html, htmlPDF);
 
         if (!resp.ok) {
             throw new Error(resp.error);
@@ -99,6 +96,16 @@ async function guardarHoja(forzar = true) {
         cambiosPendientes = false;
         actualizarBarraGuardado("saved");
 
+        if ("BroadcastChannel" in window) {
+            const sheetsChannel = new BroadcastChannel("loworkshop-sheets");
+
+            sheetsChannel.postMessage({
+                type: "sheet-saved"
+            });
+        
+            sheetsChannel.close();
+        }
+        
     } catch (err) {
         console.error(err);
         actualizarBarraGuardado("error");

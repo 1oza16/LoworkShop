@@ -7,7 +7,9 @@
     <link rel="stylesheet" href="assets/common/variables.css">
     <link rel="stylesheet" href="assets/common/common.css">
     <link rel="stylesheet" href="assets/index/index.css">
-    <title>LoworkShop — Panel Principal</title>
+    <link rel="stylesheet" href="assets/index/home.css">
+    <link rel="stylesheet" href="assets/index/sheets.css">
+    <title>LoworkShop - Panel Principal</title>
 </head>
 <body>
 
@@ -21,32 +23,33 @@
 
     <div class="barra-estado">
         <div class="estado-texto">
-            <button id="btnMenu" class="menu-toggle" onclick="toggleSidebar()">☰</button>
+            <button id="btnMenu" class="menu-toggle" onclick="toggleSidebar()">
+                <img src="img/icons/menu.png" alt="panel_principal" class="icon">
+            </button>
             <h3 id="texto-estado">Pestaña sin seleccionar</h3>
         </div>
-        <button class="btn-carpeta" id="btn-conectar" onclick="seleccionarCarpeta()">Seleccionar carpeta de hojas</button>
     </div>
 
     <div class="app-container">
-        <aside id="sidebar" class="collapsed">
+        <aside id="sidebar">
             <button onclick="changeView('home')" id="home">
-                <img src="img/icons/panel_principal.png" alt="panel_principal" class="icon">
+                <img src="img/icons/home.png" alt="panel_principal" class="icon">
                 <span>Inicio</span>
             </button>
-            <button onclick="changeView('pdf')" id="pdf">
-                <img src="img/icons/pdf.png" alt="panel_principal" class="icon">
-                <span>PDFs</span>
+            <button onclick="changeView('sheets')" id="sheets">
+                <img src="img/icons/sheets.png" alt="panel_principal" class="icon">
+                <span>Hojas</span>
             </button>
             <button onclick="changeView('album')" id="album">
-                <img src="img/icons/album_coches.png" alt="panel_principal" class="icon">
+                <img src="img/icons/album.png" alt="panel_principal" class="icon">
                 <span>Álbum</span>
             </button>
             <button onclick="changeView('statistics')" id="statistics">
-                <img src="img/icons/estadisticas.png" alt="panel_principal" class="icon">
+                <img src="img/icons/statistics.png" alt="panel_principal" class="icon">
                 <span>Estadísticas</span>
             </button>
             <button onclick="changeView('settings')" id="settings">
-                <img src="img/icons/ajustes.png" alt="panel_principal" class="icon">
+                <img src="img/icons/settings.png" alt="panel_principal" class="icon">
                 <span>Configuración</span>
             </button>
         </aside>
@@ -54,44 +57,15 @@
         <main id="mainContent">
         </main>
     </div>
-
-    <!-- MODAL -->
-    <div class="modal-overlay" id="overlay" onclick="cerrarModalFuera(event)">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="marco-icono">
-                    <img src="img/favicon.ico" alt="isologo" width="30px">
-                </div>
-                <h3>NUEVA HOJA DE PRESUPUESTO Y REPARACIÓN</h3>
-            </div>
-            <div class="modal-body">
-                <div class="campo-grupo">
-                    <label class="campo-label" for="inp-cliente">Nombre del cliente</label>
-                    <input type="text" class="campo-input" id="inp-cliente" placeholder="García López" oninput="actualizarPreview()">
-                </div>
-                <div class="campo-grupo">
-                    <label class="campo-label" for="inp-matricula">Matrícula del vehículo</label>
-                    <input type="text" class="campo-input" id="inp-matricula" placeholder="1234 ABC" oninput="actualizarPreview()">
-                </div>
-                <div class="campo-grupo">
-                    <label class="campo-label" for="inp-modelo">Modelo del vehículo</label>
-                    <input type="text" class="campo-input" id="inp-modelo" placeholder="MG-B 74" oninput="actualizarPreview()">
-                </div>
-                <div class="preview-nombre" id="preview-nombre"></div>
-
-                <div class="modal-footer">
-                    <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-                    <button class="btn-primary" onclick="crearHoja()">Crear hoja</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 </div>
 
-<script src="assets/common/common.js"></script>
 <script src="assets/common/api.js"></script>
-<script src="assets/index/index.js"></script>
+<script src="assets/common/common.js"></script>
 <script src="assets/index/home.js"></script>
+<script src="assets/index/sheets.js"></script>
+<script src="assets/index/album.js"></script>
+<script src="assets/index/settings.js"></script>
+<script src="assets/index/statistics.js"></script>
+<script src="assets/index/index.js"></script>
 </body>
 </html>
