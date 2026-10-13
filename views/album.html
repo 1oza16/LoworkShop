@@ -1,1 +1,119 @@
-<h1>album</h1>
+<div class="section-header">TODAS LAS IMÁGENES, MARCAS Y MODELOS</div>
+<div class="section-box album">
+    <div class="buscador-wrap">
+        <img src="img/icons/tracker.png" alt="reload" class="icon">
+        <input type="text" id="buscador" placeholder="Buscar por nombre de imagen, marca o modelo">
+    </div>
+</div>
+
+<div class="indicator-container">
+    <div class="nav-controls">
+        <button id="back" class="arrow-btn" title="Atrás">
+            <img src="../img/icons/back-arrow.png" class="icon" alt="Atrás">
+        </button>
+        <button id="forward" class="arrow-btn" title="Adelante">
+            <img src="../img/icons/forward-arrow.png" class="icon" alt="Adelante">
+        </button>
+        <button id="home" class="arrow-btn" title="Inicio">
+            <img src="../img/icons/home1.png" class="icon" alt="Inicio">
+        </button>
+    </div>
+    <div class="indicator"></div>
+
+    <button class="btn-hoja btn-new" id="new-item" type="button">
+        <img src="../img/icons/more.png" alt="new" class="icon">
+        <span>Nuevo</span>
+    </button>
+</div>
+
+<div id="grid" class="grid-container">
+</div>
+
+<!-- Modal image -->
+<div class="modal-overlay" id="overlay-image">
+    <div class="modal-box album">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="../img/favicon.ico" alt="isologo" width="30px">
+            </div>
+            <h3 id="image-modal-title">PORTADA DE CARPETA</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="campo-grupo" id="image-name-group" style="display: none;">
+                <label class="campo-label" for="image-name">Nombre de la imagen</label>
+                <input type="text" id="image-name" class="campo-input" placeholder="Frontal vehículo">
+            </div>
+
+            <div class="campo-grupo">
+                <label class="campo-label" for="image-url">URL de la imagen</label>
+                <input type="text" id="image-url" class="campo-input" placeholder="https://...">
+            </div>
+
+            <div class="modal-preview-label">Vista previa de la imagen</div>
+            <div class="modal-preview" id="image-preview">
+                <span>Selecciona una imagen</span>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="image-cancel-btn">Cancelar</button>
+                <button class="btn-action" id="image-local-btn">Añadir archivo local</button>
+                <button class="btn-primary" id="image-save-btn">Usar imagen</button>
+            </div>
+        </div>
+
+        <input type="file" id="image-file" accept="image/*" style="display:none">
+    </div>
+</div>
+
+<!-- Modal rename -->
+<div class="modal-overlay" id="overlay-rename">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="../img/favicon.ico" alt="isologo" width="30px">
+            </div>
+            <h3 id="rename-modal-title">RENOMBRAR ELEMENTO</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="campo-grupo">
+                <label class="campo-label" for="actual-name">Nombre actual</label>
+                <input type="text" class="campo-input" id="actual-name" disabled>
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="new-name">Nuevo nombre</label>
+                <input type="text" class="campo-input" id="new-name">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="rename-cancel-btn">Cancelar</button>
+                <button class="btn-primary" id="rename-btn">Renombrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal new folder -->
+<div class="modal-overlay" id="overlay-new-folder">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="../img/favicon.ico" alt="isologo" width="30px">
+            </div>
+            <h3 id="new-folder-modal-title">NUEVA CARPETA</h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="campo-grupo">
+                <label class="campo-label" for="new-folder-name">Nombre de la carpeta</label>
+                <input type="text" class="campo-input" id="new-folder-name">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" id="new-folder-cancel-btn">Cancelar</button>
+                <button class="btn-primary" id="create-item-btn">Crear</button>
+            </div>
+        </div>
+    </div>
+</div>

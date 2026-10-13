@@ -1,12 +1,11 @@
 let rootHome = null;
 let controllerHome = null;
 let sheets = [];
-
 let client = null;
 let plate = null;
 let model = null;
 let date = null;
-let preview = null;
+let previewNameSheet = null;
 
 //#region Mount - Unmount
 
@@ -20,7 +19,7 @@ function Home() {
         plate = rootHome.querySelector("#inp-matricula");
         model = rootHome.querySelector("#inp-modelo");
         date = rootHome.querySelector("#inp-fecha");
-        preview = rootHome.querySelector("#preview-nombre");
+        previewNameSheet = rootHome.querySelector("#preview-nombre");
 
         // Cálculo de fecha actual para insertar dinámicamente en date 
         if (!date.value) {
@@ -57,8 +56,8 @@ function Home() {
         const tracker = root.querySelector("#buscador");
         const reloadBtn = root.querySelector("#btn-recargar");
         const openModalBtn = root.querySelector("#btn-abrir-modal");
-        const closeModalBtn = root.querySelector("#btn-cerrar-modal");
-        const overlay = root.querySelector("#overlay");
+        // const closeModalBtn = root.querySelector("#btn-cerrar-modal");
+        // const overlay = root.querySelector("#overlay-");
         const createSheetBtn = root.querySelector("#btn-crear-hoja"); 
         const clientInp = client; 
         const plateInp = plate; 
@@ -87,21 +86,15 @@ function Home() {
 
         openModalBtn.addEventListener(
             "click",
-            openModal,
+            () => openModal("new-sheet"),
             { signal: controllerHome.signal }
         );
 
-        closeModalBtn.addEventListener(
-            "click",
-            closeModal,
-            { signal: controllerHome.signal }
-        );
-
-        overlay.addEventListener(
-            "click",
-            closeModalOut,
-            { signal: controllerHome.signal }
-        );
+        // closeModalBtn.addEventListener(
+        //     "click",
+        //     () => closeModal("new-sheet"),
+        //     { signal: controllerHome.signal }
+        // );
 
         createSheetBtn.addEventListener(
             "click",
@@ -182,24 +175,19 @@ function manageClick(e) {
 
 //#region Modal
 
-function openModal() {
-    client.value = '';
-    plate.value = '';
-    model.value = '';
-    preview.textContent = '';
-    rootHome.querySelector("#overlay").classList.add('visible');
+// function openModal() {
+//     client.value = '';
+//     plate.value = '';
+//     model.value = '';
+//     previewNameSheet.textContent = '';
+//     rootHome.querySelector("#overlay").classList.add('visible');
 
-    setTimeout(() => rootHome.querySelector("#inp-cliente").focus(), 80);
-} // openModal()
+//     setTimeout(() => rootHome.querySelector("#inp-cliente").focus(), 80);
+// } // openModal()
 
-function closeModal() { 
-    rootHome.querySelector("#overlay").classList.remove('visible'); 
-} // closeModal()
-
-function closeModalOut(e) { 
-    if (e.target.id === 'overlay') 
-        closeModal(); 
-} // closeModalOut()
+// function closeModal() { 
+//     rootHome.querySelector("#overlay").classList.remove('visible'); 
+// } // closeModal()
 
 function updatePreview() {
     const clientInp = client.value.trim();
@@ -209,7 +197,7 @@ function updatePreview() {
 
     const name = generateName(clientInp, plateInp, modelInp, dateInp);
 
-    preview.textContent = name ? `Nombre del archivo: ${name}.html` : '';
+    previewNameSheet.textContent = name ? `Nombre del archivo: ${name}.html` : '';
 } // updatePreview()
 
 function generateName(client, plate, model, date) {
@@ -266,10 +254,9 @@ async function createSheet() {
     try {
         openSpinner();
         const resp = await API.createSheet(clientValue, plateValue, modelValue, dateValue);
-        console.log("Hoja creada:", resp);
         toast(`Hoja "${nameSheet}" creada.`);
 
-        closeModal();
+        closeModal("new-sheet");
         await loadSheets();
         openSheet(resp.nombre);
     } catch (error) {
@@ -393,8 +380,28 @@ function renderSheetsHome(sheets) {
                 </div>
 
                 <div class="hoja-acciones">
-                    <button class="btn-hoja" type="button" data-open-sheet="${sheet.nombre}">↗ Abrir</button>
-                    <button class="btn-hoja eliminar" type="button" data-eliminate-sheet="${sheet.nombre}">✕ Eliminar</button>
+                    <button class="btn-hoja" type="button" data-open-sheet="${sheet.nombre}">Abrir</button>
+                    <button class="btn-hoja eliminar" type="button" data-eliminate-sheet="${sheet.nombre}">Eliminar</button>
+                    <div class="dropdown-menu-container">
+                        <button class="btn-options" type="button">
+                            <img src="img/icons/options.png" alt="Options" class="icon">
+                        </button>
+                        <div class="dropdown-menu">
+                            <span class="dropdown-title">Mas opciones</span>
+                            <button class="dropdown-item" data-action="edit">
+                                <span>Cambiar datos</span>
+                            </button>
+                            <button class="dropdown-item" data-action="duplicate">
+                                <span>Compartir</span>
+                            </button>
+                            <button class="dropdown-item" data-action="download">
+                                <span>Ver PDF</span>
+                            </button>
+                            <button class="dropdown-item" data-action="download">
+                                <span>Imprimir</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
@@ -408,7 +415,7 @@ function renderSheetsHome(sheets) {
 
         image.addEventListener("error", () => {
             image.onerror = null;
-            image.src = "img/icons/without-photo.png";
+            image.src = "img/icons/camara.png";
         });
 
         list.appendChild(item);

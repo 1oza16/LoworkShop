@@ -21,12 +21,14 @@ body {
     max-width: 300px;
     height: auto;
     margin: 0px;
+    cursor: pointer;
 }
 
 /* Modales Compartidos */
 
 .modal-overlay {
     display: none;
+    /* display: flex; */
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0, 0, 0, 0.6);
@@ -42,7 +44,7 @@ body {
 .modal-box {
     background: var(--blanco);
     color: var(--texto);
-    border-radius: 4px;
+    /* border-radius: 4px; */
     font-family: 'Calibri', 'Arial', sans-serif;
     position: relative;
     border-top: 4px solid var(--rojo);
@@ -114,6 +116,250 @@ body {
     transform: translateX(0);
 }
 
+/* Ver que dejar en common de modal */
+
+.modal-selects {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-preview-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--verde);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    margin-top: 14px;
+}
+
+.modal-preview {
+    border: 1px solid #ddd;
+    border-left: 3px solid var(--azul);
+    min-height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    background: #f9f9f9;
+    overflow: hidden;
+}
+
+.modal-preview img {
+    max-width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+}
+
+.modal-preview span {
+    color: #aaa;
+    font-size: 13px;
+    font-style: italic;
+}
+
+.modal-thumbs-label {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--verde);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.modal-thumbs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.modal-thumbs img.thumb {
+    width: 129px;
+    height: 85px;
+    object-fit: cover;
+    border: 2px solid #ddd;
+    cursor: pointer;
+}
+
+.modal-thumbs .thumb-item {
+    position: relative;
+    display: inline-block;
+}
+
+.modal-thumbs .thumb-item:hover img.thumb,
+.modal-thumbs .thumb-item.selected img {
+    border-color: var(--azul);
+    outline: 1px solid var(--azul);
+}
+
+.thumb-action,
+.thumb-delete {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    border: none;
+    background: var(--blanco);
+    /* border-radius: 3px; */
+    cursor: pointer;
+    transition: opacity .15s;
+}
+
+.thumb-item:hover .thumb-action,
+.thumb-item:hover .thumb-delete,
+.model-image-wrapper:hover .thumb-action {
+    opacity: 1;
+}
+
+.thumb-action img,
+.thumb-delete img {
+    width: 14px;
+    height: 14px;
+    pointer-events: none;
+}
+
+.modal-empty-msg {
+    color: #aaa;
+    font-size: 12px;
+    text-align: center;
+    padding: 10px 0;
+    font-style: italic;
+}
+
+.modal-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 18px;
+}
+
+.modal-tab {
+    flex: 1;
+    border: none;
+    background: #f0f0f0;
+    padding: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.modal-tab.active {
+    background: var(--verde);
+    color: white;
+}
+
+.modal-tab-content {
+    display: none;
+}
+
+.modal-tab-content.active {
+    display: block;
+}
+
+#urlPreview {
+    min-height: 220px;
+}
+
+#gestionPreview {
+    margin-top: 12px;
+    min-height: 220px;
+}
+
+#gestionPreview img {
+    max-width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+}
+
+#vistaGestionBiblioteca {
+    display: none;
+}
+
+#vistaGestionBiblioteca.active {
+    display: block;
+}
+
+/* Seccion de contenido */
+
+.section-box {
+	background: var(--blanco);
+	border: 1px solid var(--gris-borde);
+	border-top: none;
+	margin-bottom: 24px;
+}
+
+/* Buscador compartido */
+
+.buscador-wrap {
+	padding: 9px 12px;
+	border-bottom: 1px solid var(--gris-borde);
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.buscador-wrap .icon { 
+    width: 13px;
+}
+
+#buscador {
+	border: none;
+	outline: none;
+	font-family: 'Calibri', 'Arial', sans-serif;
+	font-size: 14px;
+	color: var(--texto);
+	width: 100%;
+	background: transparent;
+}
+
+#buscador::placeholder { color: #bbb; }
+#buscador:disabled { cursor: not-allowed; }
+
+
+/* Indicadores compartidos */
+
+.indicator-container {
+    background-color: var(--blanco);
+    border: 1px solid #e0e0e0;
+    padding: 10px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.indicator-container .arrow-btn {
+    width: 16px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+}
+
+.indicator-container .btn-hoja {
+    margin-left: auto;
+}
+
+.arrow-btn .icon {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.indicator {
+    color: var(--texto);
+    font-size: 22px;
+    margin-left: 10px;
+}
+
+
 /* Label e inputs comunes */
 
 .campo-grupo {
@@ -140,7 +386,7 @@ body {
     color: var(--texto);
     outline: none;
     transition: border-color 0.2s;
-    border-radius: 1px;
+    /* border-radius: 1px; */
     box-sizing: border-box;
 }
 
@@ -157,7 +403,7 @@ body {
     font-size: 14px;
     font-weight: bold;
     cursor: pointer;
-    border-radius: 3px;
+    /* border-radius: 3px; */
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -177,7 +423,7 @@ body {
     font-family: 'Calibri', 'Arial', sans-serif;
     font-size: 14px;
     cursor: pointer;
-    border-radius: 3px;
+    /* border-radius: 3px; */
     transition: all 0.15s;
 }
 
@@ -193,7 +439,7 @@ body {
     font-family: 'Calibri', 'Arial', sans-serif;
     font-size: 13px;
     cursor: pointer;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     transition: all 0.15s;
 }
 
@@ -202,12 +448,145 @@ body {
     color: var(--rojo); 
 }
 
+/* Diseño comun de hojas y carpetas */
+
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.card {
+    background: white;
+    border: 1px solid var(--gris-borde);
+    overflow: visible;
+    transition: all 0.15s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.card:hover {
+    background: #f5f8ff;
+    border-color: var(--azul);
+}
+
+.card-imagen {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #f9f9f9;
+    border-bottom: 1px solid var(--gris-borde);
+}
+
+.card-imagen img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-info {
+    padding: 12px 14px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-nombre {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--azul);
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-meta {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-acciones {
+    display: flex;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.card-acciones .btn-hoja {
+    flex: 1;
+}
+
+.btn-options {
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;     
+    height: 24px;
+    padding: 0;       
+}
+
+.btn-options .icon {
+    width: 15px;
+    height: auto;
+}
+
+.card-info:has(> .card-nombre + .dropdown-menu-container) {
+    flex-direction: row;
+    align-items: center;
+}
+
+.card-info:has(> .card-nombre + .dropdown-menu-container) .card-nombre {
+    flex: 1;
+}
+
+.card-info:has(> .card-nombre + .dropdown-menu-container) .dropdown-menu-container {
+    margin-left: auto;
+}
+
+@media (max-width: 768px) {
+    .grid-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .card-imagen {
+        height: 120px;
+    }
+}
+
+@media (max-width: 480px) {
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .card-imagen {
+        height: 100px;
+    }
+}
+
 /* Marco del isologo */
 
 .marco-icono {
     width: 36px;
     height: 36px;
-    border-radius: 3px;
+    /* border-radius: 3px; */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -232,7 +611,7 @@ body {
     padding: 10px 18px;
     font-size: 13px;
     font-weight: bold;
-    border-radius: 2px;
+    /* border-radius: 2px; */
     border-left: 4px solid var(--verde-osc);
     transform: translateY(60px);
     opacity: 0;
@@ -281,7 +660,7 @@ body {
     justify-content: center;
     align-items: center;
     background: var(--blanco);
-    border-radius: 12px;
+    /* border-radius: 12px; */
     box-shadow: 0 10px 30px rgba(0,0,0,.25);
 }
 
@@ -302,4 +681,85 @@ body {
         transform: rotate(360deg);
     }
 
+}
+
+/* Dropdown Menu */
+
+.dropdown-menu-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    overflow: visible;
+    z-index: 100;
+}
+
+.dropdown-menu-container:has(.dropdown-menu.visible),
+.dropdown-menu-container.active {
+    z-index: 1000;
+}
+
+.dropdown-menu {
+    display: none;
+    position: fixed;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 160px;
+    z-index: 1001;
+    margin-top: 4px;
+    animation: slideDown 0.15s ease;
+}
+
+.dropdown-menu.visible {
+    display: flex;
+    flex-direction: column;
+}
+
+.dropdown-title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background-color: var(--azul);
+    color: var(--blanco);
+    font-size: 13px;
+    text-align: left;
+
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 10px 14px;
+    border: none;
+    background-color: var(--blanco);
+    cursor: pointer;
+    font-family: 'Calibri', 'Arial', sans-serif;
+    font-size: 13px;
+    color: var(--texto);
+    text-align: left;
+    transition: background-color 0.1s;
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0;
+}
+
+.dropdown-item span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

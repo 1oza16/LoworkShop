@@ -8,7 +8,7 @@ from core import filesystem
 from .album import INDEX_IMAGES
 import re
 
-def api_listar_hojas(handler):
+def api_list_sheets(handler):
 
     try:
 
@@ -28,7 +28,7 @@ def api_listar_hojas(handler):
                 hojas.append({
                     "nombre": ruta.name,
                     "fecha": fecha.isoformat(),
-                    "imageId": obtener_id_imagen_hoja(ruta)
+                    "imageId": get_sheet_image_id(ruta)
                 })
 
         hojas.sort(
@@ -76,9 +76,9 @@ def api_listar_hojas(handler):
             }
         )
 
-def api_retornar_hoja(handler):
+def api_get_sheet(handler):
 
-    nombre = handler.path.removeprefix("/api/retornar-hoja/")
+    nombre = handler.path.removeprefix("/api/get-sheet/")
     nombre = unquote(nombre)
 
     # Evitar traversal y nombres inválidos
@@ -117,7 +117,7 @@ def api_retornar_hoja(handler):
             "Error al cargar la hoja"
         )
 
-def api_crear_hoja(handler):
+def api_create_sheet(handler):
 
     try:
 
@@ -145,7 +145,7 @@ def api_crear_hoja(handler):
             )
 
         # El backend genera el nombre
-        nombre = generar_nombre_hoja(cliente, matricula, modelo, fecha)
+        nombre = generate_sheet_name(cliente, matricula, modelo, fecha)
 
         ruta_html = filesystem.NOTES / f"{nombre}.html"
         ruta_pdf = filesystem.PDF / f"{nombre}.pdf"
@@ -238,7 +238,7 @@ def api_crear_hoja(handler):
         )
     
 #  Guarda las hojas informativas en .html una vez finalizadas para poder modificarlas de nuevo (notas) y genera un .pdf con la información de la hoja (pdf).
-def api_guardar_hoja(handler):
+def api_save_sheet(handler):
 
     try:
         data = handler.read_json()
@@ -304,7 +304,7 @@ def api_guardar_hoja(handler):
             }
         )
 
-def api_eliminar_hoja(handler):
+def api_delete_sheet(handler):
 
     try:
 
@@ -356,11 +356,11 @@ def api_eliminar_hoja(handler):
             }
         )
 
-def generar_nombre_hoja(cliente, matricula, modelo, fecha):
+def generate_sheet_name(cliente, matricula, modelo, fecha):
 
-    cliente = cliente.strip()
-    matricula = matricula.strip()
-    modelo = modelo.strip()
+    cliente = cliente.strip().upper()
+    matricula = matricula.strip().upper()
+    modelo = modelo.strip().upper()
 
     # Eliminar caracteres no válidos para nombres de archivo
     cliente = re.sub(r'[<>:"/\\|?*]', '', cliente)
@@ -370,7 +370,7 @@ def generar_nombre_hoja(cliente, matricula, modelo, fecha):
 
     return f"{cliente}_{matricula}_{modelo}_{fecha_str}"
 
-def obtener_id_imagen_hoja(ruta_hoja):
+def get_sheet_image_id(ruta_hoja):
     """Obtiene el identificador de la imagen de catálogo de una hoja."""
 
     try:

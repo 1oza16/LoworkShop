@@ -17,7 +17,7 @@ def iniciar_servidor():
         httpd.serve_forever()
 
 # Generacion del json
-album.generar_indice_coches()
+album.generate_cars_index()
 
 # Servidor en segundo plano
 threading.Thread(

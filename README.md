@@ -64,6 +64,8 @@ Características:
 - Vista previa.
 - Miniaturas.
 - Índice automático (`index.json`).
+- Identificadores UUID persistentes, conservados al renombrar imágenes, modelos o marcas.
+- Registro interno `.image_ids.json` que asocia los UUID con sus rutas actuales.
 - Actualización automática del índice al añadir imágenes.
 
 El índice tiene la estructura:

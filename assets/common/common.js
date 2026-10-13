@@ -8,6 +8,18 @@ function getPath() {
     return "";
 }
 
+// Conversor a Base64
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => { resolve(reader.result.split(',')[1]); };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+        }
+    );
+} // fileToBase64()
+
 //#region Toast
 
 function crearToast(){
@@ -27,6 +39,46 @@ function toast(msg, error = false) {
     clearTimeout(el._t);
     el._t = setTimeout(() => el.className = '', 3000);
 } // toast()
+
+//#endregion
+
+//#region Modales
+
+function openModal(modalType) {
+    const modal = document.querySelector(`#overlay-${modalType}`);
+    if (modal) {
+        modal.classList.add('visible');
+        
+        const textInputs = modal.querySelectorAll('input[type="text"]');
+        textInputs.forEach(input => input.value = '');
+        
+        const fileInputs = modal.querySelectorAll('input[type="file"]');
+        fileInputs.forEach(input => input.value = '');
+        
+        if (previewCover) {
+            previewCover.innerHTML = '<span>Selecciona una imagen</span>';
+        }
+    }
+} // openModal()
+
+function closeModal(modalType) {
+    const modal = document.querySelector(`#overlay-${modalType}`);
+    if (modal) {
+        modal.classList.remove('visible');
+    }
+} // closeModal()
+
+// Cerrar modal al presionar .btn-cancel o su overlay
+document.addEventListener('click', (e) => {
+    const modal = e.target.closest('.modal-overlay');
+    if (modal) {
+        // Si clickeaste en el overlay (fondo) o en botón cancelar
+        if (e.target === modal || e.target.closest('.btn-cancel')) {
+            const modalType = modal.id.replace('overlay-', '');
+            closeModal(modalType);
+        }
+    }
+});
 
 //#endregion
 
@@ -148,3 +200,153 @@ function closeSpinner() {
 
 //#endregion
 
+//#region Dropdown Menu
+
+function iniciateDropdowns() {
+    document.addEventListener("click", (e) => {
+        const btnOptions = e.target.closest(".btn-options");
+        
+        // Cerrar todos los dropdowns excepto el actual
+        document.querySelectorAll(".dropdown-menu").forEach(menu => {
+            const container = menu.closest(".dropdown-menu-container");
+            const btn = container ? container.querySelector(".btn-options") : null;
+            if (!btn || !btn.contains(e.target)) {
+                menu.classList.remove("visible");
+                if (container) container.classList.remove("active");
+            }
+        });
+
+        // Abrir/cerrar el dropdown del botón clickeado
+        if (btnOptions) {
+            const container = btnOptions.closest(".dropdown-menu-container");
+            const menu = container.querySelector(".dropdown-menu");
+
+            const isVisible = menu.classList.toggle("visible");
+            container.classList.toggle("active", isVisible);
+
+            if (isVisible) {
+                // Resetear max-height y overflow previos para medición correcta
+                menu.style.maxHeight = "";
+                menu.style.overflowY = "";
+
+                const buttonRect = btnOptions.getBoundingClientRect();
+                const menuHeight = menu.offsetHeight;
+                const menuWidth = menu.offsetWidth;
+                const viewportHeight = window.innerHeight;
+                const viewportWidth = window.innerWidth;
+
+                // Posicionamiento vertical inteligente (auto-flip hacia arriba si no hay espacio abajo)
+                const spaceBelow = viewportHeight - buttonRect.bottom;
+                const spaceAbove = buttonRect.top;
+
+                if (spaceBelow < menuHeight && spaceAbove > spaceBelow) {
+                    let topPos = buttonRect.top - menuHeight - 4;
+                    if (topPos < 10) {
+                        topPos = 10;
+                        menu.style.maxHeight = `${buttonRect.top - 14}px`;
+                        menu.style.overflowY = "auto";
+                    }
+                    menu.style.top = `${topPos}px`;
+                } else {
+                    let topPos = buttonRect.bottom + 4;
+                    if (topPos + menuHeight > viewportHeight - 10) {
+                        menu.style.maxHeight = `${viewportHeight - topPos - 10}px`;
+                        menu.style.overflowY = "auto";
+                    }
+                    menu.style.top = `${topPos}px`;
+                }
+
+                // Posicionamiento horizontal inteligente
+                let leftPos = buttonRect.right - menuWidth;
+                if (leftPos < 10) {
+                    leftPos = 10;
+                } else if (leftPos + menuWidth > viewportWidth - 10) {
+                    leftPos = viewportWidth - menuWidth - 10;
+                }
+                menu.style.left = `${leftPos}px`;
+            }
+        }
+    });
+
+    // Manejo de acciones del dropdown
+    document.addEventListener("click", (e) => {
+        const dropdownItem = e.target.closest(".dropdown-item");
+        if (dropdownItem) {
+            const action = dropdownItem.dataset.action;
+            const container = dropdownItem.closest(".dropdown-menu-container");
+            const menu = container.querySelector(".dropdown-menu");
+            
+            // Cerrar dropdown
+            menu.classList.remove("visible");
+            if (container) container.classList.remove("active");
+            
+            // Emitir evento personalizado para que otros scripts lo escuchen
+            const event = new CustomEvent("dropdownAction", {
+                detail: { action, container }
+            });
+            document.dispatchEvent(event);
+        }
+    });
+
+    // Cerrar dropdowns al hacer scroll fuera de ellos
+    document.addEventListener("scroll", (e) => {
+        document.querySelectorAll(".dropdown-menu.visible").forEach(menu => {
+            if (!menu.contains(e.target)) {
+                menu.classList.remove("visible");
+                const container = menu.closest(".dropdown-menu-container");
+                if (container) container.classList.remove("active");
+            }
+        });
+    }, { capture: true, passive: true });
+}
+
+// Inicializar dropdowns cuando el DOM esté listo
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", iniciateDropdowns);
+} else {
+    iniciateDropdowns();
+}
+
+//#endregion
+
+//#region Album extensions
+
+function getValidImageExtensions() {
+    return [".jpg", ".jpeg", ".png", ".webp", ".gif"];
+}
+
+function getImageExtensionFromName(name) {
+    if (!name || typeof name !== "string") {
+        return "";
+    }
+
+    const match = name.match(/\.([a-z0-9]+)$/i);
+    if (!match) {
+        return "";
+    }
+
+    const extension = `.${match[1].toLowerCase()}`;
+    return getValidImageExtensions().includes(extension) ? extension : "";
+}
+
+function getImageExtensionFromUrl(url) {
+    if (!url || typeof url !== "string") {
+        return "";
+    }
+
+    try {
+        const pathname = new URL(url).pathname;
+        const match = pathname.match(/\.([a-z0-9]+)$/i);
+
+        if (!match) {
+            return ".jpg";
+        }
+
+        const extension = `.${match[1].toLowerCase()}`;
+        return getValidImageExtensions().includes(extension) ? extension : "";
+    } catch (error) {
+        return "";
+    }
+}
+
+//#endregion

@@ -30,7 +30,6 @@ function Sheets() {
             );
         }
 
-        // Listeners
         rootSheets.addEventListener(
             "click",
             manageClick,
@@ -43,6 +42,8 @@ function Sheets() {
             { signal: controllerSheets.signal }
         );
 
+        // Poner eventos dropdowns
+        
         loadSheets();
     } // mount()
 
@@ -60,9 +61,8 @@ function Sheets() {
 
 } // Sheets()
 
-
 function renderSheets(sheets) {
-    const grid = rootSheets.querySelector("#lista-hojas");
+    const grid = rootSheets.querySelector("#grid");
 
     grid.innerHTML = "";
 
@@ -77,24 +77,44 @@ function renderSheets(sheets) {
 
     sheets.forEach(sheet => {
         const card = document.createElement("div");
-        card.className = "hoja-card";
+        card.className = "card";
 
         card.innerHTML = `
-            <div class="hoja-card-imagen">
-                <img src="" alt="Imagen del vehículo" class="hoja-card-imagen-img">
+            <div class="card-imagen">
+                <img src="" alt="Imagen del vehículo" class="card-imagen-img">
             </div>
 
-            <div class="hoja-card-info">
-                <div class="hoja-card-nombre">${sheet.nombre}</div>
-                <div class="hoja-card-meta">Modificado: ${formatDate(sheet.fecha)}</div>
-                <div class="hoja-card-acciones">
+            <div class="card-info">
+                <div class="card-nombre">${sheet.nombre}</div>
+                <div class="card-meta">Modificado: ${formatDate(sheet.fecha)}</div>
+                <div class="card-acciones">
                     <button class="btn-hoja" type="button" data-open-sheet="${sheet.nombre}">Abrir</button>
                     <button class="btn-hoja eliminar" type="button" data-eliminate-sheet="${sheet.nombre}">Eliminar</button>
+                    <div class="dropdown-menu-container">
+                        <button class="btn-options" type="button">
+                            <img src="img/icons/options.png" alt="Options" class="icon">
+                        </button>
+                        <div class="dropdown-menu">
+                            <span class="dropdown-title">Mas opciones</span>
+                            <button class="dropdown-item" data-action="edit">
+                                <span>Cambiar datos</span>
+                            </button>
+                            <button class="dropdown-item" data-action="duplicate">
+                                <span>Compartir</span>
+                            </button>
+                            <button class="dropdown-item" data-action="download">
+                                <span>Ver PDF</span>
+                            </button>
+                            <button class="dropdown-item" data-action="download">
+                                <span>Imprimir</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         `;
 
-        const image = card.querySelector(".hoja-card-imagen-img");
+        const image = card.querySelector(".card-imagen-img");
 
         if (sheet.imageId) {
             image.src = API.getImage(sheet.imageId);
@@ -102,64 +122,9 @@ function renderSheets(sheets) {
 
         image.addEventListener("error", () => {
             image.onerror = null;
-            image.src = "img/icons/without-photo.png";
+            image.src = "img/icons/camara.png";
         });
 
         grid.appendChild(card);
     });
 }
-
-// function filterSheets() {
-//     const query = rootSheets.querySelector("#buscador-sheets").value.toLowerCase().trim();
-
-//     const filteredSheets = allSheets.filter(sheet =>
-//         sheet.nombre.toLowerCase().includes(query)
-//     );
-
-//     renderSheets(filteredSheets);
-// }
-
-// function formatDate(date) {
-//     if (!date) return "—";
-    
-//     const d = new Date(date);
-//     const day = String(d.getDate()).padStart(2, "0");
-//     const month = String(d.getMonth() + 1).padStart(2, "0");
-//     const year = d.getFullYear();
-    
-//     return `${day}/${month}/${year}`;
-// }
-
-// function manageClick(event) {
-//     const openBtn = event.target.closest("[data-open-sheet]");
-//     const eliminateBtn = event.target.closest("[data-eliminate-sheet]");
-
-//     if (openBtn) {
-//         const sheetName = openBtn.dataset.openSheet;
-//         openSheet(sheetName);
-//     }
-
-//     if (eliminateBtn) {
-//         const sheetName = eliminateBtn.dataset.eliminateSheet;
-//         eliminateSheet(sheetName);
-//     }
-// }
-
-// function openSheet(name) {
-//     // Esto debería navegar a la vista de editor de hoja
-//     window.location.hash = `#/sheet/${encodeURIComponent(name)}`;
-// }
-
-// async function eliminateSheet(name) {
-//     const confirmed = confirm(`¿Eliminar la hoja "${name}"?`);
-
-//     if (!confirmed) return;
-
-//     try {
-//         await API.eliminateSheet(name);
-//         loadSheets();
-//     } catch (error) {
-//         console.error("Error al eliminar hoja:", error);
-//         alert("Error al eliminar la hoja");
-//     }
-// }

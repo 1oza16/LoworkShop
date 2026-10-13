@@ -1,0 +1,102 @@
+.modal-box.album {
+    max-width: 550px;
+}
+
+.section-box.album {
+    border-bottom: none;
+}
+
+/* Indicator container & Navigation bar */
+.indicator-container {
+    display: flex;
+    align-items: center;
+    padding: 8px 16px;
+    margin-bottom: 20px;
+    gap: 14px;
+}
+
+.nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.indicator-container .arrow-btn {
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    border: 1px solid var(--gris-borde);
+    border-radius: 4px;
+    background: #fafafa;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.indicator-container .arrow-btn:hover {
+    background: #eee;
+    border-color: #bbb;
+}
+
+.indicator-container .arrow-btn .icon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
+/* Breadcrumb navigation */
+.indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--texto);
+    margin: 0;
+}
+
+.breadcrumb-item {
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.breadcrumb-item.link {
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.breadcrumb-item.link:hover {
+    color: var(--azul);
+    text-decoration: underline;
+}
+
+.breadcrumb-item.active {
+    color: var(--texto);
+    font-weight: 700;
+}
+
+.breadcrumb-separator {
+    color: #aaa;
+    font-size: 14px;
+    user-select: none;
+}
+
+/* Boton Nuevo con estática btn-hoja reutilizada de home.css */
+.btn-new {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-new .icon {
+    width: 14px;
+    height: 14px;
+    object-fit: contain;
+}
+
+.btn-new:hover .icon {
+    filter: brightness(0) invert(1);
+}

@@ -75,5 +75,5 @@ async function changeView(nameView) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await changeView("home");
+    await changeView("album");
 });

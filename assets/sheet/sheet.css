@@ -138,7 +138,7 @@ body {
 
 /* Modal del album de coches */
 
-.modal-selects {
+/* .modal-selects {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
@@ -303,7 +303,7 @@ body {
 
 #vistaGestionBiblioteca.active {
     display: block;
-}
+} */
 
 /* Titulo documento */
 

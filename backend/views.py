@@ -1,8 +1,8 @@
 from core import filesystem
 
-def api_retornar_view(handler):
+def api_get_view(handler):
 
-    nombre_vista = handler.path.removeprefix("/api/retornar-view/")
+    nombre_vista = handler.path.removeprefix("/api/get-view/")
 
     ruta_vista = filesystem.VIEWS / f"{nombre_vista}.html"
 

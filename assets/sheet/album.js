@@ -54,14 +54,12 @@ function cerrarModalCoches() {
     document.getElementById('modalCoches').classList.remove('visible');
 } // cerrarModalCoches()
 
-
-
-function capitalizar(texto) {
+function capitalize(texto) {
     return texto.charAt(0).toUpperCase() + texto.slice(1);
-} // capitalizar()
+} // capitalize()
 
 // Abrir selector de archivo para subir a biblioteca
-function abrirSelectorArchivo() {
+function openSelectorFile() {
     document.getElementById('inputArchivoBiblioteca').click();
 } // abrirSelectorArchivo()
 
@@ -98,7 +96,7 @@ async function abrirModalCoches() {
         marcas.forEach(marca => {
             const opt = document.createElement('option');
             opt.value = marca;
-            opt.textContent = capitalizar(marca);
+            opt.textContent = capitalize(marca);
             selectMarca.appendChild(opt);
         });
     }
@@ -140,7 +138,7 @@ function cambiarTab(nombre, boton) {
         btnMedio.textContent = 'Añadir archivo local';
         btnPrincipal.textContent = 'Usar imagen';
         btnCancelar.onclick = cerrarModalCoches;
-        btnMedio.onclick = abrirSelectorArchivo;
+        btnMedio.onclick = openSelectorFile;
         btnPrincipal.onclick = confirmarSeleccionFoto;
         return;
     }
@@ -183,18 +181,35 @@ function cambiarTab(nombre, boton) {
 // Previsualizacion de imagenes URL
 function previsualizarUrl() {
     const url = document.getElementById('urlImagen').value.trim();
+    const urlPreview = document.getElementById('urlPreview');
 
-    if (!url) return;
+    if (!url) {
+        urlPreview.innerHTML = '<span>Vista previa</span>';
+        return;
+    }
 
-    document.getElementById('urlPreview').innerHTML = `<img src="${url}" alt="">`;
+    if (!getImageExtensionFromUrl(url)) {
+        urlPreview.innerHTML = '<span>La URL no tiene una extensión válida.</span>';
+        return;
+    }
+
+    urlPreview.innerHTML = `<img src="${url}" alt="">`;
 } // previsualizarUrl()
+
+const urlImagen = document.getElementById('urlImagen');
+urlImagen?.addEventListener('input', previsualizarUrl);
 
 // Uso de imagen URL en modelImg
 function usarImagenUrl() {
     const url = document.getElementById('urlImagen').value.trim();
 
     if (!url) {
-        toast('Introduce una URL', true)
+        toast('Introduce una URL', true);
+        return;
+    }
+
+    if (!getImageExtensionFromUrl(url)) {
+        toast('La URL no tiene una extensión válida.', true);
         return;
     }
 
@@ -206,52 +221,21 @@ function usarImagenUrl() {
     marcarComoModificada();
 } // usarImagenUrl()
 
-// Funcion para obtener la extensión de la imagen desde la URL
-function obtenerExtensionDesdeUrl(url) {
-
-    try {
-        const pathname = new URL(url).pathname;
-        const match = pathname.match(/\.(jpg|jpeg|png|webp|gif)$/i);
-
-        if (match) {
-            return '.' +
-                match[1]
-                .toLowerCase();
-        }
-    } catch {}
-
-    return '.jpg';
-} // obtenerExtensionDesdeUrl()
-
-// Conversor a Base64
-function archivoABase64(file) {
-    return new Promise(
-        (resolve, reject) => {
-            const reader =
-                new FileReader();
-            reader.onload = () => {
-                resolve(
-                    reader.result
-                    .split(',')[1]
-                );
-            };
-
-            reader.onerror = reject;
-
-            reader.readAsDataURL(file);
-        }
-    );
-} // archivoABase64()
-
 // Preparar archivo para subir a biblioteca
 function prepararArchivoBiblioteca(event) {
     const archivo = event.target.files[0];
 
     if (!archivo) return;
 
+    extensionPendiente = getImageExtensionFromName(archivo.name);
+    if (!extensionPendiente) {
+        toast('El archivo debe tener una extensión válida (.jpg, .jpeg, .png, .webp o .gif).', true);
+        event.target.value = '';
+        return;
+    }
+
     imagenPendiente = archivo;
     modoGestion = 'archivo';
-    extensionPendiente = archivo.name.substring(archivo.name.lastIndexOf('.'));
 
     mostrarGestionBiblioteca();
 } // prepararArchivoBiblioteca()
@@ -265,9 +249,14 @@ function prepararUrlBiblioteca() {
         return;
     }
 
+    extensionPendiente = getImageExtensionFromUrl(url);
+    if (!extensionPendiente) {
+        toast('La URL no tiene una extensión válida.', true);
+        return;
+    }
+
     imagenPendiente = url;
     modoGestion = 'url';
-    extensionPendiente = obtenerExtensionDesdeUrl(url);
 
     mostrarGestionBiblioteca();
 } // prepararUrlBiblioteca()
@@ -292,7 +281,7 @@ function onMarcaChange() {
     Object.keys(indiceCoches[marca]).forEach(modelo => {
         const opt = document.createElement('option');
         opt.value = modelo;
-        opt.textContent = capitalizar(modelo);
+        opt.textContent = capitalize(modelo);
         selectModelo.appendChild(opt);
     });
     selectModelo.disabled = false;
@@ -404,7 +393,7 @@ function cargarMarcasGestion() {
 
             opt.value = marca;
             opt.textContent =
-                capitalizar(marca);
+                capitalize(marca);
 
             select.appendChild(opt);
         });
@@ -441,7 +430,7 @@ function onGestionMarcaChange() {
 
             opt.value = modelo;
             opt.textContent =
-                capitalizar(modelo);
+                capitalize(modelo);
 
             selectModelo.appendChild(opt);
         });
@@ -479,32 +468,47 @@ async function guardarImagenBiblioteca() {
         modelo = document.getElementById('gestionModeloNuevo').value.trim();
     }
 
-    // Validaciones
     if (!marca || !modelo || !nombre) {
         toast('Completa todos los campos', true);
         return;
     }
 
-    const nombreFinal = nombre + extensionPendiente;
+    const nombreFinal = nombre.replace(/\.[^.]+$/, '') + extensionPendiente;
 
     try {
 
-        // Url
-        if (modoGestion === 'url') {
-            const resp = API.postUrlImage(marca, modelo, nombreFinal, imagenPendiente);
-        }
-        
-        // Archivo
-        if (modoGestion === 'archivo') {
-            const base64 = await archivoABase64(imagenPendiente);
-            const resp = API.postLocalImage(marca, modelo, nombreFinal, base64)
-        }
+        const imagen = modoGestion === 'archivo'
+            ? {
+                origen: 'base64',
+                valor: await fileToBase64(imagenPendiente),
+                extension: extensionPendiente
+            }
+            : {
+                origen: 'url',
+                valor: imagenPendiente,
+                extension: extensionPendiente
+            };
 
-        // Recargar indice de coches 
+        try {
+            await API.savePhoto(marca, modelo, nombreFinal, imagen, false);
+        } catch (error) {
+            if (!error.conflict) {
+                throw error;
+            }
+
+            const overwrite = await confirmar(
+                'SOBREESCRIBIR IMAGEN',
+                `La imagen "${nombreFinal}" ya existe. ¿Deseas reemplazarla?`
+            );
+
+            if (!overwrite) {
+                return;
+            }
+
+            await API.savePhoto(marca, modelo, nombreFinal, imagen, true);
+        }
 
         indiceCoches = null;
-        // await cargarIndiceCoches();
-
         toast('Imagen guardada correctamente');
         cancelarGestionBiblioteca();
 
@@ -512,7 +516,7 @@ async function guardarImagenBiblioteca() {
         onModeloChange()
     } catch (err) {
         console.error(err);
-        toast('Error guardando imagen', true);
+        toast(err.message || 'Error guardando imagen', true);
     }
 
 } // guardarImagenBiblioteca()

@@ -1,4 +1,28 @@
 // Hacer funciones de llamadas API aqui. Ejemplo:
+async function request(url, method, payload = null) {
+    const options = {
+        method,
+        headers: {
+            "Content-Type": "application/json"
+        }
+    };
+
+    if (payload !== null) {
+        options.body = JSON.stringify(payload);
+    }
+
+    const response = await fetch(url, options);
+
+    const data = await response.json();
+
+    if (!response.ok || data.ok === false) {
+        const error = new Error(data.error || `HTTP ${response.status}`);
+        error.conflict = data.conflict === true;
+        throw error;
+    }
+
+    return data;
+}
 
 async function get(url) {
     const response = await fetch(url);
@@ -27,48 +51,41 @@ async function getHtml(url) {
 }
 
 async function post(url, payload) {
-    const response = await fetch(url, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    });
+    return request(url, "POST", payload);
+}
 
-    if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-    }
+async function put(url, payload) {
+    return request(url, "PUT", payload);
+}
 
-    const data = await response.json();
-
-    if (data.ok === false) {
-        throw new Error(data.error || "Error desconocido");
-    }
-
-    return data;
+async function del(url, payload) {
+    return request(url, "DELETE", payload);
 }
 
 const API = {
     // GET
     getIndexCars() {
-        return get("/api/coches");
+        return get("/api/get-cars-index");
+    },
+    getIndexCovers() {
+        return get("/api/get-covers-index");
     },
     listSheets() {
-        return get("/api/listar-hojas");
+        return get("/api/list-sheets");
     },
     getImage(id) {
-        return `/api/retornar-imagen/${id}`;
+        return `/api/get-image/${id}`;
     },
     loadView(view) {
-        return getHtml(`/api/retornar-view/${view}`);
+        return getHtml(`/api/get-view/${view}`);
     },
     loadSheet(sheet) {
-        return get(`/api/retornar-hoja/${encodeURIComponent(sheet)}`);
+        return get(`/api/get-sheet/${encodeURIComponent(sheet)}`);
     },
 
     // POST
     createSheet(client, plate, model, date) {
-        return post("/api/crear-hoja", {
+        return post("/api/create-sheet", {
             client,
             plate,
             model,
@@ -76,36 +93,73 @@ const API = {
         })
     },
     saveSheet(name, html, pdfHtml) { 
-        return post("/api/guardar-hoja", {
+        return post("/api/save-sheet", {
             name,
             html,
             pdfHtml
         });
     },
     eliminateSheet(name) {
-        return post("/api/eliminar-hoja", {
+        return post("/api/delete-sheet", {
             name
         })
     },
-    postLocalImage(brand, model, name, image) {
-        return post("/api/subir-foto", {
+    savePhoto(brand, model, name, image, overwrite = false) {
+        return post("/api/save-photo", {
             brand,
             model,
             name,
-            image
+            image,
+            overwrite
         });
     },
-    postUrlImage(brand, model, name, image) {
-        return post("/api/guardar-url", {
+    createAlbumFolder(type, brand, name, overwrite = false) {
+        return post("/api/create-album-folder", {
+            type,
             brand,
-            model,
             name,
-            image
+            overwrite
         });
     },
     eliminateImage(id) {
-        return post("/api/eliminar-imagen", {
+        return post("/api/delete-image", {
             id
         })
     }, 
+
+    // PUT
+    saveCover(tipo, marca, modelo, imagen) {
+        return put("/api/save-cover", {
+            tipo,
+            marca,
+            modelo,
+            imagen
+        })
+    },
+    renameAlbumItem(type, brand, model, imageId, newName, overwrite = false) {
+        return put("/api/rename-album-item", {
+            type,
+            brand,
+            model,
+            imageId,
+            newName,
+            overwrite
+        });
+    },
+
+    // DELETE
+    eliminateCover(tipo, marca, modelo) {
+        return del("/api/delete-cover", {
+            tipo,
+            marca,
+            modelo
+        })
+    }, 
+    eliminateAlbumFolder(type, brand, model) {
+        return del("/api/delete-album-folder", {
+            type,
+            brand,
+            model
+        });
+    },
 };

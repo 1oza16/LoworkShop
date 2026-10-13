@@ -7,12 +7,14 @@ from backend import views
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
-        if self.path.startswith("/api/retornar-hoja/"):
-            return sheet.api_retornar_hoja(self)
-        if self.path.startswith("/api/retornar-imagen/"):
-            return album.api_retornar_imagen(self)
-        if self.path.startswith("/api/retornar-view/"):
-            return views.api_retornar_view(self)
+        if self.path.startswith("/api/get-sheet/"):
+            return sheet.api_get_sheet(self)
+        if self.path.startswith("/api/get-image/"):
+            return album.api_get_image(self)
+        if self.path.startswith("/api/get-cover/"):
+            return album.api_get_cover(self)
+        if self.path.startswith("/api/get-view/"):
+            return views.api_get_view(self)
         
     
         endpoint = GET_ENDPOINTS.get(self.path)
@@ -28,6 +30,18 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         if endpoint:
             return endpoint(self)
         
+        self.send_error(404, "Ruta no encontrada")
+
+    def do_PUT(self):
+        endpoint = PUT_ENDPOINTS.get(self.path)
+        if endpoint:
+            return endpoint(self)
+        self.send_error(404, "Ruta no encontrada")
+
+    def do_DELETE(self):
+        endpoint = DELETE_ENDPOINTS.get(self.path)
+        if endpoint:
+            return endpoint(self)
         self.send_error(404, "Ruta no encontrada")
 
     # Herramientas JSON
@@ -61,15 +75,26 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
 # Diccionario con los endpoints
 GET_ENDPOINTS = {
-        "/api/coches": album.api_coches,
-        "/api/listar-hojas": sheet.api_listar_hojas,
+        "/api/get-cars-index": album.api_get_cars_index,
+        "/api/get-covers-index": album.api_get_covers_index,
+        "/api/list-sheets": sheet.api_list_sheets,
     }
 
 POST_ENDPOINTS = {
-        "/api/crear-hoja": sheet.api_crear_hoja,
-        "/api/guardar-hoja": sheet.api_guardar_hoja,
-        "/api/eliminar-hoja": sheet.api_eliminar_hoja,
-        "/api/subir-foto": album.api_subir_foto,
-        "/api/guardar-url": album.api_guardar_url,
-        "/api/eliminar-imagen": album.api_eliminar_imagen,
+        "/api/create-sheet": sheet.api_create_sheet,
+        "/api/save-sheet": sheet.api_save_sheet,
+        "/api/delete-sheet": sheet.api_delete_sheet,
+        "/api/save-photo": album.api_save_photo,
+        "/api/delete-image": album.api_delete_image,
+        "/api/create-album-folder": album.api_create_album_folder,
+    }
+
+PUT_ENDPOINTS = {
+        "/api/save-cover": album.api_save_cover,
+        "/api/rename-album-item": album.api_rename_album_item,
+    }
+
+DELETE_ENDPOINTS = {
+        "/api/delete-cover": album.api_delete_cover,
+        "/api/delete-album-folder": album.api_delete_album_folder,
     }
