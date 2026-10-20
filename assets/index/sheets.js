@@ -78,6 +78,7 @@ function renderSheets(sheets) {
     sheets.forEach(sheet => {
         const card = document.createElement("div");
         card.className = "card";
+        card.dataset.sheetName = sheet.nombre;
 
         card.innerHTML = `
             <div class="card-imagen">

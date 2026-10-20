@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="ficha-uuid" content="{FICHA_UUID}">
     <link rel="shortcut icon" href="../img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../assets/common/variables.css">
     <link rel="stylesheet" href="../assets/common/common.css">
@@ -152,21 +153,41 @@
         <div class="section-header">INFORMACIÓN DEL CLIENTE Y VEHÍCULO</div>
         <div class="info-grid">
             <div class="info-item">
-                <div class="campo-label">NOMBRE DEL CLIENTE:</div>
-                <input type="text" class="info-value" id="cliente" value="{CLIENTE}">
+                <div class="campo-label">NOMBRE:</div>
+                <select class="info-value" id="cliente">
+                    <option value="{CLIENT_UUID}">{CLIENTE}</option>
+                </select>
+            </div>
+            <div class="info-item">
+                <div class="campo-label">MATRÍCULA:</div>
+                <input type="text" class="info-value" id="matricula" value="{MATRICULA}">
             </div>
             <div class="info-item">
                 <div class="campo-label">FECHA:</div>
                 <input type="date" class="info-value" id="fecha" value="{FECHA}">
             </div>
             <div class="info-item">
-                <div class="campo-label">MODELO DEL VEHÍCULO:</div>
-                <input type="text" class="info-value" id="modelo" value="{MODELO}">
+                <div class="campo-label">MARCA:</div>
+                <select class="info-value" id="marca">
+                    <option value="{BRAND_UUID}">{MARCA}</option>
+                </select>
             </div>
             <div class="info-item">
-                <div class="campo-label">MATRÍCULA:</div>
-                <input type="text" class="info-value" id="matricula" value="{MATRICULA}">
+                <div class="campo-label">MODELO:</div>
+                <select class="info-value" id="modelo" disabled>
+                    <option value="{MODEL_UUID}">{MODELO}</option>
+                </select>
             </div>
+                <div class="info-item">
+                    <label class="campo-label" for="kilometraje">KILOMETRAJE:</label>
+                    <div class="kilometraje-value">
+                        <input type="number" class="info-value kilometraje-input" id="kilometraje" min="0" step="1" placeholder="Introduce kilometraje" value="{KILOMETRAJE}">
+                        <select class="info-value kilometraje-unit" id="unidadKilometraje" aria-label="Unidad de kilometraje">
+                            <option value="km" {KM_SELECTED}>km</option>
+                            <option value="millas" {MILLAS_SELECTED}>millas</option>
+                        </select>
+                    </div>
+                </div>
         </div>
     </div>
     

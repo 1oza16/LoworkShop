@@ -3,6 +3,7 @@ const views = {
     sheets: () => Sheets(),
     album: () => Album(),
     statistics: () => Statistics(),
+    database: () => Database(),
     settings: () => Settings()
 };
 
@@ -75,5 +76,5 @@ async function changeView(nameView) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await changeView("album");
+    await changeView("database");
 });

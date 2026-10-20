@@ -18,6 +18,7 @@ async function request(url, method, payload = null) {
     if (!response.ok || data.ok === false) {
         const error = new Error(data.error || `HTTP ${response.status}`);
         error.conflict = data.conflict === true;
+        error.newName = data.newName;
         throw error;
     }
 
@@ -73,6 +74,12 @@ const API = {
     listSheets() {
         return get("/api/list-sheets");
     },
+    getDatabaseTables() {
+        return get("/api/database/tables");
+    },
+    getDatabaseRecords(table) {
+        return get(`/api/database/records?table=${encodeURIComponent(table)}`);
+    },
     getImage(id) {
         return `/api/get-image/${id}`;
     },
@@ -84,19 +91,23 @@ const API = {
     },
 
     // POST
-    createSheet(client, plate, model, date) {
-        return post("/api/create-sheet", {
-            client,
-            plate,
-            model,
-            date
-        })
+    createSheet(data) {
+        return post("/api/create-sheet", data);
     },
-    saveSheet(name, html, pdfHtml) { 
+    saveSheet(name, html, pdfHtml, datosCabecera = null, overwrite = false) {
         return post("/api/save-sheet", {
             name,
             html,
-            pdfHtml
+            pdfHtml,
+            datosCabecera,
+            overwrite
+        });
+    },
+    updateSheetMetadata(name, headerData, overwrite = false) {
+        return post("/api/update-sheet-metadata", {
+            name,
+            headerData,
+            overwrite
         });
     },
     eliminateSheet(name) {
@@ -126,6 +137,12 @@ const API = {
             id
         })
     }, 
+    createDatabaseRecord(table, data) {
+        return post("/api/database/record", {
+            table,
+            data
+        });
+    },
 
     // PUT
     saveCover(tipo, marca, modelo, imagen) {
@@ -146,6 +163,14 @@ const API = {
             overwrite
         });
     },
+    updateDatabaseRecord(table, pkCol, pkValue, data) {
+        return put("/api/database/record", {
+            table,
+            pkCol,
+            pkValue,
+            data
+        });
+    },
 
     // DELETE
     eliminateCover(tipo, marca, modelo) {
@@ -162,4 +187,11 @@ const API = {
             model
         });
     },
+    deleteDatabaseRecord(table, pkCol, pkValue) {
+        return del("/api/database/record", {
+            table,
+            pkCol,
+            pkValue
+        });
+    }
 };

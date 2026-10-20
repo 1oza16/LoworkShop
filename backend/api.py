@@ -3,10 +3,14 @@ import json
 from backend import sheet
 from backend import album
 from backend import views
+from backend import database
+from urllib.parse import urlsplit
 
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
+        if urlsplit(self.path).path == "/api/database/records":
+            return database.api_get_records(self)
         if self.path.startswith("/api/get-sheet/"):
             return sheet.api_get_sheet(self)
         if self.path.startswith("/api/get-image/"):
@@ -78,23 +82,28 @@ GET_ENDPOINTS = {
         "/api/get-cars-index": album.api_get_cars_index,
         "/api/get-covers-index": album.api_get_covers_index,
         "/api/list-sheets": sheet.api_list_sheets,
+        "/api/database/tables": database.api_get_tables,
     }
 
 POST_ENDPOINTS = {
         "/api/create-sheet": sheet.api_create_sheet,
         "/api/save-sheet": sheet.api_save_sheet,
+        "/api/update-sheet-metadata": sheet.api_update_sheet_metadata,
         "/api/delete-sheet": sheet.api_delete_sheet,
         "/api/save-photo": album.api_save_photo,
         "/api/delete-image": album.api_delete_image,
         "/api/create-album-folder": album.api_create_album_folder,
+        "/api/database/record": database.api_create_record,
     }
 
 PUT_ENDPOINTS = {
         "/api/save-cover": album.api_save_cover,
         "/api/rename-album-item": album.api_rename_album_item,
+        "/api/database/record": database.api_update_record,
     }
 
 DELETE_ENDPOINTS = {
         "/api/delete-cover": album.api_delete_cover,
         "/api/delete-album-folder": album.api_delete_album_folder,
+        "/api/database/record": database.api_delete_record,
     }

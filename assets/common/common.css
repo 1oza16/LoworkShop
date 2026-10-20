@@ -392,6 +392,23 @@ body {
 
 .campo-input:focus { border-color: var(--azul); }
 
+.kilometraje-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.kilometraje-input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+}
+
+.kilometraje-unit {
+    flex: 0 0 82px;
+    width: auto;
+}
+
 /* Botones comunes */
 
 .btn-primary {

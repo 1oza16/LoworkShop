@@ -48,7 +48,7 @@
     </div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL NEW SHEET -->
 <div class="modal-overlay" id="overlay-new-sheet">
     <div class="modal-box">
         <div class="modal-header">
@@ -62,15 +62,35 @@
         <div class="modal-body">
             <div class="campo-grupo">
                 <label class="campo-label" for="inp-cliente">Nombre del cliente</label>
-                <input type="text" class="campo-input" id="inp-cliente" placeholder="García López">
+                <select class="campo-input" id="inp-cliente">
+                    <option value="">Seleccionar cliente</option>
+                </select>
             </div>
             <div class="campo-grupo">
                 <label class="campo-label" for="inp-matricula">Matrícula del vehículo</label>
-                <input type="text" class="campo-input" id="inp-matricula" placeholder="1234 ABC">
+                <input type="text" class="campo-input" id="inp-matricula" placeholder="3333 XXX">
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-marca">Marca del vehículo</label>
+                <select class="campo-input" id="inp-marca">
+                    <option value="">Seleccionar marca</option>
+                </select>
             </div>
             <div class="campo-grupo">
                 <label class="campo-label" for="inp-modelo">Modelo del vehículo</label>
-                <input type="text" class="campo-input" id="inp-modelo" placeholder="MG-B 74">
+                <select class="campo-input" id="inp-modelo" disabled>
+                    <option value="">Seleccionar modelo</option>
+                </select>
+            </div>
+            <div class="campo-grupo">
+                <label class="campo-label" for="inp-kilometraje">Kilometraje</label>
+                <div class="kilometraje-value">
+                    <input type="number" class="campo-input kilometraje-input" id="inp-kilometraje" min="0" step="1" placeholder="Introduce kilometraje">
+                    <select class="campo-input kilometraje-unit" id="unidadKilometraje" aria-label="Unidad de kilometraje">
+                        <option value="km" selected>km</option>
+                        <option value="millas">millas</option>
+                    </select>
+                </div>
             </div>
             <div class="campo-grupo">
                 <label class="campo-label" for="inp-fecha">Fecha de reparación</label>

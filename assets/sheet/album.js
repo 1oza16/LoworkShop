@@ -54,10 +54,6 @@ function cerrarModalCoches() {
     document.getElementById('modalCoches').classList.remove('visible');
 } // cerrarModalCoches()
 
-function capitalize(texto) {
-    return texto.charAt(0).toUpperCase() + texto.slice(1);
-} // capitalize()
-
 // Abrir selector de archivo para subir a biblioteca
 function openSelectorFile() {
     document.getElementById('inputArchivoBiblioteca').click();

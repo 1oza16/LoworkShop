@@ -136,182 +136,13 @@ body {
     font-size: 14px;
 }
 
-/* Modal del album de coches */
-
-/* .modal-selects {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.modal-preview-label {
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--verde);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-    margin-top: 14px;
-}
-
-.modal-preview {
-    border: 1px solid #ddd;
-    border-left: 3px solid var(--azul);
-    min-height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 14px;
-    background: #f9f9f9;
-    overflow: hidden;
-}
-
-.modal-preview img {
-    max-width: 100%;
-    max-height: 180px;
-    object-fit: contain;
-}
-
-.modal-preview span {
-    color: #aaa;
-    font-size: 13px;
-    font-style: italic;
-}
-
-.modal-thumbs-label {
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--verde);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.modal-thumbs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 16px;
-    max-height: 140px;
-    overflow-y: auto;
-}
-
-.modal-thumbs img.thumb {
-    width: 129px;
-    height: 85px;
-    object-fit: cover;
-    border: 2px solid #ddd;
-    cursor: pointer;
-}
-
-.modal-thumbs .thumb-item {
-    position: relative;
-    display: inline-block;
-}
-
-.modal-thumbs .thumb-item:hover img.thumb,
-.modal-thumbs .thumb-item.selected img {
-    border-color: var(--azul);
-    outline: 1px solid var(--azul);
-}
-
-.thumb-action,
-.thumb-delete {
-    position: absolute;
-    top: 6px;
-    right: 6px;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    border: none;
-    background: var(--blanco);
-    border-radius: 3px;
-    cursor: pointer;
-    transition: opacity .15s;
-}
-
-.thumb-item:hover .thumb-action,
-.thumb-item:hover .thumb-delete,
-.model-image-wrapper:hover .thumb-action {
-    opacity: 1;
-}
-
-.thumb-action img,
-.thumb-delete img {
-    width: 14px;
-    height: 14px;
-    pointer-events: none;
-}
-
-.modal-empty-msg {
-    color: #aaa;
-    font-size: 12px;
-    text-align: center;
-    padding: 10px 0;
-    font-style: italic;
-}
-
-.modal-tabs {
-    display: flex;
-    gap: 4px;
-    margin-bottom: 18px;
-}
-
-.modal-tab {
-    flex: 1;
-    border: none;
-    background: #f0f0f0;
-    padding: 10px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 13px;
-}
-
-.modal-tab.active {
-    background: var(--verde);
-    color: white;
-}
-
-.modal-tab-content {
-    display: none;
-}
-
-.modal-tab-content.active {
-    display: block;
-}
-
-#urlPreview {
-    min-height: 220px;
-}
-
-#gestionPreview {
-    margin-top: 12px;
-    min-height: 220px;
-}
-
-#gestionPreview img {
-    max-width: 100%;
-    max-height: 220px;
-    object-fit: contain;
-}
-
-#vistaGestionBiblioteca {
-    display: none;
-}
-
-#vistaGestionBiblioteca.active {
-    display: block;
-} */
-
 /* Titulo documento */
 
 .document-title {
-    background-color: var(--verde);
+    background-color: var(--azul-osc);
     color: white;
     padding: 10px 15px;
-    margin: 20px 0;
+    margin: 0 0 20px 0;
     font-size: 18px;
     font-weight: bold;
     text-align: center;
@@ -328,9 +159,13 @@ body {
 
 /* Informacion de la nota (Nombre, fecha, modelo vehiculo y matricula)  */
 
+.info-grid .campo-label {
+    color: var(--azul);
+}
+
 .info-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 15px;
     margin-bottom: 15px;
 }
@@ -458,7 +293,7 @@ body {
 
 .precio-total {
     display: inline-block;
-    background-color: var(--verde);
+    background-color: var(--azul-osc);
     color: white;
     padding: 15px 30px;
     font-size: 20px;
@@ -509,6 +344,14 @@ body {
     justify-content: center;
     gap: 15px;
     flex-wrap: wrap;
+}
+
+.acciones-finales .btn-primary {
+    background-color: var(--azul);
+}
+
+.acciones-finales .btn-primary:hover:not(:disabled) {
+    background-color: var(--azul-osc);
 }
 
 /* Estilo de impresion */

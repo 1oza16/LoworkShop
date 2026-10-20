@@ -31,6 +31,87 @@ function setupAutoSave() {
     });
 } // setupAutoSave()
 
+async function loadSheetHeaderOptions() {
+    const client = document.getElementById("cliente");
+    const brand = document.getElementById("marca");
+    const model = document.getElementById("modelo");
+    const uuid = document.querySelector('meta[name="ficha-uuid"]')?.content;
+    const currentNames = {
+        client: client.options[0]?.textContent.trim(),
+        brand: brand.options[0]?.textContent.trim(),
+        model: model.options[0]?.textContent.trim()
+    };
+
+    try {
+        const [clientsResponse, brandsResponse, modelsResponse, sheetsResponse] =
+            await Promise.all([
+                API.getDatabaseRecords("clientes"),
+                API.getDatabaseRecords("marcas"),
+                API.getDatabaseRecords("modelos"),
+                uuid ? API.getDatabaseRecords("fichas") : Promise.resolve(null)
+            ]);
+        const ficha = sheetsResponse?.records.find(record => record.uuid === uuid);
+        const selectedModel = modelsResponse.records.find(
+            record => record.uuid === ficha?.modelo_uuid
+        );
+        const clientUuid = ficha?.cliente_uuid || clientsResponse.records.find(
+            record => record.nombre === currentNames.client
+        )?.uuid;
+        const modelUuid = selectedModel?.uuid || modelsResponse.records.find(
+            record => record.nombre === currentNames.model
+        )?.uuid;
+        const brandUuid = selectedModel?.marca_uuid || brandsResponse.records.find(
+            record => record.nombre === currentNames.brand
+        )?.uuid || modelsResponse.records.find(
+            record => record.uuid === modelUuid
+        )?.marca_uuid;
+
+        setSheetOptions(client, clientsResponse.records, "uuid", "nombre");
+        setSheetOptions(brand, brandsResponse.records, "uuid", "nombre");
+        client.value = clientUuid || "";
+        brand.value = brandUuid || "";
+        updateSheetModels(modelsResponse.records, brand.value, modelUuid);
+
+        brand.addEventListener("change", () => {
+            updateSheetModels(modelsResponse.records, brand.value);
+        });
+        document.dispatchEvent(new Event("sheet-header-loaded"));
+    } catch (error) {
+        console.error("Error cargando datos de cabecera:", error);
+        toast("No se pudieron cargar los clientes y vehículos.", true);
+    }
+}
+
+function setSheetOptions(select, records, valueKey, labelKey) {
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = "-- Seleccionar --";
+    select.replaceChildren(placeholder);
+
+    [...records]
+        .sort((first, second) =>
+            String(first[labelKey]).localeCompare(
+                String(second[labelKey]),
+                "es",
+                { sensitivity: "base" }
+            )
+        )
+        .forEach(record => {
+            const option = document.createElement("option");
+            option.value = record[valueKey];
+            option.textContent = record[labelKey];
+            select.appendChild(option);
+        });
+}
+
+function updateSheetModels(models, brandUuid, selectedModelUuid = "") {
+    const model = document.getElementById("modelo");
+    const options = models.filter(record => record.marca_uuid === brandUuid);
+    setSheetOptions(model, options, "uuid", "nombre");
+    model.disabled = !brandUuid;
+    model.value = selectedModelUuid;
+}
+
 // Cargar datos guardados
 // function loadData() {
 //     document.querySelectorAll('input').forEach((input, index) => {
@@ -62,4 +143,5 @@ async function clearForm() {
 window.addEventListener('DOMContentLoaded', function() {
     // loadData();
     setupAutoSave();
+    loadSheetHeaderOptions();
 });

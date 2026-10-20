@@ -1,0 +1,50 @@
+<div class="section-header" id="database-header">TABLAS</div>
+<div class="section-box album">
+    <div class="buscador-wrap">
+        <img src="img/icons/tracker.png" alt="Buscar" class="icon">
+        <input type="text" id="buscador" placeholder="Buscar por nombre de tabla">
+    </div>
+</div>
+
+<div class="indicator-container">
+    <div class="nav-controls">
+        <button id="back" class="arrow-btn" title="Atrás" type="button">
+            <img src="../img/icons/back-arrow.png" class="icon" alt="Atrás">
+        </button>
+        <button id="forward" class="arrow-btn" title="Adelante" type="button">
+            <img src="../img/icons/forward-arrow.png" class="icon" alt="Adelante">
+        </button>
+        <button id="home" class="arrow-btn" title="Tablas" type="button">
+            <img src="../img/icons/home1.png" class="icon" alt="Tablas">
+        </button>
+    </div>
+    <div class="indicator"></div>
+
+    <button class="btn-hoja btn-new" id="new-item" type="button" hidden>
+        <img src="../img/icons/more.png" alt="Nuevo" class="icon">
+        <span>Nueva tabla</span>
+    </button>
+</div>
+
+<div id="grid" class="grid-container database-grid"></div>
+
+<div class="modal-overlay" id="overlay-database-record">
+    <div class="modal-box database-modal">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="../img/favicon.ico" alt="LoworkShop" width="30">
+            </div>
+            <h3 id="database-record-title">REGISTRO</h3>
+        </div>
+
+        <div class="modal-body">
+            <form id="database-record-form">
+                <div id="database-record-fields"></div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" type="button">Cancelar</button>
+                    <button class="btn-primary" type="submit">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

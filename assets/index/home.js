@@ -2,10 +2,17 @@ let rootHome = null;
 let controllerHome = null;
 let sheets = [];
 let client = null;
+let brand = null;
 let plate = null;
 let model = null;
+let mileage = null;
+let mileageUnit = null;
 let date = null;
 let previewNameSheet = null;
+let sheetClients = [];
+let sheetBrands = [];
+let sheetModels = [];
+let editingSheet = null;
 
 //#region Mount - Unmount
 
@@ -16,8 +23,11 @@ function Home() {
         controllerHome = new AbortController();
 
         client = rootHome.querySelector("#inp-cliente");
+        brand = rootHome.querySelector("#inp-marca");
         plate = rootHome.querySelector("#inp-matricula");
         model = rootHome.querySelector("#inp-modelo");
+        mileage = rootHome.querySelector("#inp-kilometraje");
+        mileageUnit = rootHome.querySelector("#unidadKilometraje");
         date = rootHome.querySelector("#inp-fecha");
         previewNameSheet = rootHome.querySelector("#preview-nombre");
 
@@ -60,6 +70,7 @@ function Home() {
         // const overlay = root.querySelector("#overlay-");
         const createSheetBtn = root.querySelector("#btn-crear-hoja"); 
         const clientInp = client; 
+        const brandInp = brand;
         const plateInp = plate; 
         const modelInp = model; 
         const dateInp = date; 
@@ -90,12 +101,6 @@ function Home() {
             { signal: controllerHome.signal }
         );
 
-        // closeModalBtn.addEventListener(
-        //     "click",
-        //     () => closeModal("new-sheet"),
-        //     { signal: controllerHome.signal }
-        // );
-
         createSheetBtn.addEventListener(
             "click",
             createSheet,
@@ -103,8 +108,17 @@ function Home() {
         );
 
         clientInp.addEventListener(
-            "input",
+            "change",
             updatePreview,
+            { signal: controllerHome.signal }
+        );
+
+        brandInp.addEventListener(
+            "change",
+            () => {
+                updateModelOptions();
+                updatePreview();
+            },
             { signal: controllerHome.signal }
         );
 
@@ -115,7 +129,7 @@ function Home() {
         );
 
         modelInp.addEventListener(
-            "input",
+            "change",
             updatePreview,
             { signal: controllerHome.signal }
         );
@@ -138,6 +152,7 @@ function Home() {
             { signal: controllerHome.signal }
         );
 
+        loadSheetOptions();
         loadSheets();
     } // mount()
 
@@ -157,6 +172,15 @@ function Home() {
 } // Home()
 
 function manageClick(e) {
+    const edit = e.target.closest('[data-action="edit"]');
+    if (edit) {
+        const card = edit.closest("[data-sheet-name]");
+        if (card) {
+            editSheetMetadata(card.dataset.sheetName);
+        }
+        return;
+    }
+
     const open = e.target.closest("[data-open-sheet]");
 
     if (open) {
@@ -175,30 +199,272 @@ function manageClick(e) {
 
 //#region Modal
 
-// function openModal() {
-//     client.value = '';
-//     plate.value = '';
-//     model.value = '';
-//     previewNameSheet.textContent = '';
-//     rootHome.querySelector("#overlay").classList.add('visible');
-
-//     setTimeout(() => rootHome.querySelector("#inp-cliente").focus(), 80);
-// } // openModal()
-
-// function closeModal() { 
-//     rootHome.querySelector("#overlay").classList.remove('visible'); 
-// } // closeModal()
-
 function updatePreview() {
-    const clientInp = client.value.trim();
+    const clientInp = client.selectedOptions[0]?.textContent.trim() || "";
     const plateInp = plate.value.trim();
-    const modelInp = model.value.trim();
+    const modelInp = model.selectedOptions[0]?.textContent.trim() || "";
     const dateInp = date.value.trim();
 
-    const name = generateName(clientInp, plateInp, modelInp, dateInp);
+    const name = client.value && model.value
+        ? generateName(clientInp, plateInp, modelInp, dateInp)
+        : "";
 
     previewNameSheet.textContent = name ? `Nombre del archivo: ${name}.html` : '';
 } // updatePreview()
+
+async function loadSheetOptions() {
+    const root = rootHome;
+
+    try {
+        const [clientsResponse, brandsResponse, modelsResponse] = await Promise.all([
+            API.getDatabaseRecords("clientes"),
+            API.getDatabaseRecords("marcas"),
+            API.getDatabaseRecords("modelos")
+        ]);
+        if (rootHome !== root) {
+            return;
+        }
+
+        sheetClients = clientsResponse.records;
+        sheetBrands = brandsResponse.records;
+        sheetModels = modelsResponse.records;
+        setSheetSelectOptions(client, sheetClients, "uuid", "nombre", "cliente");
+        setSheetSelectOptions(brand, sheetBrands, "uuid", "nombre", "marca");
+    } catch (error) {
+        if (rootHome !== root) {
+            return;
+        }
+        console.error("Error cargando opciones de la hoja:", error);
+        toast("No se pudieron cargar clientes, marcas y modelos.", true);
+    }
+}
+
+async function editSheetMetadata(name) {
+    try {
+        const [clientsResponse, brandsResponse, modelsResponse, fichasResponse] =
+            await Promise.all([
+                API.getDatabaseRecords("clientes"),
+                API.getDatabaseRecords("marcas"),
+                API.getDatabaseRecords("modelos"),
+                API.getDatabaseRecords("fichas")
+            ]);
+        const ficha = fichasResponse.records.find(
+            record => record.nombre_ficha === name
+        );
+        if (!ficha) {
+            throw new Error("No se encontraron los datos de esta ficha.");
+        }
+
+        sheetClients = clientsResponse.records;
+        sheetBrands = brandsResponse.records;
+        sheetModels = modelsResponse.records;
+        const modal = getSheetMetadataModal();
+        const form = modal.querySelector("form");
+        form.dataset.sheetName = name;
+        form.dataset.uuid = ficha.uuid;
+        editingSheet = {
+            clienteUuid: ficha.cliente_uuid,
+            modeloUuid: ficha.modelo_uuid,
+            matricula: ficha.matricula || "",
+            kilometraje: ficha.kilometraje ?? "",
+            fecha: ficha.fecha || ""
+        };
+
+        openModal("sheet-metadata");
+        setSheetSelectOptions(
+            modal.querySelector("#edit-sheet-client"),
+            sheetClients,
+            "uuid",
+            "nombre",
+            "cliente"
+        );
+        setSheetSelectOptions(
+            modal.querySelector("#edit-sheet-brand"),
+            sheetBrands,
+            "uuid",
+            "nombre",
+            "marca"
+        );
+        modal.querySelector("#edit-sheet-client").value = ficha.cliente_uuid;
+        const selectedModel = sheetModels.find(
+            record => record.uuid === ficha.modelo_uuid
+        );
+        const selectedBrand = selectedModel?.marca_uuid || "";
+        modal.querySelector("#edit-sheet-brand").value = selectedBrand;
+        updateMetadataModelOptions(selectedBrand, ficha.modelo_uuid);
+        modal.querySelector("#edit-sheet-plate").value = editingSheet.matricula;
+        modal.querySelector("#edit-sheet-mileage").value = editingSheet.kilometraje;
+        modal.querySelector("#edit-sheet-date").value = editingSheet.fecha;
+    } catch (error) {
+        console.error("Error cargando datos de la ficha:", error);
+        toast(error.message || "No se pudieron cargar los datos de la ficha.", true);
+    }
+}
+
+function getSheetMetadataModal() {
+    let modal = document.getElementById("overlay-sheet-metadata");
+    if (modal) {
+        return modal;
+    }
+
+    document.body.insertAdjacentHTML("beforeend", `
+        <div class="modal-overlay" id="overlay-sheet-metadata">
+            <div class="modal-box">
+                <div class="modal-header">
+                    <h3>CAMBIAR DATOS DE LA HOJA</h3>
+                </div>
+                <div class="modal-body">
+                    <form id="sheet-metadata-form">
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-client">Cliente</label>
+                            <select class="campo-input" id="edit-sheet-client" required></select>
+                        </div>
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-brand">Marca</label>
+                            <select class="campo-input" id="edit-sheet-brand" required></select>
+                        </div>
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-model">Modelo</label>
+                            <select class="campo-input" id="edit-sheet-model" required></select>
+                        </div>
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-plate">Matrícula</label>
+                            <input class="campo-input" id="edit-sheet-plate" type="text" required>
+                        </div>
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-mileage">Kilometraje</label>
+                            <input class="campo-input" id="edit-sheet-mileage" type="number" min="0" step="1">
+                        </div>
+                        <div class="campo-grupo">
+                            <label class="campo-label" for="edit-sheet-date">Fecha</label>
+                            <input class="campo-input" id="edit-sheet-date" type="date" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn-cancel" type="button">Cancelar</button>
+                            <button class="btn-primary" type="submit">Guardar cambios</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    `);
+    modal = document.getElementById("overlay-sheet-metadata");
+    modal.querySelector("#edit-sheet-brand").addEventListener("change", event => {
+        updateMetadataModelOptions(event.currentTarget.value);
+    });
+    modal.querySelector("form").addEventListener("submit", saveSheetMetadata);
+    return modal;
+}
+
+function updateMetadataModelOptions(brandUuid, selectedModelUuid = "") {
+    const modelSelect = document.querySelector("#edit-sheet-model");
+    const models = sheetModels.filter(record => record.marca_uuid === brandUuid);
+    setSheetSelectOptions(modelSelect, models, "uuid", "nombre", "modelo");
+    modelSelect.disabled = !brandUuid;
+    modelSelect.value = selectedModelUuid;
+}
+
+async function saveSheetMetadata(event) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const submitButton = form.querySelector('[type="submit"]');
+    const headerData = {
+        uuid: form.dataset.uuid,
+        clienteUuid: form.querySelector("#edit-sheet-client").value,
+        modeloUuid: form.querySelector("#edit-sheet-model").value,
+        matricula: form.querySelector("#edit-sheet-plate").value.trim(),
+        kilometraje: form.querySelector("#edit-sheet-mileage").value,
+        fecha: form.querySelector("#edit-sheet-date").value
+    };
+
+    if (!form.reportValidity()) {
+        return;
+    }
+
+    submitButton.disabled = true;
+    try {
+        let response;
+        try {
+            response = await API.updateSheetMetadata(
+                form.dataset.sheetName,
+                headerData
+            );
+        } catch (error) {
+            if (!error.conflict) {
+                throw error;
+            }
+            const overwrite = await confirmar(
+                "Sobrescribir hoja",
+                `La hoja "${error.newName}" ya existe. ¿Deseas reemplazarla?`
+            );
+            if (!overwrite) {
+                restoreMetadataForm(form);
+                closeModal("sheet-metadata");
+                return;
+            }
+            response = await API.updateSheetMetadata(
+                form.dataset.sheetName,
+                headerData,
+                true
+            );
+        }
+
+        closeModal("sheet-metadata");
+        await loadSheets();
+        toast(`Hoja actualizada: ${response.newName}`);
+    } catch (error) {
+        console.error("Error actualizando datos de la hoja:", error);
+        toast(error.message || "No se pudieron actualizar los datos.", true);
+    } finally {
+        submitButton.disabled = false;
+    }
+}
+
+function restoreMetadataForm(form) {
+    if (!editingSheet) {
+        return;
+    }
+    form.querySelector("#edit-sheet-client").value = editingSheet.clienteUuid;
+    const model = sheetModels.find(
+        record => record.uuid === editingSheet.modeloUuid
+    );
+    const brandUuid = model?.marca_uuid || "";
+    form.querySelector("#edit-sheet-brand").value = brandUuid;
+    updateMetadataModelOptions(brandUuid, editingSheet.modeloUuid);
+    form.querySelector("#edit-sheet-plate").value = editingSheet.matricula;
+    form.querySelector("#edit-sheet-mileage").value = editingSheet.kilometraje;
+    form.querySelector("#edit-sheet-date").value = editingSheet.fecha;
+}
+
+function setSheetSelectOptions(select, records, valueKey, labelKey, label) {
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = `-- Seleccionar ${label} --`;
+    select.replaceChildren(placeholder);
+
+    [...records]
+        .sort((first, second) =>
+            String(first[labelKey]).localeCompare(
+                String(second[labelKey]),
+                "es",
+                { sensitivity: "base" }
+            )
+        )
+        .forEach(record => {
+            const option = document.createElement("option");
+            option.value = record[valueKey];
+            option.textContent = record[labelKey];
+            select.appendChild(option);
+        });
+}
+
+function updateModelOptions() {
+    const availableModels = sheetModels.filter(
+        record => record.marca_uuid === brand.value
+    );
+    setSheetSelectOptions(model, availableModels, "uuid", "nombre", "modelo");
+    model.disabled = !brand.value;
+}
 
 function generateName(client, plate, model, date) {
     const changeFormat = value => value
@@ -229,13 +495,23 @@ function generateName(client, plate, model, date) {
 //#region Sheets
 
 async function createSheet() {
-    const clientValue = client.value.trim();
+    const clientUuid = client.value;
+    const clientValue = client.selectedOptions[0]?.textContent.trim() || "";
+    const modelUuid = model.value;
+    const modelValue = model.selectedOptions[0]?.textContent.trim() || "";
     const plateValue = plate.value.trim();
-    const modelValue = model.value.trim();
+    const mileageValue = mileage.value.trim();
+    const mileageNumber = mileageValue ? Number(mileageValue) : null;
+    const mileageUnitValue = mileageUnit.value;
     const dateValue = date.value.trim();
 
-    if (!clientValue || !plateValue || !modelValue || !dateValue) {
+    if (!clientUuid || !modelUuid || !plateValue || !dateValue) {
         toast("Completa todos los campos.", true);
+        return;
+    }
+    if (mileageNumber !== null
+        && (!Number.isSafeInteger(mileageNumber) || mileageNumber < 0)) {
+        toast("El kilometraje no es válido.", true);
         return;
     }
 
@@ -253,7 +529,16 @@ async function createSheet() {
 
     try {
         openSpinner();
-        const resp = await API.createSheet(clientValue, plateValue, modelValue, dateValue);
+        const resp = await API.createSheet({
+            clientUuid,
+            modelUuid,
+            client: clientValue,
+            model: modelValue,
+            plate: plateValue,
+            mileage: mileageNumber,
+            mileageUnit: mileageUnitValue,
+            date: dateValue
+        });
         toast(`Hoja "${nameSheet}" creada.`);
 
         closeModal("new-sheet");
@@ -367,6 +652,7 @@ function renderSheetsHome(sheets) {
         const item = document.createElement("div");
 
         item.className = "hoja-item";
+        item.dataset.sheetName = sheet.nombre;
 
         item.innerHTML = `
             <div class="hoja-imagen">

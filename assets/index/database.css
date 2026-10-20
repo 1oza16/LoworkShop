@@ -1,0 +1,118 @@
+.database-grid {
+    grid-template-columns: none;
+}
+
+.database-table-card {
+    min-height: 100px;
+    padding: 18px;
+    border: 1px solid var(--gris-borde);
+    background: var(--blanco);
+    color: var(--texto);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    transition: border-color 0.15s, background-color 0.15s;
+}
+
+.database-table-card:hover {
+    border-color: var(--azul);
+    background: #f5f8ff;
+}
+
+.database-table-name {
+    color: var(--azul);
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.database-table-count {
+    color: #888;
+    font-size: 13px;
+}
+
+.database-records-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: var(--blanco);
+    border: 1px solid var(--gris-borde);
+}
+
+.database-records {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.database-records th,
+.database-records td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e7e7e7;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.database-records th {
+    background: #f5f5f5;
+    color: var(--azul);
+    font-weight: bold;
+}
+
+.database-records tbody tr {
+    transition: background-color 0.12s;
+}
+
+.database-records tbody tr:hover {
+    background: #f5f8ff;
+}
+
+.database-records tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.database-actions-heading,
+.database-record-actions {
+    width: 1%;
+    text-align: right !important;
+}
+
+.database-record-actions {
+    opacity: 0;
+    transition: opacity 0.12s;
+}
+
+.database-record-actions > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 6px;
+}
+
+.database-records tr:hover .database-record-actions,
+.database-records tr:focus-within .database-record-actions {
+    opacity: 1;
+}
+
+.database-modal {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.database-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.database-error button {
+    width: fit-content;
+}
+
+@media (hover: none) {
+    .database-record-actions {
+        opacity: 1;
+    }
+}
