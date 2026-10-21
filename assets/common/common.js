@@ -351,6 +351,61 @@ function getImageExtensionFromUrl(url) {
 
 //#endregion
 
+//#region Helpers Sheets
+function setSheetSelectOptions(select, records, valueKey, labelKey, label) {
+    const placeholder = document.createElement("option");
+    placeholder.value = "";
+    placeholder.textContent = `-- Seleccionar ${label} --`;
+    select.replaceChildren(placeholder);
+
+    [...records]
+        .sort((first, second) =>
+            String(first[labelKey]).localeCompare(
+                String(second[labelKey]),
+                "es",
+                { sensitivity: "base" }
+            )
+        )
+        .forEach(record => {
+            const option = document.createElement("option");
+            option.value = record[valueKey];
+            option.textContent = record[labelKey];
+            select.appendChild(option);
+        });
+}
+
+function setSheetModelOptions(select, models, brandUuid, selectedModelUuid = "") {
+    const availableModels = models.filter(
+        record => record.marca_uuid === brandUuid
+    );
+    setSheetSelectOptions(select, availableModels, "uuid", "nombre", "modelo");
+    select.disabled = !brandUuid;
+    select.value = selectedModelUuid;
+}
+
+async function updateSheetMetadataWithConfirmation(name, headerData, onCancel) {
+    try {
+        return await API.updateSheetMetadata(name, headerData);
+    } catch (error) {
+        if (!error.conflict) {
+            throw error;
+        }
+
+        const overwrite = await confirmar(
+            "Sobrescribir hoja",
+            `La hoja "${error.newName}" ya existe. ¿Deseas reemplazarla?`
+        );
+        if (!overwrite) {
+            onCancel?.();
+            return null;
+        }
+
+        return API.updateSheetMetadata(name, headerData, true);
+    }
+}
+
+//#endregion
+
 //#region Capitalize
 
 function capitalize(text) {

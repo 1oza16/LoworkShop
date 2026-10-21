@@ -1,1 +1,84 @@
-<h1>statistics</h1>
+<section class="statistics-page">
+    <header class="statistics-header">
+        <div>
+            <h1>Estadísticas</h1>
+            <p>Resumen de actividad de las fichas de reparación</p>
+        </div>
+        <p id="statistics-state" class="statistics-state" role="status">Cargando datos...</p>
+    </header>
+
+    <section class="statistics-filters" aria-label="Filtros de estadísticas">
+        <label>
+            Desde
+            <input id="statistics-date-from" type="date">
+        </label>
+        <label>
+            Hasta
+            <input id="statistics-date-to" type="date">
+        </label>
+        <label>
+            Marca
+            <select id="statistics-brand">
+                <option value="">Todas las marcas</option>
+            </select>
+        </label>
+        <label>
+            Modelo
+            <select id="statistics-model">
+                <option value="">Todos los modelos</option>
+            </select>
+        </label>
+        <label>
+            Cliente
+            <select id="statistics-client">
+                <option value="">Todos los clientes</option>
+            </select>
+        </label>
+    </section>
+
+    <section class="statistics-kpis" aria-label="Indicadores">
+        <article class="statistics-card">
+            <span id="statistics-record-count" class="statistics-value">0</span>
+            <span class="statistics-label">Fichas creadas</span>
+        </article>
+        <article class="statistics-card">
+            <span id="statistics-client-count" class="statistics-value">0</span>
+            <span class="statistics-label">Clientes</span>
+        </article>
+        <article class="statistics-card">
+            <span id="statistics-vehicle-count" class="statistics-value">0</span>
+            <span class="statistics-label">Vehículos únicos</span>
+        </article>
+        <article class="statistics-card">
+            <span id="statistics-average-mileage" class="statistics-value">—</span>
+            <span class="statistics-label">Kilometraje medio</span>
+        </article>
+    </section>
+
+    <section class="statistics-charts" aria-label="Gráficos">
+        <article class="statistics-chart-card">
+            <h2>Actividad mensual</h2>
+            <div class="statistics-chart">
+                <canvas id="statistics-monthly-chart" aria-label="Fichas por mes"></canvas>
+            </div>
+        </article>
+        <article class="statistics-chart-card">
+            <h2>Fichas por marca</h2>
+            <div class="statistics-chart">
+                <canvas id="statistics-brand-chart" aria-label="Fichas por marca"></canvas>
+            </div>
+        </article>
+        <article class="statistics-chart-card">
+            <h2>Modelos más frecuentes</h2>
+            <div class="statistics-chart">
+                <canvas id="statistics-model-chart" aria-label="Modelos más frecuentes"></canvas>
+            </div>
+        </article>
+        <article class="statistics-chart-card">
+            <h2>Distribución de kilometraje</h2>
+            <div class="statistics-chart">
+                <canvas id="statistics-mileage-chart" aria-label="Distribución de kilometraje"></canvas>
+            </div>
+        </article>
+    </section>
+</section>

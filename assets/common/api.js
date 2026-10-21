@@ -25,8 +25,8 @@ async function request(url, method, payload = null) {
     return data;
 }
 
-async function get(url) {
-    const response = await fetch(url);
+async function get(url, options = {}) {
+    const response = await fetch(url, options);
 
     if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
@@ -76,6 +76,9 @@ const API = {
     },
     getDatabaseTables() {
         return get("/api/database/tables");
+    },
+    getStatisticsData(signal) {
+        return get("/api/statistics/data", { signal });
     },
     getDatabaseRecords(table) {
         return get(`/api/database/records?table=${encodeURIComponent(table)}`);

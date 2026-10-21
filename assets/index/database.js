@@ -416,7 +416,7 @@ function updateDatabaseNavigation() {
         <span class="breadcrumb-separator">/</span>
         <span class="breadcrumb-item active"></span>
     `;
-    indicatorDatabase.querySelector(".breadcrumb-item.active").textContent = currentTable;
+    indicatorDatabase.querySelector(".breadcrumb-item.active").textContent = capitalize(currentTable);
 }
 
 function updateDatabaseHeader() {
@@ -439,6 +439,11 @@ async function openRecordModal(mode, record = {}) {
 
     const table = currentTable;
     const data = tableData;
+    if (table === "fichas" && mode === "update") {
+        await openSheetRecordModal(record, table, data);
+        return;
+    }
+
     const relationOptions = {};
     try {
         for (const column of data.columns) {
@@ -536,6 +541,96 @@ async function openRecordModal(mode, record = {}) {
     fields.querySelector("input, select")?.focus();
 }
 
+async function openSheetRecordModal(record, table, data) {
+    let clients;
+    let brands;
+    let models;
+    try {
+        [clients, brands, models] = await Promise.all([
+            getRelationRecords("clientes"),
+            getRelationRecords("marcas"),
+            getRelationRecords("modelos")
+        ]);
+    } catch (error) {
+        console.error("Error cargando opciones de la ficha:", error);
+        toast(error.message || "No se pudieron cargar las opciones.", true);
+        return;
+    }
+    if (currentTable !== table || tableData !== data) {
+        return;
+    }
+
+    const form = rootDatabase.querySelector("#database-record-form");
+    const fields = rootDatabase.querySelector("#database-record-fields");
+    const title = rootDatabase.querySelector("#database-record-title");
+    form.dataset.mode = "update";
+    form.dataset.uuid = record.uuid;
+    form.dataset.sheetName = record.nombre_ficha;
+    form.dataset.originalHeader = JSON.stringify({
+        clienteUuid: record.cliente_uuid,
+        modeloUuid: record.modelo_uuid,
+        matricula: record.matricula || "",
+        kilometraje: record.kilometraje ?? "",
+        fecha: record.fecha || ""
+    });
+    title.textContent = "EDITAR FICHA";
+    openModal("database-record");
+    fields.innerHTML = `
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-client">Cliente</label>
+            <select class="campo-input" id="database-sheet-client" name="cliente_uuid" required></select>
+        </div>
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-brand">Marca</label>
+            <select class="campo-input" id="database-sheet-brand" required></select>
+        </div>
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-model">Modelo</label>
+            <select class="campo-input" id="database-sheet-model" name="modelo_uuid" required></select>
+        </div>
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-plate">Matrícula</label>
+            <input class="campo-input" id="database-sheet-plate" name="matricula" type="text" required>
+        </div>
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-mileage">Kilometraje</label>
+            <input class="campo-input" id="database-sheet-mileage" name="kilometraje" type="number" min="0" step="1">
+        </div>
+        <div class="campo-grupo">
+            <label class="campo-label" for="database-sheet-date">Fecha</label>
+            <input class="campo-input" id="database-sheet-date" name="fecha" type="date" required>
+        </div>
+    `;
+
+    const clientSelect = fields.querySelector("#database-sheet-client");
+    const brandSelect = fields.querySelector("#database-sheet-brand");
+    const modelSelect = fields.querySelector("#database-sheet-model");
+    setSheetSelectOptions(clientSelect, clients, "uuid", "nombre", "cliente");
+    setSheetSelectOptions(brandSelect, brands, "uuid", "nombre", "marca");
+
+    const selectedModel = models.find(
+        model => model.uuid === record.modelo_uuid
+    );
+    brandSelect.value = selectedModel?.marca_uuid || "";
+    setSheetModelOptions(
+        modelSelect,
+        models,
+        brandSelect.value,
+        record.modelo_uuid
+    );
+    brandSelect.addEventListener("change", () => {
+        setSheetModelOptions(modelSelect, models, brandSelect.value);
+    });
+
+    clientSelect.value = record.cliente_uuid;
+    fields.querySelector("#database-sheet-plate").value =
+        record.matricula || "";
+    fields.querySelector("#database-sheet-mileage").value =
+        record.kilometraje ?? "";
+    fields.querySelector("#database-sheet-date").value = record.fecha || "";
+    clientSelect.focus();
+}
+
 async function getRelationRecords(tableName) {
     if (!relationRecordsCache[tableName]) {
         const response = await API.getDatabaseRecords(tableName);
@@ -576,8 +671,29 @@ async function saveDatabaseRecord(event) {
 
     submitButton.disabled = true;
     try {
+        let successMessage;
         if (form.dataset.mode === "create") {
             await API.createDatabaseRecord(currentTable, data);
+            successMessage = "Registro creado.";
+        } else if (currentTable === "fichas") {
+            const headerData = {
+                uuid: form.dataset.uuid,
+                clienteUuid: form.querySelector('[name="cliente_uuid"]').value,
+                modeloUuid: form.querySelector('[name="modelo_uuid"]').value,
+                matricula: form.querySelector('[name="matricula"]').value.trim(),
+                kilometraje: form.querySelector('[name="kilometraje"]').value,
+                fecha: form.querySelector('[name="fecha"]').value
+            };
+            const response = await updateSheetMetadataWithConfirmation(
+                form.dataset.sheetName,
+                headerData,
+                () => restoreSheetRecordForm(form)
+            );
+            if (!response) {
+                closeModal("database-record");
+                return;
+            }
+            successMessage = `Hoja actualizada: ${response.newName}`;
         } else {
             const primaryKey = tableData.columns.find(column => column.primaryKey);
             const record = form.dataset.recordIndex !== undefined
@@ -589,12 +705,11 @@ async function saveDatabaseRecord(event) {
                 record[primaryKey.name],
                 data
             );
+            successMessage = "Registro actualizado.";
         }
 
         closeModal("database-record");
-        toast(form.dataset.mode === "create"
-            ? "Registro creado."
-            : "Registro actualizado.");
+        toast(successMessage);
         await refreshDatabaseTable();
     } catch (error) {
         console.error("Error guardando el registro:", error);
@@ -602,6 +717,27 @@ async function saveDatabaseRecord(event) {
     } finally {
         submitButton.disabled = false;
     }
+}
+
+function restoreSheetRecordForm(form) {
+    const original = JSON.parse(form.dataset.originalHeader);
+    const clientSelect = form.querySelector('[name="cliente_uuid"]');
+    const brandSelect = form.querySelector("#database-sheet-brand");
+    const modelSelect = form.querySelector('[name="modelo_uuid"]');
+    const model = relationRecordsCache.modelos.find(
+        record => record.uuid === original.modeloUuid
+    );
+    brandSelect.value = model?.marca_uuid || "";
+    setSheetModelOptions(
+        modelSelect,
+        relationRecordsCache.modelos,
+        brandSelect.value,
+        original.modeloUuid
+    );
+    clientSelect.value = original.clienteUuid;
+    form.querySelector('[name="matricula"]').value = original.matricula;
+    form.querySelector('[name="kilometraje"]').value = original.kilometraje;
+    form.querySelector('[name="fecha"]').value = original.fecha;
 }
 
 async function deleteDatabaseRecord(record) {

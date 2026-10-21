@@ -115,8 +115,8 @@ function Home() {
 
         brandInp.addEventListener(
             "change",
-            () => {
-                updateModelOptions();
+            event => {
+                updateHomeModelOptions(event.currentTarget.value);
                 updatePreview();
             },
             { signal: controllerHome.signal }
@@ -358,10 +358,12 @@ function getSheetMetadataModal() {
 
 function updateMetadataModelOptions(brandUuid, selectedModelUuid = "") {
     const modelSelect = document.querySelector("#edit-sheet-model");
-    const models = sheetModels.filter(record => record.marca_uuid === brandUuid);
-    setSheetSelectOptions(modelSelect, models, "uuid", "nombre", "modelo");
-    modelSelect.disabled = !brandUuid;
-    modelSelect.value = selectedModelUuid;
+    setSheetModelOptions(
+        modelSelect,
+        sheetModels,
+        brandUuid,
+        selectedModelUuid
+    );
 }
 
 async function saveSheetMetadata(event) {
@@ -383,30 +385,14 @@ async function saveSheetMetadata(event) {
 
     submitButton.disabled = true;
     try {
-        let response;
-        try {
-            response = await API.updateSheetMetadata(
-                form.dataset.sheetName,
-                headerData
-            );
-        } catch (error) {
-            if (!error.conflict) {
-                throw error;
-            }
-            const overwrite = await confirmar(
-                "Sobrescribir hoja",
-                `La hoja "${error.newName}" ya existe. ¿Deseas reemplazarla?`
-            );
-            if (!overwrite) {
-                restoreMetadataForm(form);
-                closeModal("sheet-metadata");
-                return;
-            }
-            response = await API.updateSheetMetadata(
-                form.dataset.sheetName,
-                headerData,
-                true
-            );
+        const response = await updateSheetMetadataWithConfirmation(
+            form.dataset.sheetName,
+            headerData,
+            () => restoreMetadataForm(form)
+        );
+        if (!response) {
+            closeModal("sheet-metadata");
+            return;
         }
 
         closeModal("sheet-metadata");
@@ -436,34 +422,8 @@ function restoreMetadataForm(form) {
     form.querySelector("#edit-sheet-date").value = editingSheet.fecha;
 }
 
-function setSheetSelectOptions(select, records, valueKey, labelKey, label) {
-    const placeholder = document.createElement("option");
-    placeholder.value = "";
-    placeholder.textContent = `-- Seleccionar ${label} --`;
-    select.replaceChildren(placeholder);
-
-    [...records]
-        .sort((first, second) =>
-            String(first[labelKey]).localeCompare(
-                String(second[labelKey]),
-                "es",
-                { sensitivity: "base" }
-            )
-        )
-        .forEach(record => {
-            const option = document.createElement("option");
-            option.value = record[valueKey];
-            option.textContent = record[labelKey];
-            select.appendChild(option);
-        });
-}
-
-function updateModelOptions() {
-    const availableModels = sheetModels.filter(
-        record => record.marca_uuid === brand.value
-    );
-    setSheetSelectOptions(model, availableModels, "uuid", "nombre", "modelo");
-    model.disabled = !brand.value;
+function updateHomeModelOptions(brandUuid) {
+    setSheetModelOptions(model, sheetModels, brandUuid);
 }
 
 function generateName(client, plate, model, date) {

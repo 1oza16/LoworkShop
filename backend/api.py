@@ -4,11 +4,14 @@ from backend import sheet
 from backend import album
 from backend import views
 from backend import database
+from backend import statistics
 from urllib.parse import urlsplit
 
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
+        if urlsplit(self.path).path == "/api/statistics/data":
+            return statistics.api_get_statistics_data(self)
         if urlsplit(self.path).path == "/api/database/records":
             return database.api_get_records(self)
         if self.path.startswith("/api/get-sheet/"):
