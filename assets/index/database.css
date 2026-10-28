@@ -1,8 +1,11 @@
 .database-grid {
-    grid-template-columns: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
 }
 
 .database-table-card {
+    flex: 1 1 220px;
     min-height: 100px;
     padding: 18px;
     border: 1px solid var(--gris-borde);
@@ -35,7 +38,9 @@
 }
 
 .database-records-wrap {
+    flex: 1 1 100%;
     width: 100%;
+    min-width: 0;
     overflow-x: auto;
     background: var(--blanco);
     border: 1px solid var(--gris-borde);
@@ -114,5 +119,22 @@
 @media (hover: none) {
     .database-record-actions {
         opacity: 1;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .database-table-card {
+        flex-basis: 180px;
+    }
+
+    .database-records th,
+    .database-records td {
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .database-table-card {
+        flex-basis: 100%;
     }
 }

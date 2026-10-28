@@ -76,5 +76,10 @@ async function changeView(nameView) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
+    if (window.matchMedia("(max-width: 767px)").matches) {
+        document.getElementById("sidebar").classList.add("collapsed");
+        document.getElementById("btnMenu").classList.add("collapsed");
+    }
+
     await changeView("statistics");
 });

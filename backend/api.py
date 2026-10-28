@@ -1,13 +1,81 @@
 import http.server
+import io
 import json
+import os
+import re
 from backend import sheet
 from backend import album
 from backend import views
 from backend import database
 from backend import statistics
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
 
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
+
+    def send_head(self):
+        request_path = urlsplit(self.path).path
+        if request_path != "/" and not request_path.lower().endswith(".html"):
+            return super().send_head()
+
+        if request_path == "/":
+            file_path = self.translate_path("index.html")
+        else:
+            file_path = self.translate_path(request_path)
+
+        try:
+            with open(file_path, "rb") as html_file:
+                html = html_file.read().decode("utf-8")
+        except FileNotFoundError:
+            self.send_error(404, "File not found")
+            return None
+
+        html = re.sub(
+            r"""(?P<prefix>\b(?:href|src)\s*=\s*)(?P<quote>["'])(?P<url>.*?)(?P=quote)""",
+            lambda match: (
+                match.group("prefix")
+                + self._version_static_asset(
+                    match.group("url"),
+                    request_path
+                )
+            ),
+            html,
+            flags=re.IGNORECASE
+        )
+        body = html.encode("utf-8")
+
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(body)))
+        self.send_header("Last-Modified", self.date_time_string(os.path.getmtime(file_path)))
+        self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
+        self.end_headers()
+        return io.BytesIO(body)
+
+    def _version_static_asset(self, asset_url, html_path):
+        parsed_url = urlsplit(asset_url)
+        extension = os.path.splitext(parsed_url.path)[1].lower()
+        if parsed_url.scheme or parsed_url.netloc or extension not in (".css", ".js"):
+            return f'"{asset_url}"'
+
+        asset_path = urlsplit(urljoin(html_path, asset_url)).path
+        asset_file = self.translate_path(asset_path)
+        if not os.path.isfile(asset_file):
+            return f'"{asset_url}"'
+
+        query = [
+            (key, value)
+            for key, value in parse_qsl(parsed_url.query, keep_blank_values=True)
+            if key != "v"
+        ]
+        query.append(("v", str(os.path.getmtime(asset_file))))
+        versioned_url = urlunsplit((
+            parsed_url.scheme,
+            parsed_url.netloc,
+            parsed_url.path,
+            urlencode(query),
+            parsed_url.fragment
+        ))
+        return f'"{versioned_url}"'
 
     def do_GET(self):
         if urlsplit(self.path).path == "/api/statistics/data":

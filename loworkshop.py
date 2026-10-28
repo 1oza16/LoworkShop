@@ -1,4 +1,4 @@
-from core import filesystem
+from core import filesystem, discovery
 from backend import album, api
 import os
 import webbrowser
@@ -10,24 +10,25 @@ os.chdir(filesystem.ROOT)
 
 PORT = 8000
 
-def iniciar_servidor():
 
+def iniciar_servidor():
     with socketserver.TCPServer(("", PORT), api.LoworkShopHandler) as httpd:
-        print(f"Servidor iniciado en http://localhost:{PORT}")
+        print(f"Servidor HTTP iniciado en http://localhost:{PORT}")
+        print(f"Accesible desde la red local en http://0.0.0.0:{PORT}")
         httpd.serve_forever()
 
-# Generacion del json
-album.generate_cars_index()
 
-# Servidor en segundo plano
-threading.Thread(
-    target=iniciar_servidor,
-    daemon=True
-).start()
+def iniciar_descubrimiento():
+    udp_server = discovery.start_discovery_server(http_port=PORT)
+    print(f"Descubrimiento UDP activo en udp://0.0.0.0:{discovery.DISCOVERY_PORT}")
+    udp_server.serve_forever()
 
-# Abrir navegador por defecto de google
-webbrowser.open(
-    "http://localhost:8000"
-)
 
-input("LoworkShop en ejecución. Pulsa ENTER para cerrar...\n")
+if __name__ == "__main__":
+    album.generate_cars_index()
+
+    threading.Thread(target=iniciar_servidor, daemon=True).start()
+    threading.Thread(target=iniciar_descubrimiento, daemon=True).start()
+
+    webbrowser.open(f"http://localhost:{PORT}")
+    input("LoworkShop en ejecución. Pulsa ENTER para cerrar...\n")

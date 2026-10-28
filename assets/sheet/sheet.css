@@ -382,3 +382,123 @@ body {
         page-break-inside: auto;
     }
 }
+
+@media screen and (max-width: 1024px) {
+    body {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .info-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .save-status-bar {
+        gap: 10px;
+        padding: 9px 12px;
+    }
+
+    .save-status-right {
+        gap: 12px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    body {
+        padding: 8px;
+    }
+
+    .save-status-bar {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 10px;
+    }
+
+    .save-status-left {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    #saveFileName {
+        min-width: 0;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .save-status-right {
+        flex-wrap: wrap;
+        gap: 4px 12px;
+        font-size: 12px;
+    }
+
+    .header {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 10px;
+    }
+
+    .header .logo {
+        max-width: min(180px, 48vw);
+    }
+
+    .model {
+        max-width: 100px;
+    }
+
+    .title-section h1 {
+        font-size: 22px;
+    }
+
+    .info-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+    }
+
+    .document-title {
+        padding: 9px 10px;
+        font-size: 16px;
+    }
+
+    .section {
+        margin-bottom: 20px;
+    }
+
+    .editor-toolbar {
+        gap: 2px;
+        padding: 4px;
+    }
+
+    .toolbar-btn {
+        padding: 6px 8px;
+    }
+
+    .precio-section {
+        margin-top: 20px;
+    }
+
+    .toggle-mano-obra-mini {
+        margin-right: 0;
+    }
+
+    .precio-total {
+        max-width: 100%;
+        padding: 12px 16px;
+        font-size: 18px;
+    }
+
+    .precio-input,
+    .precio-total-input {
+        max-width: 100%;
+    }
+
+    .acciones-finales {
+        justify-content: stretch;
+        gap: 8px;
+    }
+
+    .acciones-finales > button {
+        flex: 1 1 140px;
+    }
+}

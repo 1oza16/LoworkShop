@@ -1,0 +1,27 @@
+[project]
+name = "loworkshop-mobile"
+version = "3.2.0"
+description = "Cliente móvil para localizar y abrir LoworkShop en la red local"
+requires-python = ">=3.12"
+dependencies = [
+    "flet==1.0.4",
+    "flet-webview==1.0.4",
+]
+
+[tool.flet]
+product = "LoworkShop"
+package = "com.loworkshop.mobile"
+icon = "assets/icon.png"
+
+[tool.flet.android]
+package = "com.loworkshop.mobile"
+
+[tool.flet.android.permission]
+"android.permission.ACCESS_NETWORK_STATE" = true
+"android.permission.ACCESS_WIFI_STATE" = true
+"android.permission.CHANGE_WIFI_MULTICAST_STATE" = true
+"android.permission.READ_EXTERNAL_STORAGE" = true
+"android.permission.READ_MEDIA_IMAGES" = true
+
+[tool.flet.android.manifest_application]
+usesCleartextTraffic = "true"

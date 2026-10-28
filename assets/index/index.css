@@ -3,12 +3,13 @@
 body {
     margin: 0;
     padding: 0;
-    height: 100%;
+    height: 100vh;
     font-family: 'Calibri', 'Arial', sans-serif;
     background: var(--gris-bg);
     color: var(--texto);
-    min-height: 100vh;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Header */
@@ -38,6 +39,10 @@ body {
     align-items: center;
     justify-content: space-between;
     font-size: 16px;
+}
+
+#texto-estado {
+    margin: 0;
 }
 
 .estado-texto {
@@ -88,13 +93,15 @@ body {
     transform: rotate(90deg);
 }
 
-.app-container{
-    display:flex;
-    height:calc(100vh - 70px);
+.app-container {
+    display: flex;
+    flex: 1 1 auto;
+    min-height: 0;
 }
 
-#sidebar{
+#sidebar {
     width: 220px;
+    flex: 0 0 220px;
     background: var(--azul);
     color: var(--blanco);
     display: flex;
@@ -109,6 +116,7 @@ body {
 
 #sidebar.collapsed {
     width: 55px;
+    flex-basis: 55px;
 }
 
 #sidebar.collapsed button {
@@ -158,7 +166,82 @@ body {
 main {
     width: 100%;
     min-width: 0;
-    padding: 36px clamp(18px, 4vw, 64px) 110px;
+    padding: 36px clamp(18px, 4vw, 64px) 40px;
     flex: 1 1 auto;
     overflow-y: auto;
+}
+
+@media screen and (max-width: 1024px) {
+    .logo {
+        max-width: 220px;
+    }
+
+    .header-titulo h1 {
+        font-size: 20px;
+    }
+
+    .barra-estado {
+        padding-right: 16px;
+    }
+
+    #sidebar {
+        width: 190px;
+        flex-basis: 190px;
+    }
+
+    #sidebar.collapsed {
+        width: 55px;
+        flex-basis: 55px;
+    }
+
+    main {
+        padding: 28px 24px 72px;
+    }
+}
+
+@media screen and (max-width: 767px) {
+    .header {
+        padding: 8px 12px;
+    }
+
+    .logo {
+        max-width: min(160px, 42vw);
+    }
+
+    .header-titulo h1 {
+        font-size: 18px;
+    }
+
+    .header-titulo p {
+        display: none;
+    }
+
+    .barra-estado {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .menu-toggle {
+        margin-right: 8px;
+    }
+
+    .app-container {
+        position: relative;
+    }
+
+    #sidebar {
+        position: static;
+        width: 220px;
+        flex-basis: 220px;
+    }
+
+    #sidebar.collapsed {
+        width: 55px;
+        flex-basis: 55px;
+        max-width: none;
+    }
+
+    main {
+        padding: 18px 14px 20px;
+    }
 }

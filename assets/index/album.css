@@ -100,3 +100,13 @@
 .btn-new:hover .icon {
     filter: brightness(0) invert(1);
 }
+
+@media screen and (max-width: 767px) {
+    .indicator-container {
+        justify-content: flex-start;
+    }
+
+    .indicator-container .btn-new {
+        margin-left: auto;
+    }
+}

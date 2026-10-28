@@ -124,13 +124,17 @@
     height: 280px;
 }
 
-@media (max-width: 1100px) {
+@media screen and (max-width: 1024px) {
     .statistics-filters {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    .statistics-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 
-@media (max-width: 760px) {
+@media screen and (max-width: 767px) {
     .statistics-header {
         flex-direction: column;
     }
@@ -152,7 +156,7 @@
     }
 }
 
-@media (max-width: 480px) {
+@media screen and (max-width: 480px) {
     .statistics-filters {
         grid-template-columns: minmax(0, 1fr);
     }
