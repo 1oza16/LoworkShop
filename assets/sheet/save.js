@@ -201,16 +201,6 @@ async function guardarHoja(forzar = true) {
             document.title = resp.title;
         }
 
-        if ("BroadcastChannel" in window) {
-            const sheetsChannel = new BroadcastChannel("loworkshop-sheets");
-
-            sheetsChannel.postMessage({
-                type: "sheet-saved"
-            });
-        
-            sheetsChannel.close();
-        }
-        
     } catch (err) {
         console.error(err);
         actualizarBarraGuardado("error");

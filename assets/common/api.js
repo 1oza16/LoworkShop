@@ -64,6 +64,35 @@ async function del(url, payload) {
 }
 
 const API = {
+    // SSE
+    subscribe(channel, onUpdate, signal = null) {
+        if (!("EventSource" in window)) {
+            console.warn("EventSource no soportado en este entorno.");
+            return null;
+        }
+
+        if (signal?.aborted) {
+            return null;
+        }
+
+        const source = new EventSource(
+            `/api/stream/${encodeURIComponent(channel)}`
+        );
+        source.addEventListener("update", () => {
+            if (!signal?.aborted && typeof onUpdate === "function") {
+                onUpdate();
+            }
+        });
+
+        signal?.addEventListener(
+            "abort",
+            () => source.close(),
+            { once: true }
+        );
+
+        return source;
+    },
+
     // GET
     getIndexCars() {
         return get("/api/get-cars-index");

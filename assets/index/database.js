@@ -88,6 +88,18 @@ function Database() {
             { signal: controllerDatabase.signal }
         );
 
+        API.subscribe(
+            "database",
+            () => {
+                if (currentTable) {
+                    refreshDatabaseTable(true);
+                } else {
+                    loadDatabaseTables();
+                }
+            },
+            controllerDatabase.signal
+        );
+
         root.querySelector("#grid").innerHTML = `
             <div class="estado-vacio">Cargando tablas...</div>
         `;
@@ -137,7 +149,11 @@ async function loadDatabaseTables() {
     }
 }
 
-async function loadDatabaseRecords(table, requestId = ++databaseRequestId) {
+async function loadDatabaseRecords(
+    table,
+    requestId = ++databaseRequestId,
+    preserveSearch = false
+) {
     currentTable = table;
     tableData = null;
     visibleRecords = [];
@@ -155,7 +171,9 @@ async function loadDatabaseRecords(table, requestId = ++databaseRequestId) {
         }
 
         tableData = response;
-        rootDatabase.querySelector("#buscador").value = "";
+        if (!preserveSearch) {
+            rootDatabase.querySelector("#buscador").value = "";
+        }
         rootDatabase.querySelector("#buscador").placeholder = `Buscar en ${table}...`;
         renderDatabaseRecords();
     } catch (error) {
@@ -764,10 +782,13 @@ async function deleteDatabaseRecord(record) {
     }
 }
 
-async function refreshDatabaseTable() {
+async function refreshDatabaseTable(preserveSearch = false) {
+    const table = currentTable;
     relationRecordsCache = {};
     await loadDatabaseTables();
-    await loadDatabaseRecords(currentTable);
+    if (table && currentTable === table) {
+        await loadDatabaseRecords(table, undefined, preserveSearch);
+    }
 }
 
 function showDatabaseError(message, retryType) {

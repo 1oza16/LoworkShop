@@ -3,14 +3,17 @@ import io
 import json
 import os
 import re
+from queue import Empty
 from backend import sheet
 from backend import album
 from backend import views
 from backend import database
 from backend import statistics
-from urllib.parse import parse_qsl, urlencode, urljoin, urlsplit, urlunsplit
+from backend import events
+from urllib.parse import parse_qsl, unquote, urlencode, urljoin, urlsplit, urlunsplit
 
 class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
+    stream_heartbeat_seconds = 15
 
     def send_head(self):
         request_path = urlsplit(self.path).path
@@ -78,9 +81,13 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         return f'"{versioned_url}"'
 
     def do_GET(self):
-        if urlsplit(self.path).path == "/api/statistics/data":
+        request_path = urlsplit(self.path).path
+        if request_path.startswith("/api/stream/"):
+            channel = unquote(request_path[len("/api/stream/"):])
+            return self._serve_event_stream(channel)
+        if request_path == "/api/statistics/data":
             return statistics.api_get_statistics_data(self)
-        if urlsplit(self.path).path == "/api/database/records":
+        if request_path == "/api/database/records":
             return database.api_get_records(self)
         if self.path.startswith("/api/get-sheet/"):
             return sheet.api_get_sheet(self)
@@ -100,24 +107,57 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def do_POST(self):
-        endpoint = POST_ENDPOINTS.get(self.path)
-
-        if endpoint:
-            return endpoint(self)
-        
-        self.send_error(404, "Ruta no encontrada")
+        return self._dispatch_mutation(POST_ENDPOINTS)
 
     def do_PUT(self):
-        endpoint = PUT_ENDPOINTS.get(self.path)
-        if endpoint:
-            return endpoint(self)
-        self.send_error(404, "Ruta no encontrada")
+        return self._dispatch_mutation(PUT_ENDPOINTS)
 
     def do_DELETE(self):
-        endpoint = DELETE_ENDPOINTS.get(self.path)
-        if endpoint:
+        return self._dispatch_mutation(DELETE_ENDPOINTS)
+
+    def _dispatch_mutation(self, endpoints):
+        route = endpoints.get(self.path)
+        if route is None:
+            self.send_error(404, "Ruta no encontrada")
+            return
+
+        endpoint, channels = route
+        self._mutation_channels = channels
+        try:
             return endpoint(self)
-        self.send_error(404, "Ruta no encontrada")
+        finally:
+            del self._mutation_channels
+
+    def _serve_event_stream(self, channel):
+        if channel not in events.CHANNELS:
+            self.send_error(404, "Canal no encontrado")
+            return
+
+        subscriber = events.EVENT_MANAGER.subscribe(channel)
+        try:
+            self.send_response(200)
+            self.send_header("Content-Type", "text/event-stream; charset=utf-8")
+            self.send_header("Cache-Control", "no-cache, no-transform")
+            self.send_header("Connection", "keep-alive")
+            self.send_header("X-Accel-Buffering", "no")
+            self.end_headers()
+            self.wfile.write(b": connected\n\n")
+            self.wfile.flush()
+            while True:
+                try:
+                    event_name = subscriber.get(
+                        timeout=self.stream_heartbeat_seconds
+                    )
+                    message = f"event: {event_name}\ndata: {{}}\n\n"
+                except Empty:
+                    message = ": keep-alive\n\n"
+
+                self.wfile.write(message.encode("utf-8"))
+                self.wfile.flush()
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
+            pass
+        finally:
+            events.EVENT_MANAGER.unsubscribe(channel, subscriber)
 
     # Herramientas JSON
     def send_json(self, code, data):
@@ -139,6 +179,9 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
 
         self.wfile.write(body)
+        if 200 <= code < 300:
+            for channel in getattr(self, "_mutation_channels", ()):
+                events.EVENT_MANAGER.notify(channel)
 
     def read_json(self):
         content_length = int(self.headers.get("Content-Length", 0))
@@ -147,6 +190,11 @@ class LoworkShopHandler(http.server.SimpleHTTPRequestHandler):
     
     def log_message(self, format, *args):
         pass
+
+SHEET_CHANNELS = ("sheets", "database", "statistics")
+DATABASE_CHANNELS = ("database", "statistics")
+ALBUM_CHANNELS = ("album",)
+
 
 # Diccionario con los endpoints
 GET_ENDPOINTS = {
@@ -157,24 +205,24 @@ GET_ENDPOINTS = {
     }
 
 POST_ENDPOINTS = {
-        "/api/create-sheet": sheet.api_create_sheet,
-        "/api/save-sheet": sheet.api_save_sheet,
-        "/api/update-sheet-metadata": sheet.api_update_sheet_metadata,
-        "/api/delete-sheet": sheet.api_delete_sheet,
-        "/api/save-photo": album.api_save_photo,
-        "/api/delete-image": album.api_delete_image,
-        "/api/create-album-folder": album.api_create_album_folder,
-        "/api/database/record": database.api_create_record,
+        "/api/create-sheet": (sheet.api_create_sheet, SHEET_CHANNELS),
+        "/api/save-sheet": (sheet.api_save_sheet, SHEET_CHANNELS),
+        "/api/update-sheet-metadata": (sheet.api_update_sheet_metadata, SHEET_CHANNELS),
+        "/api/delete-sheet": (sheet.api_delete_sheet, SHEET_CHANNELS),
+        "/api/save-photo": (album.api_save_photo, ALBUM_CHANNELS),
+        "/api/delete-image": (album.api_delete_image, ALBUM_CHANNELS),
+        "/api/create-album-folder": (album.api_create_album_folder, ALBUM_CHANNELS),
+        "/api/database/record": (database.api_create_record, DATABASE_CHANNELS),
     }
 
 PUT_ENDPOINTS = {
-        "/api/save-cover": album.api_save_cover,
-        "/api/rename-album-item": album.api_rename_album_item,
-        "/api/database/record": database.api_update_record,
+        "/api/save-cover": (album.api_save_cover, ALBUM_CHANNELS),
+        "/api/rename-album-item": (album.api_rename_album_item, ALBUM_CHANNELS),
+        "/api/database/record": (database.api_update_record, DATABASE_CHANNELS),
     }
 
 DELETE_ENDPOINTS = {
-        "/api/delete-cover": album.api_delete_cover,
-        "/api/delete-album-folder": album.api_delete_album_folder,
-        "/api/database/record": database.api_delete_record,
+        "/api/delete-cover": (album.api_delete_cover, ALBUM_CHANNELS),
+        "/api/delete-album-folder": (album.api_delete_album_folder, ALBUM_CHANNELS),
+        "/api/database/record": (database.api_delete_record, DATABASE_CHANNELS),
     }

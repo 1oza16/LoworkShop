@@ -21,6 +21,11 @@ function Home() {
     function mount(root) {
         rootHome = root;
         controllerHome = new AbortController();
+        API.subscribe(
+            "sheets",
+            () => loadSheets(),
+            controllerHome.signal
+        );
 
         client = rootHome.querySelector("#inp-cliente");
         brand = rootHome.querySelector("#inp-marca");
@@ -40,27 +45,6 @@ function Home() {
                 String(today.getMonth() + 1).padStart(2, "0"),
                 String(today.getDate()).padStart(2, "0")
             ].join("-");
-        }
-
-        // Canal para indicar cambio de foto en hoja de reparacion y cargarla 
-        if ("BroadcastChannel" in window) {
-            const sheetsChannel = new BroadcastChannel("loworkshop-sheets");
-
-            sheetsChannel.addEventListener(
-                "message",
-                event => {
-                    if (event.data?.type === "sheet-saved") {
-                        loadSheets();
-                    }
-                },
-                { signal: controllerHome.signal }
-            );
-        
-            controllerHome.signal.addEventListener(
-                "abort",
-                () => sheetsChannel.close(),
-                { once: true }
-            );
         }
 
         const tracker = root.querySelector("#buscador");
@@ -546,12 +530,10 @@ async function loadSheets() {
 
         if (rootHome) {
             reloadStatistics(data.estadisticas);
-            renderSheetsHome(sheets);
-            return;
         }
 
-        if (rootSheets) {
-            renderSheets(sheets);
+        if (rootHome || rootSheets) {
+            filterSheets();
         }
     } catch (error) {
         console.error("Error cargando hojas:", error);

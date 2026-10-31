@@ -2,6 +2,7 @@ from core import filesystem, discovery
 from backend import album, api
 import os
 import webbrowser
+import http.server
 import socketserver
 import threading
 
@@ -11,8 +12,13 @@ os.chdir(filesystem.ROOT)
 PORT = 8000
 
 
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
 def iniciar_servidor():
-    with socketserver.TCPServer(("", PORT), api.LoworkShopHandler) as httpd:
+    with ThreadingHTTPServer(("", PORT), api.LoworkShopHandler) as httpd:
         print(f"Servidor HTTP iniciado en http://localhost:{PORT}")
         print(f"Accesible desde la red local en http://0.0.0.0:{PORT}")
         httpd.serve_forever()

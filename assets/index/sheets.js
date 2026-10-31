@@ -6,29 +6,13 @@ function Sheets() {
     function mount(root) {
         rootSheets = root;
         controllerSheets = new AbortController();
+        API.subscribe(
+            "sheets",
+            () => loadSheets(),
+            controllerSheets.signal
+        );
 
         const tracker = rootSheets.querySelector("#buscador");
-        
-        // Canal para indicar cambio de hoja guardada
-        if ("BroadcastChannel" in window) {
-            const sheetsChannel = new BroadcastChannel("loworkshop-sheets");
-
-            sheetsChannel.addEventListener(
-                "message",
-                event => {
-                    if (event.data?.type === "sheet-saved") {
-                        loadSheets();
-                    }
-                },
-                { signal: controllerSheets.signal }
-            );
-        
-            controllerSheets.signal.addEventListener(
-                "abort",
-                () => sheetsChannel.close(),
-                { once: true }
-            );
-        }
 
         rootSheets.addEventListener(
             "click",

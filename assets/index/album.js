@@ -99,6 +99,12 @@ function Album() {
             { signal: controllerAlbum.signal }
         );
 
+        API.subscribe(
+            "album",
+            reloadCurrentAlbumView,
+            controllerAlbum.signal
+        );
+
         newItemBtn.addEventListener(
             "click",
             () => {
@@ -211,20 +217,48 @@ function manageMouseButton(e) {
 async function loadAlbum() {
 
     try {
-
-        const [cars, covers] = await Promise.all([
-            API.getIndexCars(),
-            API.getIndexCovers()
-        ]);
-
-        indexCars = cars;
-        indexCovers = covers;
-
+        await loadAlbumIndexes();
         renderBrands();
     } catch (error) {
         console.error("Error cargando datos del álbum:", error);
     }
 } // loadAlbum()
+
+async function loadAlbumIndexes() {
+    const [cars, covers] = await Promise.all([
+        API.getIndexCars(),
+        API.getIndexCovers()
+    ]);
+
+    indexCars = cars;
+    indexCovers = covers;
+}
+
+async function reloadCurrentAlbumView() {
+    const root = rootAlbum;
+    const brand = actualBrand;
+    const model = actualModel;
+
+    try {
+        await loadAlbumIndexes();
+        if (rootAlbum !== root) {
+            return;
+        }
+
+        if (brand && indexCars?.[brand]) {
+            if (model && indexCars[brand][model]) {
+                renderImages(brand, model, false);
+            } else {
+                renderModels(brand, false);
+            }
+            return;
+        }
+
+        renderBrands();
+    } catch (error) {
+        console.error("Error actualizando el álbum:", error);
+    }
+}
 
 function getCreateContext() {
     if (!actualBrand && !actualModel) {

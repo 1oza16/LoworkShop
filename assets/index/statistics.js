@@ -32,6 +32,11 @@ function Statistics() {
             input.addEventListener("change", updateStatistics, { signal });
         });
 
+        API.subscribe(
+            "statistics",
+            () => loadStatistics(signal, true),
+            signal
+        );
         loadStatistics(signal);
     } // mount()
 
@@ -52,8 +57,15 @@ function Statistics() {
 
 } // Statistics()
 
-async function loadStatistics(signal) {
+async function loadStatistics(signal, preserveFilters = false) {
     const root = rootStatistics;
+    const selectedFilters = preserveFilters && root
+        ? {
+            brand: root.querySelector("#statistics-brand").value,
+            model: root.querySelector("#statistics-model").value,
+            client: root.querySelector("#statistics-client").value
+        }
+        : null;
 
     try {
         const response = await API.getStatisticsData(signal);
@@ -63,6 +75,12 @@ async function loadStatistics(signal) {
 
         statisticsRecords = response.records;
         populateStatisticsFilters();
+        if (selectedFilters) {
+            root.querySelector("#statistics-brand").value = selectedFilters.brand;
+            root.querySelector("#statistics-client").value = selectedFilters.client;
+            updateStatisticsModelOptions(false);
+            root.querySelector("#statistics-model").value = selectedFilters.model;
+        }
         root.querySelector("#statistics-state").textContent =
             `${statisticsNumberFormat.format(statisticsRecords.length)} fichas cargadas`;
         updateStatistics();
