@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="assets/index/album.css">
     <link rel="stylesheet" href="assets/index/statistics.css">
     <link rel="stylesheet" href="assets/index/database.css">
+    <link rel="stylesheet" href="assets/index/calendar.css">
     <title>LoworkShop - Panel Principal</title>
 </head>
 <body>
@@ -20,7 +21,6 @@
         <img src="img/isologo.png" alt="Lozano Workshop" class="logo" onclick="changeView('home')">
         <div class="header-titulo">
             <h1>LoworkShop</h1>
-            <p>Panel de gestión de hojas</p>
         </div>
     </div>
 
@@ -30,6 +30,10 @@
                 <img src="img/icons/menu.png" alt="panel_principal" class="icon">
             </button>
             <h3 id="texto-estado">Pestaña sin seleccionar</h3>
+        </div>
+        <div class="usuario">
+            <img src="img/icons/user.png" alt="" class="icon">
+            <span>Usuario</span>
         </div>
     </div>
 
@@ -46,6 +50,10 @@
             <button onclick="changeView('album')" id="album">
                 <img src="img/icons/album.png" alt="panel_principal" class="icon">
                 <span>Álbum</span>
+            </button>
+            <button onclick="changeView('calendar')" id="calendar">
+                <img src="img/icons/calendar.png" alt="panel_principal" class="icon">
+                <span>Calendario</span>
             </button>
             <button onclick="changeView('statistics')" id="statistics">
                 <img src="img/icons/statistics.png" alt="panel_principal" class="icon">
@@ -71,6 +79,9 @@
 <script src="assets/index/home.js"></script>
 <script src="assets/index/sheets.js"></script>
 <script src="assets/index/album.js"></script>
+<script src="assets/vendor/fullcalendar.global.min.js"></script>
+<script src="assets/vendor/fullcalendar-locales-all.global.min.js"></script>
+<script src="assets/index/calendar.js"></script>
 <script src="assets/index/settings.js"></script>
 <script src="assets/vendor/chart.umd.min.js"></script>
 <script src="assets/index/statistics.js"></script>

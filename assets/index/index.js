@@ -2,6 +2,7 @@ const views = {
     home: () => Home(),
     sheets: () => Sheets(),
     album: () => Album(),
+    calendar: () => Calendar(),
     statistics: () => Statistics(),
     database: () => Database(),
     settings: () => Settings()
@@ -23,6 +24,11 @@ function toggleSidebar() {
 async function changeView(nameView) {
     ++navigationId
     const currentNavigation = navigationId;
+
+    if (window.matchMedia("(max-width: 767px)").matches) {
+        document.getElementById("sidebar").classList.add("collapsed");
+        document.getElementById("btnMenu").classList.add("collapsed");
+    }
     
     openSpinner(true);
 
@@ -81,5 +87,5 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById("btnMenu").classList.add("collapsed");
     }
 
-    await changeView("statistics");
+    await changeView("calendar");
 });

@@ -295,6 +295,10 @@ function getSheetMetadataModal() {
         <div class="modal-overlay" id="overlay-sheet-metadata">
             <div class="modal-box">
                 <div class="modal-header">
+                    <div class="marco-icono">
+                        <img src="img/favicon.ico" alt="isologo" width="30px">
+                    </div>
+
                     <h3>CAMBIAR DATOS DE LA HOJA</h3>
                 </div>
                 <div class="modal-body">

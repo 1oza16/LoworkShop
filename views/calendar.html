@@ -1,0 +1,52 @@
+<section class="calendar-content">
+    <div class="section-header">CALENDARIO</div>
+    <div class="section-box calendar-section-box">
+        <div id="calendar-view" class="calendar-view" aria-label="Calendario de citas del taller"></div>
+    </div>
+</section>
+
+<!-- Modal event details -->
+<div class="modal-overlay" id="overlay-calendar-event">
+    <div class="modal-box calendar-event-modal">
+        <div class="modal-header">
+            <div class="marco-icono">
+                <img src="img/favicon.ico" alt="isologo" width="30px">
+            </div>
+
+            <h3 id="calendar-event-title"></h3>
+        </div>
+
+        <div class="modal-body">
+            <div class="calendar-event-fields">
+                <div class="campo-grupo">
+                    <div class="campo-label">Tipo de actividad</div>
+                    <div class="campo-input" id="calendar-event-type"></div>
+                </div>
+                <div class="campo-grupo">
+                    <div class="campo-label">Fecha y hora</div>
+                    <div class="campo-input" id="calendar-event-date"></div>
+                </div>
+                <div class="campo-grupo">
+                    <div class="campo-label">Cliente</div>
+                    <div class="campo-input" id="calendar-event-client"></div>
+                </div>
+                <div class="campo-grupo">
+                    <div class="campo-label">Vehículo</div>
+                    <div class="campo-input" id="calendar-event-vehicle"></div>
+                </div>
+                <div class="campo-grupo">
+                    <div class="campo-label">Notas</div>
+                    <div class="campo-input" id="calendar-event-description"></div>
+                </div>
+                <div class="campo-grupo">
+                    <div class="campo-label">Creada por</div>
+                    <div class="campo-input" id="calendar-event-owner">Añadir el usuario que la creo</div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" type="button">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>

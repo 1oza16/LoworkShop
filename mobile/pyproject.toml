@@ -1,5 +1,5 @@
 [project]
-name = "loworkshop-mobile"
+name = "LoworkShop-3.2.0-Android"
 version = "3.2.0"
 description = "Cliente móvil para localizar y abrir LoworkShop en la red local"
 requires-python = ">=3.12"
